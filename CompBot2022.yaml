@@ -133,7 +133,7 @@ Children:
         Safety Enabled: !!robotbuilder.data.properties.BooleanProperty {default: true,
           name: Safety Enabled, validators: null, value: true}
       Base: Differential Drive
-      Name: DriveTrain
+      Name: Drivetrain
     Properties:
       Send to SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: false,
         name: Send to SmartDashboard, validators: null, value: false}
@@ -143,14 +143,14 @@ Children:
         validators: null
         value: []
       Default Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Default Command, type: Command, validators: null, value: DriveTrainJoystick}
+        name: Default Command, type: Command, validators: null, value: DrivetrainJoystick}
       Constants: !!robotbuilder.data.properties.ConstantsProperty
         default: []
         name: Constants
         validators: null
         value: []
     Base: Subsystem
-    Name: DriveTrainSubsystem
+    Name: DrivetrainSubsystem
   Properties: {}
   Base: Subsystems
   Name: Subsystems
@@ -191,7 +191,7 @@ Children:
       Run When Disabled: !!robotbuilder.data.properties.BooleanProperty {default: false,
         name: Run When Disabled, validators: null, value: false}
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: DriveTrainSubsystem}
+        name: Requires, type: Subsystem, validators: null, value: DrivetrainSubsystem}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: []
         name: Parameter presets
@@ -200,7 +200,7 @@ Children:
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
         name: Button on SmartDashboard, validators: null, value: false}
     Base: Command
-    Name: DriveTrainJoystick
+    Name: DrivetrainJoystick
   - Children: []
     Properties:
       Autonomous Selection: !!robotbuilder.data.properties.BooleanProperty {default: false,
