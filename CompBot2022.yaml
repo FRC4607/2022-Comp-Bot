@@ -244,12 +244,10 @@ Properties:
       Number, validators: null, value: 0}
   Export Subsystems: !!robotbuilder.data.properties.BooleanProperty {default: true,
     name: Export Subsystems, validators: null, value: true}
-  Wiring file location: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\C.I.S.
-      4\', extension: null, folder: true, name: Wiring file location, validators: null,
-    value: 'C:\Users\C.I.S. 4\Desktop'}
-  Export Directory: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\C.I.S.
-      4\FRCProjects', extension: null, folder: true, name: Export Directory, validators: null,
-    value: 'C:\Users\C.I.S. 4\Desktop'}
+  Wiring file location: !!robotbuilder.data.properties.FileProperty {default: './wiring', extension: null, folder: true, name: Wiring file location, validators: null,
+    value: './wiring'}
+  Export Directory: !!robotbuilder.data.properties.FileProperty {default: './', extension: null, folder: true, name: Export Directory, validators: null,
+    value: './'}
   Autonomous Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
     name: Autonomous Command, type: Command, validators: null, value: AutonomousCommand}
 Base: Robot
