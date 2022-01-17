@@ -28,7 +28,6 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.PigeonIMU.GeneralStatus;
 import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
@@ -52,7 +51,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private WPI_TalonFX rightMotor2;
     private MotorControllerGroup rightDrive;
     private DifferentialDrive drivetrain;
-    private ADIS16470_IMU ADISIMU;
+    // private ADIS16470_IMU ADISIMU;
     private final CANCoderConfiguration encoderConfig;
     private final TalonFXConfiguration motorConfig;
     private PigeonIMU pigeonIMU;
@@ -117,7 +116,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         drivetrain.setExpiration(0.1);
         drivetrain.setMaxOutput(1.0);
 
-        ADISIMU = new ADIS16470_IMU();
+        // ADISIMU = new ADIS16470_IMU();
         pigeonIMU = new PigeonIMU(DriveConstants.pigeonID);
 
         pigeonIMU.setFusedHeading(0);
@@ -139,21 +138,30 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // here. Call these from Commands.
 
     /**
-     * Sets the voltage of the left side motors
+     * Sets the voltage of the left side motors. Needs to be called continuously.
+     * Will be overwritten by calls to setArcadeDrive!
+     * 
+     * @param voltage The voltage to set the left side of the drivtrain to.
      */
     public void setLeftVoltage(double voltage) {
         leftDrive.setVoltage(voltage);
     }
 
     /**
-     * Sets the voltage of the right side motors
+     * Sets the voltage of the right side motors. Needs to be called continuously.
+     * Will be overwritten by calls to setArcadeDrive!
+     * 
+     * @param voltage The voltage to set the right side of the drivtrain to.
      */
     public void setRightVoltage(double voltage) {
         rightDrive.setVoltage(voltage);
     }
 
     /**
-     * Sets the voltage of both the left and right side motors
+     * Sets the voltage of both the left and right side motors. Needs to be called
+     * continuously. Will be overwritten by calls to setArcadeDrive!
+     * 
+     * @param voltage The voltage to set both sides of the drivetrain to.
      */
     public void setVoltage(double voltage) {
         leftDrive.setVoltage(voltage);
@@ -161,49 +169,64 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     /**
-     * Returns the left encoder absolute position
+     * Returns the left encoder absolute position.
+     * 
+     * @return The absolute position of the left encoder ranging from [0, Math.PI *
+     *         Units.inchesToMeters(6)) in meters.
      */
     public double getLeftEncoderAbsolutePosition() {
         return leftEncoder.getAbsolutePosition();
     }
 
     /**
-     * Returns the left encoder absolute position
+     * Returns the right encoder absolute position.
+     * * @return The absolute position of the right encoder ranging from [0, Math.PI
+     * * Units.inchesToMeters(6)) in meters.
      */
     public double getRightEncoderAbsolutePosition() {
         return rightEncoder.getAbsolutePosition();
     }
 
     /**
-     * Returns the left encoder position
+     * Returns the left encoder position.
+     * 
+     * @return The position of the right side of the drivetrain in meters.
      */
     public double getLeftEncoderPosition() {
         return leftEncoder.getPosition();
     }
 
     /**
-     * Returns the right encoder position
+     * Returns the right encoder position.
+     * 
+     * @return The position of the right side of the drivetrain in meters.
      */
     public double getRightEncoderPosition() {
         return rightEncoder.getPosition();
     }
 
     /**
-     * Sets the position of the left encoder
+     * Sets the position of the left encoder.
+     * 
+     * @param position The position of the left side of the drivetrain in meters.
      */
     public void setLeftEncoderPostion(double position) {
         leftEncoder.setPosition(position);
     }
 
     /**
-     * Sets the position of the right encoder
+     * Sets the position of the right encoder.
+     * 
+     * @param position The position of the right side of the drivetrain in meters.
      */
     public void setRightEncoderPostion(double position) {
         rightEncoder.setPosition(position);
     }
 
     /**
-     * Sets the position of both the left and right side encoders
+     * Sets the position of both the left and right side encoders at the same time.
+     * 
+     * @param position The position of the two sides of the drivetrain in meters.
      */
     public void setEncoderPostion(double position) {
         leftEncoder.setPosition(position);
@@ -223,6 +246,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // YAAY my first code!!! I did something useful! -Helen
     }
 
+    /**
+     * Check to see if our pigeon has disconnected. Useful for switching to a backup
+     * IMU if present.
+     * 
+     * @return True if the pigeon has failed, false otherwise.
+     */
     private boolean checkForPigeonFailure() {
         GeneralStatus status = new GeneralStatus();
         pigeonIMU.getGeneralStatus(status);
@@ -245,13 +274,23 @@ public class DrivetrainSubsystem extends SubsystemBase {
      */
 
     /**
+     * Returns the robot's heading, ranging from -inf to inf, with counterclockwise
+     * being positive.
+     * 
+     * @return The rotation of the robot in degrees, with counterclockwise rotations
+     *         increasing this value.
+     */
+    public double getGyroscopeReadingContinuous() {
+        return getGyroscopeReadingContinuous(true);
+    }
+
+    /**
      * Returns the robot's heading, ranging from -inf to inf.
      * 
      * @param ccwPositive Whether the reading should be returned treating
      *                    counterclockwise as positive or negative, with true
      *                    meaning ccw is positive.
-     * @return The rotation of the robot in degrees, with counterclockwise rotations
-     *         increasing this value.
+     * @return The rotation of the robot in degrees.
      */
     public double getGyroscopeReadingContinuous(boolean ccwPositive) {
         if (!pigeonFailure && !checkForPigeonFailure()) {
@@ -261,13 +300,28 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 return -pigeonIMU.getFusedHeading();
             }
         } else {
-            double uncorrectedHeading = ADISIMU.getAngle();
-            if (ccwPositive) {
-                return uncorrectedHeading;
-            } else {
-                return -uncorrectedHeading;
-            }
+            // Can't use these due to Analog Devices gyro bug.
+            /*
+             * double uncorrectedHeading = ADISIMU.getAngle();
+             * if (ccwPositive) {
+             * return uncorrectedHeading;
+             * } else {
+             * return -uncorrectedHeading;
+             * }
+             */
+            return 0;
         }
+    }
+
+    /**
+     * Returns the robot's heading, with a range of [-180, 180], with
+     * counterclockwise being positive.
+     * 
+     * @return The rotation of the robot in degrees, with counterclockwise rotations
+     *         increasing this value.
+     */
+    public double getGyroscopeReading() {
+        return getGyroscopeReading(true);
     }
 
     /**
@@ -276,8 +330,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param ccwPositive Whether the reading should be returned treating
      *                    counterclockwise as positive or negative, with true
      *                    meaning ccw is positive.
-     * @return The rotation of the robot in degrees, with counterclockwise rotations
-     *         increasing this value.
+     * @return The rotation of the robot in degrees.
      */
     public double getGyroscopeReading(boolean ccwPositive) {
         double continuousHeading = getGyroscopeReadingContinuous(ccwPositive);
@@ -300,33 +353,36 @@ public class DrivetrainSubsystem extends SubsystemBase {
         }
     }
 
+    // Can't use these due to Analog Devices gyro bug.
     /**
      * Gets the x acceleration of the robot in m/s^2 (i think). You can check which
      * axis is which direction and sign by looking at the graphic on the roborio.
      * 
      * @return The acceleration on the x axis.
-     */
-    public double getXAccel() {
-        return ADISIMU.getAccelX();
-    }
-
-    /**
-     * Gets the y acceleration of the robot in m/s^2 (i think). You can check which
-     * axis is which direction and sign by looking at the graphic on the roborio.
+     *         public double getXAccel() {
+     *         return ADISIMU.getAccelX();
+     *         }
+     * 
+     *         /**
+     *         Gets the y acceleration of the robot in m/s^2 (i think). You can
+     *         check which
+     *         axis is which direction and sign by looking at the graphic on the
+     *         roborio.
      * 
      * @return The acceleration on the y axis.
-     */
-    public double getYAccel() {
-        return ADISIMU.getAccelY();
-    }
-
-    /**
-     * Gets the z acceleration of the robot in m/s^2 (i think). You can check which
-     * axis is which direction and sign by looking at the graphic on the roborio.
+     *         public double getYAccel() {
+     *         return ADISIMU.getAccelY();
+     *         }
+     * 
+     *         /**
+     *         Gets the z acceleration of the robot in m/s^2 (i think). You can
+     *         check which
+     *         axis is which direction and sign by looking at the graphic on the
+     *         roborio.
      * 
      * @return The acceleration on the z axis.
+     *         public double getZAccel() {
+     *         return ADISIMU.getAccelZ();
+     *         }
      */
-    public double getZAccel() {
-        return ADISIMU.getAccelZ();
-    }
 }
