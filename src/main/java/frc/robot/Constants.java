@@ -11,6 +11,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -27,6 +29,18 @@ public class Constants {
     *   public static final int kRightMotor1Port = 2;
     *   public static final int kRightMotor2Port = 3; 
     * }
-    */ 
+    */
+    
+    public static final class DriveConstants {
+        public static final int leftMotor1ID = 0;
+        public static final int leftMotor2ID = 1;
+        public static final int rightMotor1ID = 3;
+        public static final int rightMotor2ID = 4;
+        public static final int leftEncoderID = 2;
+        public static final int rightEncoderID = 5;
+        public static final int pigeonID = 6;
+        public static final int countsPerRevolution = 4096;
+        public static final double sensorCoefficient = (Math.PI * Units.inchesToMeters(6)) / countsPerRevolution;
+    }
 }
 
