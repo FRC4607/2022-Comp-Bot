@@ -166,54 +166,13 @@ Children:
   - Children:
     - Children: []
       Properties:
-        Intended ControlMode: !!robotbuilder.data.properties.ChoicesProperty
-          choices: [PercentOutput, Position, Velocity, Current, Follower, MotionProfile,
-            MotionMagic, MotionProfileArc]
-          default: PercentOutput
-          name: Intended ControlMode
-          validators: null
-          value: PercentOutput
-        Motion Magic Cruise Velocity: !!robotbuilder.data.properties.IntegerProperty {
-          default: 0, name: Motion Magic Cruise Velocity, validators: null, value: 0}
-        Motion Magic Acceleration: !!robotbuilder.data.properties.IntegerProperty {
-          default: 0, name: Motion Magic Acceleration, validators: null, value: 0}
-        D: !!robotbuilder.data.properties.DoubleProperty {default: 0, name: D, validators: null,
-          value: 0.0}
-        F: !!robotbuilder.data.properties.DoubleProperty {default: 0, name: F, validators: null,
-          value: 0.0}
         CAN ID: !!robotbuilder.data.properties.ChoicesProperty
-          choices: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-            '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23',
-            '24', '25', '26', '27', '28', '29', '30', '31']
+          choices: *id003
           default: '2'
           name: CAN ID
-          validators: [CANID]
+          validators: *id004
           value: '7'
-        I: !!robotbuilder.data.properties.DoubleProperty {default: 0, name: I, validators: null,
-          value: 0.0}
-        Restore Factory Defaults: !!robotbuilder.data.properties.BooleanProperty {
-          default: true, name: Restore Factory Defaults, validators: null, value: true}
-        SensorPhase Invert: !!robotbuilder.data.properties.BooleanProperty {default: false,
-          name: SensorPhase Invert, validators: null, value: false}
-        P: !!robotbuilder.data.properties.DoubleProperty {default: 0, name: P, validators: null,
-          value: 0.0}
-        Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
-          name: Inverted, validators: null, value: false}
-        Break Mode: !!robotbuilder.data.properties.ChoicesProperty
-          choices: [Coast, Brake]
-          default: Coast
-          name: Break Mode
-          validators: null
-          value: Coast
-        Data Port Encoder: !!robotbuilder.data.properties.ChoicesProperty
-          choices: [None, CTRE_MagEncoder_Relative, CTRE_MagEncoder_Absolute, QuadEncoder,
-            Analog, Tachometer, PulseWidthEncodedPosition, SensorSum, SensorDifference,
-            RemoteSensor0, RemoteSensor1, SoftwareEmulatedSensor]
-          default: None
-          name: Data Port Encoder
-          validators: null
-          value: None
-      Base: Talon SRX Enhanced
+      Base: Talon FX
       Name: flywheelMotor
     Properties:
       Send to SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: false,
@@ -318,10 +277,10 @@ Children:
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
         name: Requires, type: Subsystem, validators: null, value: Flywheel}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
-        default: &id009 []
+        default: []
         name: Parameter presets
         validators: null
-        value: *id009
+        value: []
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
         name: Button on SmartDashboard, validators: null, value: false}
     Base: Command
