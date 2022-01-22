@@ -42,5 +42,12 @@ public class Constants {
         public static final int countsPerRevolution = 4096;
         public static final double sensorCoefficient = (Math.PI * Units.inchesToMeters(6)) / countsPerRevolution;
     }
+
+    public static final class TowerConstants {
+        public static final int agitatiorID = 9;
+        public static final int transferWheelID = 10;
+        public static final double agitatorSpeed = 0.3;
+        public static final double transferWheelSpeed = 0.1;
+    }
 }
 
