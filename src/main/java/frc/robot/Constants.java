@@ -11,6 +11,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -41,6 +42,20 @@ public class Constants {
         public static final int pigeonID = 6;
         public static final int countsPerRevolution = 4096;
         public static final double sensorCoefficient = (Math.PI * Units.inchesToMeters(6)) / countsPerRevolution;
+        public static final double ks = 1.0;
+        public static final double kv = 1.0;
+        public static final double ka = 1.0;
+        public static final double kPDriveVel = 1.0;
+        public static final double trackWidth_meters = 1;
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(trackWidth_meters);
+        public static final double maxVoltage = 10;
+    }
+
+    public static final class FollowPathConstants {
+        public static final double kMaxSpeed_MetersPerSecond = 10;
+        public static final double kMaxAcceleration_MetersPerSecondSquared = 1;
+        public static final double kRamseteB = 0;
+        public static final double kRamseteZeta = 0;
     }
 }
 
