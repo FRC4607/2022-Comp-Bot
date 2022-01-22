@@ -42,5 +42,9 @@ public class Constants {
         public static final int countsPerRevolution = 4096;
         public static final double sensorCoefficient = (Math.PI * Units.inchesToMeters(6)) / countsPerRevolution;
     }
+
+    public static final class FlywheelConstants {
+        public static final int flywheelMotorID = 7;
+    }
 }
 
