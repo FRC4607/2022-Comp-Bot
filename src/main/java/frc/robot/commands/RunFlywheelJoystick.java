@@ -54,7 +54,9 @@ public class RunFlywheelJoystick extends CommandBase {
     public void execute() {
         double axis = m_driver.getRawAxis(3);
 
-        m_flywheel.setSpeed(axis);
+        if (axis >= 0.01) {
+            m_flywheel.setSpeed(axis);
+        }
     }
 
     // Called once the command ends or is interrupted.
