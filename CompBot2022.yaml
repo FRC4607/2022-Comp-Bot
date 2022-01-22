@@ -163,6 +163,62 @@ Children:
         value: []
     Base: Subsystem
     Name: DrivetrainSubsystem
+  - Children:
+    - Children: []
+      Properties:
+        CAN ID: !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id003
+          default: '2'
+          name: CAN ID
+          validators: *id004
+          value: '9'
+      Base: Talon FX
+      Name: Agitatior
+    - Children: []
+      Properties:
+        Idle Mode: !!robotbuilder.data.properties.ChoicesProperty
+          choices: [kCoast, kBrake]
+          default: kCoast
+          name: Idle Mode
+          validators: null
+          value: kBrake
+        Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
+          name: Inverted, validators: null, value: false}
+        CAN ID: !!robotbuilder.data.properties.ChoicesProperty
+          choices: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
+            '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23',
+            '24', '25', '26', '27', '28', '29', '30', '31']
+          default: '2'
+          name: CAN ID
+          validators: [CANID]
+          value: '10'
+        MOTOR TYPE: !!robotbuilder.data.properties.ChoicesProperty
+          choices: [kBrushless, kBrushed]
+          default: kBrushless
+          name: MOTOR TYPE
+          validators: null
+          value: kBrushless
+        Restore Factory Defaults: !!robotbuilder.data.properties.BooleanProperty {
+          default: true, name: Restore Factory Defaults, validators: null, value: true}
+      Base: Spark MAX
+      Name: TransferWheel
+    Properties:
+      Send to SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: false,
+        name: Send to SmartDashboard, validators: null, value: false}
+      Default command parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Default command parameters
+        validators: null
+        value: []
+      Default Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Default Command, type: Command, validators: null, value: None}
+      Constants: !!robotbuilder.data.properties.ConstantsProperty
+        default: []
+        name: Constants
+        validators: null
+        value: []
+    Base: Subsystem
+    Name: TowerSubsystem
   Properties: {}
   Base: Subsystems
   Name: Subsystems
@@ -235,6 +291,68 @@ Children:
         name: Button on SmartDashboard, validators: null, value: true}
     Base: Command
     Name: AutonomousCommand
+  - Children: []
+    Properties:
+      Autonomous Selection: !!robotbuilder.data.properties.BooleanProperty {default: false,
+        name: Autonomous Selection, validators: null, value: false}
+      Parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Parameters
+        validators: null
+        value:
+        - !!robotbuilder.data.properties.ParameterDescriptor {name: reverse, type: boolean}
+      Run When Disabled: !!robotbuilder.data.properties.BooleanProperty {default: false,
+        name: Run When Disabled, validators: null, value: false}
+      Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Requires, type: Subsystem, validators: null, value: TowerSubsystem}
+      Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
+        default: &id009
+        - !!robotbuilder.data.properties.ParameterSet
+          name: Forward
+          parameters:
+          - {name: reverse, type: boolean, value: 'false'}
+        - !!robotbuilder.data.properties.ParameterSet
+          name: Reverse
+          parameters:
+          - {name: reverse, type: boolean, value: 'true'}
+        name: Parameter presets
+        validators: null
+        value: *id009
+      Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
+        name: Button on SmartDashboard, validators: null, value: true}
+    Base: Command
+    Name: RunTransferWheel
+  - Children: []
+    Properties:
+      Autonomous Selection: !!robotbuilder.data.properties.BooleanProperty {default: false,
+        name: Autonomous Selection, validators: null, value: false}
+      Parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Parameters
+        validators: null
+        value:
+        - !!robotbuilder.data.properties.ParameterDescriptor {name: reverse, type: boolean}
+      Run When Disabled: !!robotbuilder.data.properties.BooleanProperty {default: false,
+        name: Run When Disabled, validators: null, value: false}
+      Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Requires, type: Subsystem, validators: null, value: TowerSubsystem}
+      Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
+        default: &id010
+        - !!robotbuilder.data.properties.ParameterSet
+          name: Forward
+          parameters:
+          - {name: reverse, type: boolean, value: 'false'}
+        - !!robotbuilder.data.properties.ParameterSet
+          name: Reverse
+          parameters:
+          - {name: reverse, type: boolean, value: 'true'}
+        name: Parameter presets
+        validators: null
+        value: *id010
+      Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
+        name: Button on SmartDashboard, validators: null, value: true}
+    Base: Command
+    Name: RunAgitator
   Properties: {}
   Base: Commands
   Name: Commands
@@ -257,11 +375,11 @@ Properties:
   Export Subsystems: !!robotbuilder.data.properties.BooleanProperty {default: true,
     name: Export Subsystems, validators: null, value: true}
   Wiring file location: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\C.I.S.
-      4\', extension: null, folder: true, name: Wiring file location, validators: null,
+      3\', extension: null, folder: true, name: Wiring file location, validators: null,
     value: ./wiring}
   Export Directory: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\C.I.S.
-      4\FRCProjects', extension: null, folder: true, name: Export Directory, validators: null,
-    value: ..\}
+      3\FRCProjects', extension: null, folder: true, name: Export Directory, validators: null,
+    value: ..\2022-CompBot-RobotBuilder}
   Autonomous Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
     name: Autonomous Command, type: Command, validators: null, value: AutonomousCommand}
 Base: Robot
