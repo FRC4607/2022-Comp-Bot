@@ -61,13 +61,10 @@ public class Constants {
 
     public static final class IntakeConstants {
         public static final int motorID = 10;
-        public static final int leftSolenoidModule = 0;
-        public static final int rightSolenoidModule = 0;
-        public static final PneumaticsModuleType SolenoidType = PneumaticsModuleType.CTREPCM;
-        public static final int leftSolenoidForwardChannel = 0;
-        public static final int leftSolenoidReverseChannel = 0;
-        public static final int rightSolenoidForwardChannel = 0;
-        public static final int rightSolenoidReverseChannel = 0;
+        public static final int solenoidModule = 0;
+        public static final PneumaticsModuleType SolenoidType = PneumaticsModuleType.REVPH;
+        public static final int solenoidForwardChannel = 0;
+        public static final int solenoidReverseChannel = 1;
 
     }
 }

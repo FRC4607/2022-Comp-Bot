@@ -4,21 +4,21 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 class Intake extends SubsystemBase {
 
-    private WPI_TalonFX m_motor;
-    private DoubleSolenoid m_leftSolenoid;
-    private DoubleSolenoid m_rightSolenoid;
+    private CANSparkMax m_motor;
+    private DoubleSolenoid m_solenoid;
 
     public Intake() {
-        m_leftSolenoid = new DoubleSolenoid(IntakeConstants.leftSolenoidModule, IntakeConstants.SolenoidType,
-                IntakeConstants.leftSolenoidForwardChannel, IntakeConstants.leftSolenoidReverseChannel);
-        m_rightSolenoid = new DoubleSolenoid(IntakeConstants.rightSolenoidModule, IntakeConstants.SolenoidType,
-                IntakeConstants.rightSolenoidForwardChannel, IntakeConstants.rightSolenoidReverseChannel);
+        m_solenoid = new DoubleSolenoid(IntakeConstants.solenoidModule, IntakeConstants.SolenoidType,
+                IntakeConstants.solenoidForwardChannel, IntakeConstants.solenoidReverseChannel);
+        m_motor = new CANSparkMax(IntakeConstants.motorID, MotorType.kBrushless);
 
-        m_motor = new WPI_TalonFX(IntakeConstants.motorID);
+        m_motor.setSmartCurrentLimit(20, 40);
+        
     }
 
     /**
@@ -42,23 +42,20 @@ class Intake extends SubsystemBase {
      * Extends the solenoid
      */
     public void extendIntake() {
-        m_leftSolenoid.set(Value.kForward);
-        m_rightSolenoid.set(Value.kForward);
+        m_solenoid.set(Value.kForward);
     }
 
     /**
      * Retracts the solenoid
      */
     public void retractIntake() {
-        m_leftSolenoid.set(Value.kReverse);
-        m_rightSolenoid.set(Value.kReverse);
+        m_solenoid.set(Value.kReverse);
     }
 
     /**
      * Toggles the solenoid
      */
     public void toggleIntake() {
-        m_leftSolenoid.toggle();
-        m_rightSolenoid.toggle();
+        m_solenoid.toggle();
     }
 }
