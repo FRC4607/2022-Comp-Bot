@@ -7,7 +7,7 @@ import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-class Intake extends SubsystemBase {
+public class Intake extends SubsystemBase {
 
     private CANSparkMax m_motor;
     private DoubleSolenoid m_solenoid;
@@ -16,7 +16,6 @@ class Intake extends SubsystemBase {
         m_solenoid = new DoubleSolenoid(IntakeConstants.solenoidModule, IntakeConstants.SolenoidType,
                 IntakeConstants.solenoidForwardChannel, IntakeConstants.solenoidReverseChannel);
         m_motor = new CANSparkMax(IntakeConstants.motorID, MotorType.kBrushless);
-
         m_motor.setSmartCurrentLimit(20, 40);
         
     }

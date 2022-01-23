@@ -66,6 +66,8 @@ public class Constants {
         public static final int solenoidForwardChannel = 0;
         public static final int solenoidReverseChannel = 1;
 
+        public static final double maxSpeed = 0.3;
+
     }
 }
 
