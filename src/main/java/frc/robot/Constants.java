@@ -13,6 +13,7 @@ package frc.robot;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -63,6 +64,17 @@ public class Constants {
         public static final int transferWheelID = 10;
         public static final double agitatorSpeed = 0.3;
         public static final double transferWheelSpeed = 0.1;
+    }
+    public static final class IntakeConstants {
+        public static final int motorID = 10;
+        public static final int leftSolenoidModule = 0;
+        public static final int rightSolenoidModule = 0;
+        public static final PneumaticsModuleType SolenoidType = PneumaticsModuleType.CTREPCM;
+        public static final int leftSolenoidForwardChannel = 0;
+        public static final int leftSolenoidReverseChannel = 0;
+        public static final int rightSolenoidForwardChannel = 0;
+        public static final int rightSolenoidReverseChannel = 0;
+
     }
 }
 
