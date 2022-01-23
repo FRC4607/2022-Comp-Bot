@@ -226,20 +226,20 @@ Children:
   - Children: []
     Properties:
       Number: !!robotbuilder.data.properties.ChoicesProperty
-        choices: &id007 ['0', '1', '2', '3', '4', '5']
+        choices: &id008 ['0', '1', '2', '3', '4', '5']
         default: 1
         name: Number
-        validators: &id008 [Joystick]
+        validators: &id009 [Joystick]
         value: '0'
     Base: Xbox Controller
     Name: Driver
   - Children: []
     Properties:
       Number: !!robotbuilder.data.properties.ChoicesProperty
-        choices: *id007
+        choices: *id008
         default: 1
         name: Number
-        validators: *id008
+        validators: *id009
         value: '1'
     Base: Xbox Controller
     Name: Opperater
@@ -378,8 +378,8 @@ Properties:
       3\', extension: null, folder: true, name: Wiring file location, validators: null,
     value: ./wiring}
   Export Directory: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\C.I.S.
-      3\FRCProjects', extension: null, folder: true, name: Export Directory, validators: null,
-    value: ..\2022-CompBot-RobotBuilder}
+      4\FRCProjects', extension: null, folder: true, name: Export Directory, validators: null,
+    value: ..\2022-Robot-Builder-Template}
   Autonomous Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
     name: Autonomous Command, type: Command, validators: null, value: AutonomousCommand}
 Base: Robot
