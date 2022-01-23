@@ -12,6 +12,7 @@ public class RunIntake extends CommandBase {
 
     public RunIntake(Intake intake, XboxController driver) {
         m_intake = intake;
+        addRequirements(m_intake);
         m_driver = driver;
     }
 

@@ -66,13 +66,13 @@ public class Constants {
         public static final double transferWheelSpeed = 0.1;
     }
     public static final class IntakeConstants {
-        public static final int motorID = 10;
-        public static final int solenoidModule = 0;
+        public static final int motorID = 7;
+        public static final int solenoidModule = 8;
         public static final PneumaticsModuleType SolenoidType = PneumaticsModuleType.REVPH;
         public static final int solenoidForwardChannel = 0;
         public static final int solenoidReverseChannel = 1;
 
-        public static final double maxSpeed = 0.3;
+        public static final double maxSpeed = 1;
 
     }
 }
