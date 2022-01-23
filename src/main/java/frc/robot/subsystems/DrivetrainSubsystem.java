@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -163,7 +164,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
      */
     public void setArcadeDrive(double x, double y) {
         // The y is inverted so forward will be positive and backward will be negative.
-        m_drivetrain.arcadeDrive(-y, x);
+        m_drivetrain.arcadeDrive(-y * DriveConstants.maxSpeed, x * DriveConstants.maxTurning);
 
         // YAAY my first code!!! I did something useful! -Helen
     }

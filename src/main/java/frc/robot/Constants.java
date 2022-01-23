@@ -50,6 +50,10 @@ public class Constants {
         public static final double trackWidth_meters = 1;
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(trackWidth_meters);
         public static final double maxVoltage = 10;
+
+        public static final double maxSpeed = 1;
+        public static final double maxTurning = 0.5;
+
     }
 
     public static final class FollowPathConstants {
