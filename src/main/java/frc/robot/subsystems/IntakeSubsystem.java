@@ -7,12 +7,12 @@ import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-public class Intake extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
 
     private CANSparkMax m_motor;
     private DoubleSolenoid m_solenoid;
 
-    public Intake() {
+    public IntakeSubsystem() {
         m_solenoid = new DoubleSolenoid(IntakeConstants.solenoidModule, IntakeConstants.SolenoidType,
                 IntakeConstants.solenoidForwardChannel, IntakeConstants.solenoidReverseChannel);
         m_motor = new CANSparkMax(IntakeConstants.motorID, MotorType.kBrushless);
@@ -42,14 +42,14 @@ public class Intake extends SubsystemBase {
      * Extends the solenoid
      */
     public void extendIntake() {
-        m_solenoid.set(Value.kForward);
+        m_solenoid.set(Value.kReverse);
     }
 
     /**
      * Retracts the solenoid
      */
     public void retractIntake() {
-        m_solenoid.set(Value.kReverse);
+        m_solenoid.set(Value.kForward);
     }
 
     /**

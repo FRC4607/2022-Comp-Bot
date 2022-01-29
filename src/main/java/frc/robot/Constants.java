@@ -8,31 +8,38 @@
 // update. Deleting the comments indicating the section will prevent
 // it from being updated in the future.
 
-
 package frc.robot;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants.  This class should not be used for any other purpose.  All constants should be
- * declared globally (i.e. public static).  Do not put anything functional in this class.
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be
+ * declared globally (i.e. public static). Do not put anything functional in
+ * this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public class Constants {
-   /**
-    * public static final class DriveConstants {
-    *   public static final int kLeftMotor1Port = 0;
-    *   public static final int kLeftMotor2Port = 1;
-    *   public static final int kRightMotor1Port = 2;
-    *   public static final int kRightMotor2Port = 3; 
-    * }
-    */
-    
+    /**
+     * public static final class DriveConstants {
+     * public static final int kLeftMotor1Port = 0;
+     * public static final int kLeftMotor2Port = 1;
+     * public static final int kRightMotor1Port = 2;
+     * public static final int kRightMotor2Port = 3;
+     * }
+     */
+
     public static final class DriveConstants {
         public static final int leftMotor1ID = 0;
         public static final int leftMotor2ID = 1;
@@ -42,14 +49,17 @@ public class Constants {
         public static final int rightEncoderID = 5;
         public static final int pigeonID = 6;
         public static final int countsPerRevolution = 4096;
-        public static final double sensorCoefficient = (Math.PI * Units.inchesToMeters(6)) / countsPerRevolution;
-        public static final double ks = 1.0;
-        public static final double kv = 1.0;
-        public static final double ka = 1.0;
-        public static final double kPDriveVel = 1.0;
-        public static final double trackWidth_meters = 1;
-        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(trackWidth_meters);
+        public static final double sensorCoefficient = (Math.PI * Units.inchesToMeters(6)) / countsPerRevolution; // 0.478777
+        public static final double ks_Volts = 0.58644; // [0.58644, 0.5908]
+        public static final double kv_VoltSecondsPerMeters = 2.5377; // [2.5331, 2.5377]
+        public static final double ka_VoltSecondsSquaredPerMeters = 0.25145; // [0.20049, 0.25145]
+        public static final double trackWidth_Meters = 1;
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
+                trackWidth_Meters);
         public static final double maxVoltage = 10;
+
+        // PID drive
+        public static final double kPDriveVel = 2.9445;
 
         public static final double maxSpeed = 1;
         public static final double maxTurning = 0.5;
@@ -59,8 +69,19 @@ public class Constants {
     public static final class FollowPathConstants {
         public static final double kMaxSpeed_MetersPerSecond = 10;
         public static final double kMaxAcceleration_MetersPerSecondSquared = 1;
-        public static final double kRamseteB = 0;
+        public static final double kRamseteB_radSquaredPerMetersSquared = 0;
         public static final double kRamseteZeta = 0;
+
+        public static final DifferentialDriveVoltageConstraint voltageConstraint = new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(DriveConstants.ks_Volts, DriveConstants.kv_VoltSecondsPerMeters,
+            DriveConstants.ka_VoltSecondsSquaredPerMeters), DriveConstants.kDriveKinematics, DriveConstants.maxVoltage);
+
+        public static final TrajectoryConfig trajectoryConfig = new TrajectoryConfig(FollowPathConstants.kMaxSpeed_MetersPerSecond, 
+        FollowPathConstants.kMaxAcceleration_MetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics)
+        // Apply the voltage constraint
+        .addConstraint(voltageConstraint);
     }
 
     public static final class TowerConstants {
@@ -69,6 +90,7 @@ public class Constants {
         public static final double agitatorSpeed = 0.3;
         public static final double transferWheelSpeed = 0.1;
     }
+
     public static final class IntakeConstants {
         public static final int motorID = 7;
         public static final int solenoidModule = 8;
@@ -80,4 +102,3 @@ public class Constants {
 
     }
 }
-

@@ -3,16 +3,16 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class RunIntake extends CommandBase {
     
-    private Intake m_intake;
+    private IntakeSubsystem m_intakeSubsystem;
     private XboxController m_driver;
 
-    public RunIntake(Intake intake, XboxController driver) {
-        m_intake = intake;
-        addRequirements(m_intake);
+    public RunIntake(IntakeSubsystem intakeSubsystem, XboxController driver) {
+        m_intakeSubsystem = intakeSubsystem;
+        addRequirements(m_intakeSubsystem);
         m_driver = driver;
     }
 
@@ -23,11 +23,11 @@ public class RunIntake extends CommandBase {
     @Override
     public void execute() {
         double speed = (m_driver.getRawAxis(3) - m_driver.getRawAxis(2)) * IntakeConstants.maxSpeed;
-        m_intake.setSpeed(speed);
+        m_intakeSubsystem.setSpeed(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_intake.setSpeed(0);
+        m_intakeSubsystem.setSpeed(0);
     }
 }

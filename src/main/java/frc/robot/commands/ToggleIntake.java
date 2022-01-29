@@ -1,19 +1,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class ToggleIntake extends CommandBase {
     
-    private Intake m_intake;
+    private IntakeSubsystem m_intakeSubsytem;
 
-    public ToggleIntake(Intake intake) {
-        m_intake = intake;
+    public ToggleIntake(IntakeSubsystem intakeSubsystem) {
+        m_intakeSubsytem = intakeSubsystem;
     }
 
     @Override
     public void initialize() {
-        m_intake.toggleIntake();
+        m_intakeSubsytem.toggleIntake();
     }
 
      @Override
