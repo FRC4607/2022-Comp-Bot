@@ -15,8 +15,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TowerConstants;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -26,18 +24,18 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
  */
 public class TowerSubsystem extends SubsystemBase {
 
-    private WPI_TalonFX agitatior;
+    private CANSparkMax agitatior;
     private CANSparkMax transferWheel;
 
     /**
     *
     */
     public TowerSubsystem() {
-        agitatior = new WPI_TalonFX(TowerConstants.agitatiorID);
+        agitatior = new CANSparkMax(TowerConstants.agitatiorID, MotorType.kBrushless);
 
-        agitatior.configFactoryDefault();
+        agitatior.restoreFactoryDefaults();
         agitatior.setInverted(false);
-        agitatior.setNeutralMode(NeutralMode.Brake);
+        agitatior.setIdleMode(IdleMode.kBrake);
 
         transferWheel = new CANSparkMax(TowerConstants.transferWheelID, MotorType.kBrushless);
 

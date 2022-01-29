@@ -39,6 +39,7 @@ public class RobotContainer {
   public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   //public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
   public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
+  public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
 
   // Joysticks
   private final XboxController operator = new XboxController(1);
@@ -98,10 +99,10 @@ public class RobotContainer {
     
     driver_aButton.whenPressed( new ToggleIntake(m_intakeSubsystem) );
 
-    // operator_aButton.whileHeld(new RunAgitator(false, m_towerSubsystem));
-    // operator_bButton.whileHeld(new RunAgitator(true, m_towerSubsystem));
-    // operator_xButton.whileHeld(new RunTransferWheel(false, m_towerSubsystem));
-    // operator_yButton.whileHeld(new RunTransferWheel(true, m_towerSubsystem));
+    operator_aButton.whileHeld(new RunAgitator(false, m_towerSubsystem));
+    operator_bButton.whileHeld(new RunAgitator(true, m_towerSubsystem));
+    operator_xButton.whileHeld(new RunTransferWheel(false, m_towerSubsystem));
+    operator_yButton.whileHeld(new RunTransferWheel(true, m_towerSubsystem));
   }
 
   public XboxController getDriver() {
