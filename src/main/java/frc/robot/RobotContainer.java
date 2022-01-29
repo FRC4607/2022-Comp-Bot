@@ -38,7 +38,7 @@ public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   //public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
-  public final Flywheel m_Flywheel = new Flywheel();
+  public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 
   // Joysticks
   private final XboxController operator = new XboxController(1);
@@ -52,16 +52,17 @@ public class RobotContainer {
    */
   private RobotContainer() {
 
+
     // Smartdashboard Subsystems
 
     // SmartDashboard Buttons
     SmartDashboard.putData("AutonomousCommand", new AutonomousCommand(m_drivetrainSubsystem));
+    SmartDashboard.putData("Run Flywheel", new RunFlywheel(m_flywheelSubsystem));
 
     // Configure the button bindings
     configureButtonBindings();
 
     // Configure default commands
-    m_Flywheel.setDefaultCommand(new RunFlywheelJoystick(m_Flywheel, driver));
     m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
     m_intakeSubsystem.setDefaultCommand(new RunIntake(m_intakeSubsystem, driver));
     
