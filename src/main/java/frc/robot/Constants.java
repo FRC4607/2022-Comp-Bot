@@ -66,6 +66,10 @@ public class Constants {
 
     }
 
+    public static final class FlywheelConstants {
+        public static final int flywheelMotorID = 7;
+    }
+
     public static final class FollowPathConstants {
         public static final double kMaxSpeed_MetersPerSecond = 10;
         public static final double kMaxAcceleration_MetersPerSecondSquared = 1;
