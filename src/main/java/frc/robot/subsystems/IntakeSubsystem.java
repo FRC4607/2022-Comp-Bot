@@ -5,20 +5,29 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-    private CANSparkMax m_motor;
+    private CANSparkMax m_intakeMotor;
+    private CANSparkMax m_agitatior;
     private DoubleSolenoid m_solenoid;
 
     public IntakeSubsystem() {
         m_solenoid = new DoubleSolenoid(IntakeConstants.solenoidModule, IntakeConstants.SolenoidType,
                 IntakeConstants.solenoidForwardChannel, IntakeConstants.solenoidReverseChannel);
-        m_motor = new CANSparkMax(IntakeConstants.motorID, MotorType.kBrushless);
-        m_motor.setInverted(true);
-        m_motor.setSmartCurrentLimit(20, 40);
         m_solenoid.set(Value.kForward);
+        
+        m_intakeMotor = new CANSparkMax(IntakeConstants.motorID, MotorType.kBrushless);
+        m_intakeMotor.restoreFactoryDefaults();
+        m_intakeMotor.setInverted(true);
+        m_intakeMotor.setSmartCurrentLimit(20, 40);
+
+        m_agitatior = new CANSparkMax(IntakeConstants.agitatiorID, MotorType.kBrushless);
+        m_agitatior.restoreFactoryDefaults();
+        m_agitatior.setInverted(false);
+        m_agitatior.setIdleMode(IdleMode.kBrake);
     }
 
     /**
@@ -27,7 +36,11 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param speed the speed the motor is set to. [-1, 1]
      */
     public void setSpeed(double speed) {
-        m_motor.set(speed);
+        m_intakeMotor.set(speed);
+    }
+
+    public void setAgitator(double speed) {
+        m_agitatior.set(speed);
     }
 
     /**
@@ -35,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param voltage
      */
     public void setVoltage(double voltage) {
-        m_motor.setVoltage(voltage);
+        m_intakeMotor.setVoltage(voltage);
     }
 
     /**

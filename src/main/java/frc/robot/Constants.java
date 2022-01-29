@@ -67,7 +67,8 @@ public class Constants {
     }
 
     public static final class FlywheelConstants {
-        public static final int flywheelMotorID = 7;
+        public static final int flywheelMotor1ID = 7;
+        public static final int flywheelMotor2ID = 7;
     }
 
     public static final class FollowPathConstants {
@@ -89,20 +90,21 @@ public class Constants {
     }
 
     public static final class TowerConstants {
-        public static final int agitatiorID = 9;
         public static final int transferWheelID = 10;
         public static final double agitatorSpeed = 0.3;
         public static final double transferWheelSpeed = 0.1;
     }
-
+    
     public static final class IntakeConstants {
         public static final int motorID = 7;
+        public static final int agitatiorID = 9;
+
         public static final int solenoidModule = 8;
         public static final PneumaticsModuleType SolenoidType = PneumaticsModuleType.REVPH;
         public static final int solenoidForwardChannel = 0;
         public static final int solenoidReverseChannel = 1;
 
-        public static final double maxSpeed = 1;
-
+        public static final double intakeSpeed = 1;
+        public static final double agitatorSpeed = 0.3;
     }
 }

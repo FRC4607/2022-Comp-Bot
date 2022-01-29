@@ -66,6 +66,7 @@ public class RobotContainer {
     // Configure default commands
     m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
     m_intakeSubsystem.setDefaultCommand(new RunIntake(m_intakeSubsystem, driver));
+    m_flywheelSubsystem.setDefaultCommand(new RunFlywheelJoystick(m_flywheelSubsystem, operator));
     
     // Configure autonomous sendable chooser
     m_chooser.setDefaultOption("AutonomousCommand", new AutonomousCommand(m_drivetrainSubsystem));
@@ -99,10 +100,8 @@ public class RobotContainer {
     
     driver_aButton.whenPressed( new ToggleIntake(m_intakeSubsystem) );
 
-    operator_aButton.whileHeld(new RunAgitator(false, m_towerSubsystem));
-    operator_bButton.whileHeld(new RunAgitator(true, m_towerSubsystem));
-    operator_xButton.whileHeld(new RunTransferWheel(false, m_towerSubsystem));
-    operator_yButton.whileHeld(new RunTransferWheel(true, m_towerSubsystem));
+    operator_aButton.whileHeld(new RunTransferWheel(false, m_towerSubsystem));
+    operator_bButton.whileHeld(new RunTransferWheel(true, m_towerSubsystem));
   }
 
   public XboxController getDriver() {

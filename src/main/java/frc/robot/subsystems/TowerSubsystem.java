@@ -24,25 +24,17 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
  */
 public class TowerSubsystem extends SubsystemBase {
 
-    private CANSparkMax agitatior;
     private CANSparkMax transferWheel;
 
     /**
     *
     */
     public TowerSubsystem() {
-        agitatior = new CANSparkMax(TowerConstants.agitatiorID, MotorType.kBrushless);
-
-        agitatior.restoreFactoryDefaults();
-        agitatior.setInverted(false);
-        agitatior.setIdleMode(IdleMode.kBrake);
-
         transferWheel = new CANSparkMax(TowerConstants.transferWheelID, MotorType.kBrushless);
 
         transferWheel.restoreFactoryDefaults();
         transferWheel.setInverted(false);
         transferWheel.setIdleMode(IdleMode.kBrake);
-
     }
 
     @Override
@@ -59,10 +51,6 @@ public class TowerSubsystem extends SubsystemBase {
 
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
-
-    public void setAgitator(double speed) {
-        agitatior.set(speed);
-    }
 
     public void setTransferWheel(double speed) {
         transferWheel.set(speed);
