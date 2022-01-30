@@ -61,7 +61,7 @@ public class AutonomousCommand extends CommandBase {
                 // Pass config
                 FollowPathConstants.trajectoryConfig);
 
-        m_path = new FollowPath(m_drivetrainSubsystem, m_exampleTrajectory);
+        m_path = new FollowPath(m_drivetrainSubsystem, m_ballRoutine);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

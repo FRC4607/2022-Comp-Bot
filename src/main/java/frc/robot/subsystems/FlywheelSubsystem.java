@@ -64,6 +64,8 @@ public class FlywheelSubsystem extends SubsystemBase {
         m_flywheelMotor2.configSelectedFeedbackCoefficient(1 / 2048);
 
         m_flywheelMotor2.follow(m_flywheelMotor1);
+
+        SmartDashboard.putNumber("Max flywheel speed", 0.5);
     }
 
     @Override
@@ -82,6 +84,6 @@ public class FlywheelSubsystem extends SubsystemBase {
     // here. Call these from Commands.
 
     public void setSpeed(double speed) {
-        m_flywheelMotor1.set(speed);
+        m_flywheelMotor1.set(speed * SmartDashboard.getNumber("Max flywheel speed", 0.5));
     }
 }

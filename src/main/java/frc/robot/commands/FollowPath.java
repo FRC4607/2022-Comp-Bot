@@ -34,7 +34,7 @@ public class FollowPath extends CommandBase {
         m_ramseteCommand = new RamseteCommand(
                 m_trajectory,
                 m_drivetrain::getPose,
-                new RamseteController(FollowPathConstants.kRamseteB_radSquaredPerMetersSquared, FollowPathConstants.kRamseteZeta),
+                new RamseteController(),
                 new SimpleMotorFeedforward(DriveConstants.ks_Volts, DriveConstants.kv_VoltSecondsPerMeters, DriveConstants.ka_VoltSecondsSquaredPerMeters),
                 DriveConstants.kDriveKinematics,
                 m_drivetrain::getWheelSpeeds,
@@ -51,7 +51,7 @@ public class FollowPath extends CommandBase {
     @Override
     public boolean isFinished() {
         // Returns true when the command should end.
-        return m_ramseteCommand.isFinished();
+        return true;
     }
 
     @Override

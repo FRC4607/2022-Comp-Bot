@@ -62,19 +62,19 @@ public class Constants {
         public static final double kPDriveVel = 2.9445;
 
         public static final double maxSpeed = 1;
-        public static final double maxTurning = 0.5;
+        public static final double maxTurning = 0.9;
 
     }
 
     public static final class FlywheelConstants {
-        public static final int flywheelMotor1ID = 7;
-        public static final int flywheelMotor2ID = 7;
+        public static final int flywheelMotor1ID = 11;
+        public static final int flywheelMotor2ID = 12;
     }
 
     public static final class FollowPathConstants {
-        public static final double kMaxSpeed_MetersPerSecond = 10;
+        public static final double kMaxSpeed_MetersPerSecond = 2;
         public static final double kMaxAcceleration_MetersPerSecondSquared = 1;
-        public static final double kRamseteB_radSquaredPerMetersSquared = 0;
+        public static final double kRamseteB_radSquaredPerMetersSquared = 1;
         public static final double kRamseteZeta = 0;
 
         public static final DifferentialDriveVoltageConstraint voltageConstraint = new DifferentialDriveVoltageConstraint(
@@ -84,15 +84,14 @@ public class Constants {
         public static final TrajectoryConfig trajectoryConfig = new TrajectoryConfig(FollowPathConstants.kMaxSpeed_MetersPerSecond, 
         FollowPathConstants.kMaxAcceleration_MetersPerSecondSquared)
         // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics)
+        .setKinematics(DriveConstants.kDriveKinematics);
         // Apply the voltage constraint
-        .addConstraint(voltageConstraint);
+        // .addConstraint(voltageConstraint);
     }
 
     public static final class TowerConstants {
         public static final int transferWheelID = 10;
-        public static final double agitatorSpeed = 0.3;
-        public static final double transferWheelSpeed = 0.1;
+        public static final double transferWheelSpeed = 1;
     }
     
     public static final class IntakeConstants {
@@ -105,6 +104,8 @@ public class Constants {
         public static final int solenoidReverseChannel = 1;
 
         public static final double intakeSpeed = 1;
-        public static final double agitatorSpeed = 0.3;
+        public static final double agitatorSpeed = 1;
+
+        public static final double reverseScalar = 0.5;
     }
 }

@@ -108,8 +108,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_odometry = new DifferentialDriveOdometry(
                 new Rotation2d(getGyroscopeReadingRad()));
 
-        SmartDashboard.putNumber("Max speed", DriveConstants.maxSpeed);
-        SmartDashboard.putNumber("Max turning", DriveConstants.maxTurning);
+        SmartDashboard.putNumber("Max drive speed", DriveConstants.maxSpeed);
+        SmartDashboard.putNumber("Max drive turning", DriveConstants.maxTurning);
     }
 
     @Override
@@ -166,8 +166,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param y The y-axis of the controller.
      */
     public void setArcadeDrive(double x, double y) {
-        double maxSpeed = SmartDashboard.getNumber("Max speed", 0);
-        double maxTurning = SmartDashboard.getNumber("Max turning", 0);
+        double maxSpeed = SmartDashboard.getNumber("Max speed", DriveConstants.maxSpeed);
+        double maxTurning = SmartDashboard.getNumber("Max turning", DriveConstants.maxTurning);
 
         // The y is inverted so forward will be positive and backward will be negative.
         m_drivetrain.arcadeDrive(-y * maxSpeed, x * maxTurning);

@@ -42,15 +42,19 @@ public class RunFlywheelJoystick extends CommandBase {
     @Override
     public void execute() {
         double axis = m_operator.getRawAxis(XboxController.Axis.kRightTrigger.value);
-
+        //System.out.println(axis);
         if (axis >= 0.01) {
             m_flywheelSubsystem.setSpeed(axis);
+        }
+        else {
+            m_flywheelSubsystem.setSpeed(0);
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        
     }
 
     // Returns true when the command should end.

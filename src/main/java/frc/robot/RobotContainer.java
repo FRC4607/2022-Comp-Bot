@@ -12,13 +12,30 @@
 
 package frc.robot;
 
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FollowPathConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import java.util.List;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -66,7 +83,7 @@ public class RobotContainer {
     // Configure default commands
     m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
     m_intakeSubsystem.setDefaultCommand(new RunIntake(m_intakeSubsystem, driver));
-    m_flywheelSubsystem.setDefaultCommand(new RunFlywheelJoystick(m_flywheelSubsystem, operator));
+    //m_flywheelSubsystem.setDefaultCommand(new RunFlywheelJoystick(m_flywheelSubsystem, operator));
     
     // Configure autonomous sendable chooser
     m_chooser.setDefaultOption("AutonomousCommand", new AutonomousCommand(m_drivetrainSubsystem));
@@ -92,6 +109,7 @@ public class RobotContainer {
     JoystickButton operator_bButton = new JoystickButton(operator, 2);
     JoystickButton operator_xButton = new JoystickButton(operator, 3);
     JoystickButton operator_yButton = new JoystickButton(operator, 4);
+    JoystickButton operator_rightBumper = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
 
     JoystickButton driver_aButton = new JoystickButton(driver, 1);
     JoystickButton driver_bButton = new JoystickButton(driver, 2);
@@ -102,6 +120,7 @@ public class RobotContainer {
 
     operator_aButton.whileHeld(new RunTransferWheel(false, m_towerSubsystem));
     operator_bButton.whileHeld(new RunTransferWheel(true, m_towerSubsystem));
+    operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem));
   }
 
   public XboxController getDriver() {
@@ -119,7 +138,35 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // The selected command will be run in autonomous
-    return m_chooser.getSelected();
+    
+    // Reset odometry to the starting pose of the trajectory.
+    Trajectory m_trajectory = TrajectoryGenerator.generateTrajectory(
+                // Start at the origin facing the +X direction
+                new Pose2d(0, 0, new Rotation2d(0)),
+                // Pass through these two interior waypoints, making an 's' curve path
+                List.of(
+                        new Translation2d(1, 1),
+                        new Translation2d(2, -1)),
+                // End 3 meters straight ahead of where we started, facing forward
+                new Pose2d(3, 0, new Rotation2d(0)),
+                // Pass config
+                FollowPathConstants.trajectoryConfig);
+    
+    m_drivetrainSubsystem.resetOdometry(m_trajectory.getInitialPose());
+
+    return new RamseteCommand(
+            m_trajectory,
+            m_drivetrainSubsystem::getPose,
+            new RamseteController(),
+            new SimpleMotorFeedforward(DriveConstants.ks_Volts, DriveConstants.kv_VoltSecondsPerMeters, DriveConstants.ka_VoltSecondsSquaredPerMeters),
+            DriveConstants.kDriveKinematics,
+            m_drivetrainSubsystem::getWheelSpeeds,
+            new PIDController(DriveConstants.kPDriveVel, 0, 0),
+            new PIDController(DriveConstants.kPDriveVel, 0, 0),
+            // RamseteCommand passes volts to the callback
+            m_drivetrainSubsystem::tankDriveVolts,
+            m_drivetrainSubsystem);
+    
   }
 
 }

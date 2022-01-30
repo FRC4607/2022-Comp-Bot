@@ -11,8 +11,6 @@ public class RunFlywheel extends CommandBase {
     public RunFlywheel(FlywheelSubsystem flywheelSubsystem) {
         m_flywheelSubsystem = flywheelSubsystem;
         addRequirements(m_flywheelSubsystem);
-        
-        SmartDashboard.putNumber("Flywheel Speed", 0);
     }
 
     @Override
@@ -21,7 +19,7 @@ public class RunFlywheel extends CommandBase {
 
     @Override
     public void execute() {
-        m_flywheelSubsystem.setSpeed(SmartDashboard.getNumber("Flywheel Speed", 0));
+        m_flywheelSubsystem.setSpeed(SmartDashboard.getNumber("Max flywheel speed", 0));
     }
 
     @Override

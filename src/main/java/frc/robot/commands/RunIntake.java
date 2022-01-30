@@ -22,7 +22,7 @@ public class RunIntake extends CommandBase {
 
     @Override
     public void execute() {
-        double speed = (m_driver.getRawAxis(XboxController.Axis.kRightTrigger.value) - m_driver.getRawAxis(XboxController.Axis.kLeftTrigger.value));
+        double speed = (m_driver.getRawAxis(XboxController.Axis.kRightTrigger.value) - m_driver.getRawAxis(XboxController.Axis.kLeftTrigger.value)) * IntakeConstants.reverseScalar;
         m_intakeSubsystem.setSpeed(speed * IntakeConstants.intakeSpeed);
         m_intakeSubsystem.setAgitator(speed * IntakeConstants.agitatorSpeed);
     }

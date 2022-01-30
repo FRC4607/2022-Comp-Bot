@@ -12,6 +12,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TowerConstants;
 
@@ -35,6 +36,8 @@ public class TowerSubsystem extends SubsystemBase {
         transferWheel.restoreFactoryDefaults();
         transferWheel.setInverted(false);
         transferWheel.setIdleMode(IdleMode.kBrake);
+
+        SmartDashboard.putNumber("Transfer Wheel Speed", 0.8);
     }
 
     @Override

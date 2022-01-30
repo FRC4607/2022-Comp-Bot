@@ -12,6 +12,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.TowerConstants;
 import frc.robot.subsystems.TowerSubsystem;
@@ -37,10 +38,10 @@ public class RunTransferWheel extends CommandBase {
     @Override
     public void initialize() {
         if (!m_reverse) {
-            m_towerSubsystem.setTransferWheel(TowerConstants.transferWheelSpeed);
+            m_towerSubsystem.setTransferWheel(SmartDashboard.getNumber("Transfer Wheel Speed", 0.8));
         }
         else {
-            m_towerSubsystem.setTransferWheel(-TowerConstants.transferWheelSpeed);
+            m_towerSubsystem.setTransferWheel(-SmartDashboard.getNumber("Transfer Wheel Speed", 0.8));
         }
     }
 
