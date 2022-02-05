@@ -22,9 +22,9 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.Constants.FollowPathConstants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -34,7 +34,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 public class AutonomousCommand extends CommandBase {
 
     private DrivetrainSubsystem m_drivetrainSubsystem;
-    private RamseteCommand m_path;
+    private Command m_path;
 
     public AutonomousCommand(DrivetrainSubsystem drivetrainSubsystem) {
 
@@ -68,7 +68,7 @@ public class AutonomousCommand extends CommandBase {
                 FollowPathConstants.trajectoryConfig);
         Path m_filePath = Filesystem.getDeployDirectory().toPath().resolve("paths/Ball2_0.wpilib.json");
 
-        m_path = FollowPath.generateRamseteCommand(m_drivetrainSubsystem, m_exampleTrajectory);
+        m_path = new FollowPath(m_drivetrainSubsystem, m_exampleTrajectory);
         CommandScheduler.getInstance().schedule(m_path.andThen(() -> {m_drivetrainSubsystem.setVoltage(0);}));
 
 

@@ -15,10 +15,15 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.PigeonIMU.GeneralStatus;
 import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -44,6 +49,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private boolean m_pigeonFailure = false;
 
     private final DifferentialDriveOdometry m_odometry;
+
+    // Motion Planing
+    private final RamseteController m_follower = new RamseteController(
+            DriveConstants.kRamseteB_radSquaredPerMetersSquared, DriveConstants.kRamseteZeta_PerRad);
+    private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.ks_Volts,
+            DriveConstants.kv_VoltSecondsPerMeters, DriveConstants.ka_VoltSecondsSquaredPerMeters);
+    private final DifferentialDriveKinematics m_kinematics = DriveConstants.kDriveKinematics;
+    private final PIDController m_leftController = new PIDController(DriveConstants.kPDriveVel, 0, 0);
+    private final PIDController m_rightController = new PIDController(DriveConstants.kPDriveVel, 0, 0);
 
     /**
     *
@@ -214,7 +228,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * Returns the right encoder absolute position.
      * 
      * @return The absolute position of the right encoder ranging from [0, Math.PI
-     * Units.inchesToMeters(6)) in meters.
+     *         Units.inchesToMeters(6)) in meters.
      */
     public double getRightEncoderAbsolutePosition() {
         return m_rightEncoder.getAbsolutePosition();
@@ -455,10 +469,41 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_rightMotor1.configOpenloopRamp(0.5);
         m_rightMotor2.configOpenloopRamp(0.5);
     }
+
     public void disableAccelerationLimit() {
         m_leftMotor1.configOpenloopRamp(0);
         m_leftMotor2.configOpenloopRamp(0);
         m_rightMotor1.configOpenloopRamp(0);
         m_rightMotor2.configOpenloopRamp(0);
+    }
+
+    // PID, FF, Ramset
+
+    public DifferentialDriveWheelSpeeds getRamsetTargetWheelSpeeds(State tragectorySample) {
+        return m_kinematics.toWheelSpeeds(m_follower.calculate(getPose(), tragectorySample));
+
+    }
+
+    public SimpleMotorFeedforward Feedforward() {
+        return m_feedforward;
+    }
+
+    public double getLeftPID(double leftSpeedSetpoint) {
+        return m_leftController.calculate(getWheelSpeeds().leftMetersPerSecond,
+                leftSpeedSetpoint);
+    }
+    
+    public double getRightPID(double rightSpeedSetpoint) {
+        return m_rightController.calculate(getWheelSpeeds().leftMetersPerSecond,
+                rightSpeedSetpoint);
+    }
+
+    public DifferentialDriveKinematics getKinematics() {
+        return m_kinematics;
+    }
+
+    public void resetPID() {
+        m_leftController.reset();
+        m_rightController.reset();
     }
 }

@@ -39,7 +39,7 @@ public class Constants {
      * public static final int kRightMotor2Port = 3;
      * }
      */
-
+    
     public static final class DriveConstants {
         public static final int leftMotor1ID = 0;
         public static final int leftMotor2ID = 1;
@@ -55,14 +55,18 @@ public class Constants {
         public static final double ka_VoltSecondsSquaredPerMeters = 0.25145; // [0.20049, 0.25145]
         public static final double trackWidth_Meters = Units.inchesToMeters(28); // Theoretical
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
-                trackWidth_Meters);
-        public static final double maxVoltage = 10;
-
-        // PID drive
-        public static final double kPDriveVel = 2.9445 * 1.2;
-
-        public static final double maxSpeed = 1;
-        public static final double maxTurning = 0.9;
+            trackWidth_Meters);
+            public static final double maxVoltage = 10;
+            
+            // PID drive
+            public static final double kPDriveVel = 2.9445 * 1.2;
+            
+            public static final double maxSpeed = 1;
+            public static final double maxTurning = 0.9;
+            
+            //Ramset
+            public static final double kRamseteB_radSquaredPerMetersSquared = 2;
+            public static final double kRamseteZeta_PerRad = 0.7;
 
     }
 
@@ -80,12 +84,10 @@ public class Constants {
 
         public static final int flywheeelRPM = 3800;
     }
-
+    
     public static final class FollowPathConstants {
         public static final double kMaxSpeed_MetersPerSecond = 3;
         public static final double kMaxAcceleration_MetersPerSecondSquared = 1.5;
-        public static final double kRamseteB_radSquaredPerMetersSquared = 2;
-        public static final double kRamseteZeta_PerRad = 0.7;
 
         public static final DifferentialDriveVoltageConstraint voltageConstraint = new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(DriveConstants.ks_Volts, DriveConstants.kv_VoltSecondsPerMeters,
