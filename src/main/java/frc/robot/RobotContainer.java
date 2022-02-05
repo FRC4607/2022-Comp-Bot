@@ -65,11 +65,11 @@ public class RobotContainer {
 
     // Configure default commands
     m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
-    m_intakeSubsystem.setDefaultCommand(new RunIntake(m_intakeSubsystem, driver));
+    m_intakeSubsystem.setDefaultCommand(new RunIntakeJoystick(m_intakeSubsystem, driver));
     //m_flywheelSubsystem.setDefaultCommand(new RunFlywheelJoystick(m_flywheelSubsystem, operator));
     
     // Configure autonomous sendable chooser
-    m_chooser.setDefaultOption("AutonomousCommand", new AutonomousCommand(m_drivetrainSubsystem));
+    m_chooser.setDefaultOption("AutonomousCommand", new Auton_TwoBall(m_flywheelSubsystem, m_towerSubsystem, m_intakeSubsystem));
 
     SmartDashboard.putData("Auto Mode", m_chooser);
   }

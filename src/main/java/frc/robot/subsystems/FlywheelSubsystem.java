@@ -117,6 +117,10 @@ public class FlywheelSubsystem extends SubsystemBase {
 
     }
 
+    public double getFlywheelError() {
+        return m_flywheelMotor1.getClosedLoopError();
+    }
+
     // This is taken from CTRE's sample code at https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/MotionMagic_ArbFeedForward/src/main/java/frc/robot/Robot.java.
 
     /** 

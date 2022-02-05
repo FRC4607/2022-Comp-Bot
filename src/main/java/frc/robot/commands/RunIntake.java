@@ -6,14 +6,13 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class RunIntake extends CommandBase {
-    
-    private IntakeSubsystem m_intakeSubsystem;
-    private XboxController m_driver;
+    private final boolean m_reverse;
+    private final IntakeSubsystem m_intakeSubsystem;
 
-    public RunIntake(IntakeSubsystem intakeSubsystem, XboxController driver) {
+    public RunIntake(IntakeSubsystem intakeSubsystem, boolean reverse) {
         m_intakeSubsystem = intakeSubsystem;
+        m_reverse = reverse;
         addRequirements(m_intakeSubsystem);
-        m_driver = driver;
     }
 
     @Override
@@ -22,9 +21,14 @@ public class RunIntake extends CommandBase {
 
     @Override
     public void execute() {
-        double speed = m_driver.getRightTriggerAxis() - m_driver.getLeftTriggerAxis() * IntakeConstants.reverseScalar;
-        m_intakeSubsystem.setSpeed(speed * IntakeConstants.intakeSpeed);
-        m_intakeSubsystem.setAgitator(speed * IntakeConstants.agitatorSpeed);
+        if (!m_reverse) {
+            m_intakeSubsystem.setSpeed(IntakeConstants.intakeSpeed);
+            m_intakeSubsystem.setAgitator(IntakeConstants.agitatorSpeed);
+        }
+        else {
+            m_intakeSubsystem.setSpeed(-IntakeConstants.intakeSpeed);
+            m_intakeSubsystem.setAgitator(-IntakeConstants.agitatorSpeed);
+        }
     }
 
     @Override
@@ -33,3 +37,4 @@ public class RunIntake extends CommandBase {
         m_intakeSubsystem.setAgitator(0);
     }
 }
+
