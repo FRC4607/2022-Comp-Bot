@@ -41,8 +41,8 @@ public class DrivetrainJoystick extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double xAxis = m_driver.getRawAxis(XboxController.Axis.kLeftX.value);
-        double yAxis = m_driver.getRawAxis(XboxController.Axis.kLeftY.value);
+        double xAxis = m_driver.getLeftX();
+        double yAxis = m_driver.getLeftY();
         m_drivetrainSubsystem.setArcadeDrive(xAxis, yAxis);
     }
 

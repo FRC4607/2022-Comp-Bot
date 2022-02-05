@@ -121,6 +121,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         m_odometry.update(getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
+        SmartDashboard.putNumber("Front Left Voltage", m_leftMotor1.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Back Left Voltage", m_leftMotor2.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Front Right Voltage", m_rightMotor1.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Back Right Voltage", m_rightMotor2.getMotorOutputVoltage());
     }
 
     @Override
@@ -163,6 +167,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void setVoltage(double voltage) {
         m_leftDrive.setVoltage(voltage);
         m_rightDrive.setVoltage(voltage);
+        m_leftMotor1.setVoltage(voltage);
     }
 
     /**
