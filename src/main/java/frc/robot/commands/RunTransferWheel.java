@@ -38,10 +38,10 @@ public class RunTransferWheel extends CommandBase {
     @Override
     public void initialize() {
         if (!m_reverse) {
-            m_towerSubsystem.setTransferWheel(SmartDashboard.getNumber("Transfer Wheel Speed", 0.8));
+            m_towerSubsystem.setTransferWheel(TowerConstants.transferWheelSpeed);
         }
         else {
-            m_towerSubsystem.setTransferWheel(-SmartDashboard.getNumber("Transfer Wheel Speed", 0.8));
+            m_towerSubsystem.setTransferWheel(-TowerConstants.transferWheelSpeed);
         }
     }
 
