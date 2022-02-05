@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants.DriveConstants;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -73,9 +75,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_leftMotor1 = new WPI_TalonFX(DriveConstants.leftMotor1ID);
         m_leftMotor1.configFactoryDefault();
         m_leftMotor1.configAllSettings(m_motorConfig);
+        m_leftMotor1.setNeutralMode(NeutralMode.Brake);
         m_leftMotor2 = new WPI_TalonFX(DriveConstants.leftMotor2ID);
         m_leftMotor2.configFactoryDefault();
         m_leftMotor2.configAllSettings(m_motorConfig);
+        m_leftMotor2.setNeutralMode(NeutralMode.Brake);
 
         m_leftDrive = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
         addChild("LeftDrive", m_leftDrive);
@@ -84,10 +88,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_rightMotor1.configFactoryDefault();
         m_rightMotor1.configAllSettings(m_motorConfig);
         m_rightMotor1.setInverted(true);
+        m_rightMotor1.setNeutralMode(NeutralMode.Brake);
         m_rightMotor2 = new WPI_TalonFX(DriveConstants.rightMotor2ID);
         m_rightMotor2.configFactoryDefault();
         m_rightMotor2.configAllSettings(m_motorConfig);
         m_rightMotor2.setInverted(true);
+        m_rightMotor2.setNeutralMode(NeutralMode.Brake);
 
         m_rightDrive = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
         addChild("RightDrive", m_rightDrive);
@@ -436,5 +442,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
      */
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         return new DifferentialDriveWheelSpeeds(m_leftEncoder.getVelocity(), m_rightEncoder.getVelocity());
+    }
+
+    public void enableAccelerationLimit() {
+        m_leftMotor1.configOpenloopRamp(0.5);
+        m_leftMotor2.configOpenloopRamp(0.5);
+        m_rightMotor1.configOpenloopRamp(0.5);
+        m_rightMotor2.configOpenloopRamp(0.5);
+    }
+    public void disableAccelerationLimit() {
+        m_leftMotor1.configOpenloopRamp(0);
+        m_leftMotor2.configOpenloopRamp(0);
+        m_rightMotor1.configOpenloopRamp(0);
+        m_rightMotor2.configOpenloopRamp(0);
     }
 }

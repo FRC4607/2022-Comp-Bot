@@ -69,6 +69,16 @@ public class Constants {
     public static final class FlywheelConstants {
         public static final int flywheelMotor1ID = 11;
         public static final int flywheelMotor2ID = 12;
+
+        // This is calculated from the characterization tool's CTRE preset.
+        public static final double flywheelP = 0.17121;
+        // kS from characterization tool, used here as an arbitrary feed forward to overcome friction. This is divided by 12 to get the value as a percent of the motor's max output.
+        public static final double flywheelKs = 0.64575 / 12;
+        // kA from characterization tool, used here as the velocity feed forward. Conversion from v / (rotation/sec) to CTRE units (v (0-1023) / (rotations / 0.1sec) ) is needed.
+        //public static final double flywheelKf = 0.05103092783505154639175257731959;
+        public static final double flywheelKf = 0.046775;
+
+        public static final int flywheeelRPM = 3800;
     }
 
     public static final class FollowPathConstants {
