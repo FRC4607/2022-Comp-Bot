@@ -4,6 +4,7 @@ import frc.robot.Constants.DriveConstants;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -80,6 +81,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         m_motorConfig = new TalonFXConfiguration();
         m_motorConfig.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, 35, 40, 0.2);
+        //m_motorConfig.statorCurrLimit = new StatorCurrentLimitConfiguration(true, 20, 40, 0.1);
         m_motorConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
         m_motorConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
         m_motorConfig.remoteFilter0.remoteSensorDeviceID = m_leftEncoder.getDeviceID();

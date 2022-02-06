@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.FlywheelConstants;
 import frc.robot.subsystems.FlywheelSubsystem;
@@ -20,7 +21,9 @@ public class SpinFlywheel extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(m_flywheelSubsystem.getFlywheelError()) < FlywheelConstants.flywheelMaxError) {
+        double calculatedError = Math.abs(m_flywheelSubsystem.getFlywheelError() - 30);
+        SmartDashboard.putNumber("Calculated Error", calculatedError);
+        if (calculatedError < FlywheelConstants.flywheelMaxError) {
             m_counter ++;
         } 
         else {

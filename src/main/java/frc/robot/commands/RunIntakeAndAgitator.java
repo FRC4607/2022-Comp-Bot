@@ -32,6 +32,7 @@ public class RunIntakeAndAgitator extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
+        m_intakeSubsystem.setSpeed(0);
         m_intakeSubsystem.setAgitator(0);
     }
 

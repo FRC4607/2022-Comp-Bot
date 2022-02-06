@@ -41,16 +41,17 @@ public class Auton_TwoBall extends CommandBase {
                 new FollowPath(m_drivetrainSubsystem, Paths.twoBall0),
                 new RunIntake(m_intakeSubsystem, false)
             ),
-            new RunIntake(m_intakeSubsystem, false).withTimeout(0.3),
-            new RunIntakeAndAgitator(m_intakeSubsystem, false).withTimeout(0.2),
+            new RunIntakeAndAgitator(m_intakeSubsystem, false).withTimeout(0.1),
             new ParallelCommandGroup(
                 new FollowPath(m_drivetrainSubsystem, Paths.twoBall1),
                 new SpinFlywheel(m_flywheelSubsystem)
             ),
+            new RunTransferWheel(true, m_towerSubsystem).withTimeout(0.2),
             new ParallelCommandGroup(
-                new RunTransferWheel(true, m_towerSubsystem).withTimeout(2),
-                new RunAgitator(m_intakeSubsystem, false).withTimeout(2)    
+                new SpinFlywheel(m_flywheelSubsystem),
+                new RunAgitator(m_intakeSubsystem, false).withTimeout(1)    
             ),
+            new RunTransferWheel(true, m_towerSubsystem).withTimeout(0.2),
             new RunFlywheel(m_flywheelSubsystem).withTimeout(0.1)
         ));
     }

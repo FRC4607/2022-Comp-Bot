@@ -25,7 +25,7 @@ public class Paths {
             // Pass through these two interior waypoints, making an 's' curve path
             List.of(),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(Units.inchesToMeters(38.797), Units.inchesToMeters(-3.683), Rotation2d.fromDegrees(157.5)),
+            new Pose2d(Units.inchesToMeters(43.797), Units.inchesToMeters(-5.683), Rotation2d.fromDegrees(157.5)),
             // Pass config
             FollowPathConstants.trajectoryConfig.setReversed(true));
 }
