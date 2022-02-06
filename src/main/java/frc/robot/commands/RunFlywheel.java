@@ -24,7 +24,7 @@ public class RunFlywheel extends CommandBase {
 
     @Override
     public void end(boolean interuptied) {
-        m_flywheelSubsystem.setRPM(0);
+        m_flywheelSubsystem.setSpeed(0);
     }
 
     @Override

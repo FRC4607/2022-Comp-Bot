@@ -86,8 +86,6 @@ public class FlywheelSubsystem extends SubsystemBase {
         m_flywheelMotor1.configAllSettings(pidConfig);
 
         m_flywheelMotor2.follow(m_flywheelMotor1);
-
-        SmartDashboard.putNumber("Max flywheel speed", 0.5);
     }
 
     @Override

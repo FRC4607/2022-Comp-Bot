@@ -69,7 +69,7 @@ public class RobotContainer {
     //m_flywheelSubsystem.setDefaultCommand(new RunFlywheelJoystick(m_flywheelSubsystem, operator));
     
     // Configure autonomous sendable chooser
-    m_chooser.setDefaultOption("AutonomousCommand", new Auton_TwoBall(m_flywheelSubsystem, m_towerSubsystem, m_intakeSubsystem));
+    m_chooser.setDefaultOption("AutonomousCommand", new Auton_TwoBall(m_flywheelSubsystem, m_towerSubsystem, m_intakeSubsystem, m_drivetrainSubsystem));
 
     SmartDashboard.putData("Auto Mode", m_chooser);
   }

@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -23,6 +24,7 @@ public class FollowPath extends CommandBase {
     public FollowPath(DrivetrainSubsystem drivetrainSubsystem, Trajectory trajectory) {
         m_trajectory = trajectory;
         m_drivetrainSubsystem = drivetrainSubsystem;
+        addRequirements(m_drivetrainSubsystem);
     }
 
     public FollowPath(DrivetrainSubsystem drivetrain, Path pathweaverJSON) {
@@ -69,8 +71,8 @@ public class FollowPath extends CommandBase {
         double leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
         double rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
 
-        SmartDashboard.putNumber("Left Setpoint", leftSpeedSetpoint);
-        SmartDashboard.putNumber("Right Setpoint", rightSpeedSetpoint);
+        SmartDashboard.putNumber("Left Ramsette Setpoint", leftSpeedSetpoint);
+        SmartDashboard.putNumber("Right Ramsette Setpoint", rightSpeedSetpoint);
 
         // Feed Forward
         double leftFeedforward = m_drivetrainSubsystem.Feedforward().calculate(
@@ -79,8 +81,8 @@ public class FollowPath extends CommandBase {
         double rightFeedforward = m_drivetrainSubsystem.Feedforward().calculate(
                 rightSpeedSetpoint, (rightSpeedSetpoint - m_prevSpeeds.rightMetersPerSecond) / dt);
 
-        SmartDashboard.putNumber("Left Setpoint", leftFeedforward);
-        SmartDashboard.putNumber("Right Setpoint", rightFeedforward);
+        SmartDashboard.putNumber("Left FF Setpoint", leftFeedforward);
+        SmartDashboard.putNumber("Right FF Setpoint", rightFeedforward);
 
         // PID
         double leftPID = m_drivetrainSubsystem.getLeftPID(leftSpeedSetpoint);

@@ -71,6 +71,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         Shuffleboard.stopRecording();
+        m_robotContainer.m_drivetrainSubsystem.disableAccelerationLimit();
     }
 
     @Override
@@ -107,6 +108,7 @@ public class Robot extends TimedRobot {
             m_autonomousCommand.cancel();
         }
 
+        m_robotContainer.m_drivetrainSubsystem.enableAccelerationLimit();
         Shuffleboard.startRecording();
     }
 

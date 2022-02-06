@@ -191,6 +191,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param y The y-axis of the controller.
      */
     public void setArcadeDrive(double x, double y) {
+        if (Math.abs(y) < 0.05) {
+            disableAccelerationLimit();
+        }
+        else {
+            enableAccelerationLimit();
+        }
         double maxSpeed = SmartDashboard.getNumber("Max speed", DriveConstants.maxSpeed);
         double maxTurning = SmartDashboard.getNumber("Max turning", DriveConstants.maxTurning);
 
@@ -207,6 +213,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param rightVolts Right side Voltage
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
+        leftVolts = Math.max(Math.min(leftVolts, 12), -12);
+        rightVolts = Math.max(Math.min(rightVolts, 12), -12);
         m_leftDrive.setVoltage(leftVolts);
         m_rightDrive.setVoltage(rightVolts);
         m_drivetrain.feed();
@@ -464,10 +472,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void enableAccelerationLimit() {
-        m_leftMotor1.configOpenloopRamp(0.5);
-        m_leftMotor2.configOpenloopRamp(0.5);
-        m_rightMotor1.configOpenloopRamp(0.5);
-        m_rightMotor2.configOpenloopRamp(0.5);
+        m_leftMotor1.configOpenloopRamp(0.25);
+        m_leftMotor2.configOpenloopRamp(0.25);
+        m_rightMotor1.configOpenloopRamp(0.25);
+        m_rightMotor2.configOpenloopRamp(0.25);
     }
 
     public void disableAccelerationLimit() {
