@@ -2,9 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants.DriveConstants;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -19,6 +17,7 @@ import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -48,6 +47,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final TalonFXConfiguration m_motorConfig;
     private PigeonIMU m_pigeonIMU;
     private boolean m_pigeonFailure = false;
+    private final SlewRateLimiter m_rateLimiter;
 
     private final DifferentialDriveOdometry m_odometry;
 
@@ -91,11 +91,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_leftMotor1 = new WPI_TalonFX(DriveConstants.leftMotor1ID);
         m_leftMotor1.configFactoryDefault();
         m_leftMotor1.configAllSettings(m_motorConfig);
-        m_leftMotor1.setNeutralMode(NeutralMode.Brake);
+        //m_leftMotor1.setNeutralMode(NeutralMode.Brake);
         m_leftMotor2 = new WPI_TalonFX(DriveConstants.leftMotor2ID);
         m_leftMotor2.configFactoryDefault();
         m_leftMotor2.configAllSettings(m_motorConfig);
-        m_leftMotor2.setNeutralMode(NeutralMode.Brake);
+        //m_leftMotor2.setNeutralMode(NeutralMode.Brake);
 
         m_leftDrive = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
         addChild("LeftDrive", m_leftDrive);
@@ -104,12 +104,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_rightMotor1.configFactoryDefault();
         m_rightMotor1.configAllSettings(m_motorConfig);
         m_rightMotor1.setInverted(true);
-        m_rightMotor1.setNeutralMode(NeutralMode.Brake);
+        //m_rightMotor1.setNeutralMode(NeutralMode.Brake);
         m_rightMotor2 = new WPI_TalonFX(DriveConstants.rightMotor2ID);
         m_rightMotor2.configFactoryDefault();
         m_rightMotor2.configAllSettings(m_motorConfig);
         m_rightMotor2.setInverted(true);
-        m_rightMotor2.setNeutralMode(NeutralMode.Brake);
+        //m_rightMotor2.setNeutralMode(NeutralMode.Brake);
 
         m_rightDrive = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
         addChild("RightDrive", m_rightDrive);
@@ -129,6 +129,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         m_odometry = new DifferentialDriveOdometry(
                 new Rotation2d(getGyroscopeReadingRad()));
+
+        m_rateLimiter = new SlewRateLimiter(DriveConstants.maxUnitsPerSecond);
 
         SmartDashboard.putNumber("Max drive speed", DriveConstants.maxSpeed);
         SmartDashboard.putNumber("Max drive turning", DriveConstants.maxTurning);
@@ -193,17 +195,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param y The y-axis of the controller.
      */
     public void setArcadeDrive(double x, double y) {
-        if (Math.abs(y) < 0.05) {
-            disableAccelerationLimit();
-        }
-        else {
-            enableAccelerationLimit();
-        }
         double maxSpeed = SmartDashboard.getNumber("Max speed", DriveConstants.maxSpeed);
         double maxTurning = SmartDashboard.getNumber("Max turning", DriveConstants.maxTurning);
 
         // The y is inverted so forward will be positive and backward will be negative.
-        m_drivetrain.arcadeDrive(-y * maxSpeed, x * maxTurning);
+        m_drivetrain.arcadeDrive(m_rateLimiter.calculate(-y * maxSpeed), x * maxTurning);
 
         // YAAY my first code!!! I did something useful! -Helen
     }
@@ -471,20 +467,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
      */
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         return new DifferentialDriveWheelSpeeds(m_leftEncoder.getVelocity(), m_rightEncoder.getVelocity());
-    }
-
-    public void enableAccelerationLimit() {
-        m_leftMotor1.configOpenloopRamp(0.25);
-        m_leftMotor2.configOpenloopRamp(0.25);
-        m_rightMotor1.configOpenloopRamp(0.25);
-        m_rightMotor2.configOpenloopRamp(0.25);
-    }
-
-    public void disableAccelerationLimit() {
-        m_leftMotor1.configOpenloopRamp(0);
-        m_leftMotor2.configOpenloopRamp(0);
-        m_rightMotor1.configOpenloopRamp(0);
-        m_rightMotor2.configOpenloopRamp(0);
     }
 
     // PID, FF, Ramset

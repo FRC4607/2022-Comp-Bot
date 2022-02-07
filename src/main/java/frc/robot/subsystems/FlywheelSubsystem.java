@@ -37,6 +37,7 @@ public class FlywheelSubsystem extends SubsystemBase {
     private WPI_TalonFX m_flywheelMotor1;
     private WPI_TalonFX m_flywheelMotor2;
     private final TalonFXConfiguration motorConfig;
+
     /**
     *
     */
