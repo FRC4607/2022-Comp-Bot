@@ -17,6 +17,10 @@ import frc.robot.Constants.FlywheelConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -37,6 +41,9 @@ public class FlywheelSubsystem extends SubsystemBase {
     private WPI_TalonFX m_flywheelMotor1;
     private WPI_TalonFX m_flywheelMotor2;
     private final TalonFXConfiguration motorConfig;
+
+    private ArrayList<Double> speeds = new ArrayList<>(Arrays.asList(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0));
+
     /**
     *
     */
@@ -93,6 +100,9 @@ public class FlywheelSubsystem extends SubsystemBase {
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Flywheel RPM", m_flywheelMotor1.getSelectedSensorVelocity() / 2048 * 600);
         SmartDashboard.putNumber("Flywheel Error", m_flywheelMotor1.getClosedLoopError());
+
+        speeds.remove(0);
+        speeds.add( getFlywheelError() );
     }
 
     @Override
@@ -119,6 +129,10 @@ public class FlywheelSubsystem extends SubsystemBase {
         return m_flywheelMotor1.getClosedLoopError();
     }
 
+    public boolean constantSpeed() {
+        return ( Collections.max(speeds) - Collections.min(speeds) ) < FlywheelConstants.flywheelMaxError;
+    }
+    
     // This is taken from CTRE's sample code at https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/MotionMagic_ArbFeedForward/src/main/java/frc/robot/Robot.java.
 
     /** 

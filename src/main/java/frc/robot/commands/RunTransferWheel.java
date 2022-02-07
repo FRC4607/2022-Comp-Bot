@@ -15,17 +15,17 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.TowerConstants;
-import frc.robot.subsystems.TowerSubsystem;
+import frc.robot.subsystems.TransferWheelSubsystem;
 
 /**
  *
  */
 public class RunTransferWheel extends CommandBase {
 
-    private final TowerSubsystem m_towerSubsystem;
+    private final TransferWheelSubsystem m_towerSubsystem;
     private boolean m_reverse;
 
-    public RunTransferWheel(boolean reverse, TowerSubsystem subsystem) {
+    public RunTransferWheel(boolean reverse, TransferWheelSubsystem subsystem) {
 
         m_reverse = reverse;
 

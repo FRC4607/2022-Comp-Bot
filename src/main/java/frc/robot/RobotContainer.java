@@ -12,6 +12,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.AgitatorConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -37,9 +38,9 @@ public class RobotContainer {
   // The robot's subsystems
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
-  //public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
   public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
-  public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
+  public final TransferWheelSubsystem m_towerSubsystem = new TransferWheelSubsystem();
+  public final AgitatorSubsystem m_agitatorSubsystem = new AgitatorSubsystem();
 
   // Joysticks
   private final XboxController operator = new XboxController(1);
@@ -69,8 +70,9 @@ public class RobotContainer {
     //m_flywheelSubsystem.setDefaultCommand(new RunFlywheelJoystick(m_flywheelSubsystem, operator));
     
     // Configure autonomous sendable chooser
-    m_chooser.setDefaultOption("AutonomousCommand", new Auton_TwoBall(m_flywheelSubsystem, m_towerSubsystem, m_intakeSubsystem, m_drivetrainSubsystem));
-
+    m_chooser.setDefaultOption("AutonomousCommand", new Auton_ThreeBall(m_flywheelSubsystem, m_towerSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_agitatorSubsystem));
+    // m_chooser.setDefaultOption("name", new AutonomousCommand(m_drivetrainSubsystem));
+    
     SmartDashboard.putData("Auto Mode", m_chooser);
   }
 

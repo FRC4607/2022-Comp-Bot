@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.AgitatorConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -24,12 +25,12 @@ public class RunIntakeJoystick extends CommandBase {
     public void execute() {
         double speed = m_driver.getRightTriggerAxis() - m_driver.getLeftTriggerAxis() * IntakeConstants.reverseScalar;
         m_intakeSubsystem.setSpeed(speed * IntakeConstants.intakeSpeed);
-        m_intakeSubsystem.setAgitator(speed * IntakeConstants.agitatorSpeed);
+        m_intakeSubsystem.setSpeed(speed * AgitatorConstants.agitatorSpeed);
     }
 
     @Override
     public void end(boolean interrupted) {
         m_intakeSubsystem.setSpeed(0);
-        m_intakeSubsystem.setAgitator(0);
+        m_intakeSubsystem.setSpeed(0);
     }
 }

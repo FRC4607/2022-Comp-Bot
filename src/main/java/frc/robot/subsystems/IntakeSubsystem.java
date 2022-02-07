@@ -5,13 +5,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class IntakeSubsystem extends SubsystemBase {
 
     private CANSparkMax m_intakeMotor;
-    private CANSparkMax m_agitatior;
     private DoubleSolenoid m_solenoid;
 
     public IntakeSubsystem() {
@@ -24,10 +22,6 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intakeMotor.setInverted(true);
         m_intakeMotor.setSmartCurrentLimit(20, 40);
 
-        m_agitatior = new CANSparkMax(IntakeConstants.agitatiorID, MotorType.kBrushless);
-        m_agitatior.restoreFactoryDefaults();
-        m_agitatior.setInverted(false);
-        m_agitatior.setIdleMode(IdleMode.kBrake);
     }
 
     /**
@@ -37,10 +31,6 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public void setSpeed(double speed) {
         m_intakeMotor.set(speed);
-    }
-
-    public void setAgitator(double speed) {
-        m_agitatior.set(speed);
     }
 
     /**

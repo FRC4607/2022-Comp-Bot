@@ -84,7 +84,7 @@ public class Constants {
 
         public static final int flywheeelRPM = 3800;
 
-        public static final float flywheelMaxError = 50;
+        public static final float flywheelMaxError = 200; // 50
     }
     
     public static final class FollowPathConstants {
@@ -110,16 +110,19 @@ public class Constants {
     
     public static final class IntakeConstants {
         public static final int motorID = 7;
-        public static final int agitatiorID = 9;
-
         public static final int solenoidModule = 8;
         public static final PneumaticsModuleType SolenoidType = PneumaticsModuleType.REVPH;
         public static final int solenoidForwardChannel = 0;
         public static final int solenoidReverseChannel = 1;
 
         public static final double intakeSpeed = 1;
-        public static final double agitatorSpeed = 1;
-
         public static final double reverseScalar = 0.5;
+    }
+
+    public static class AgitatorConstants {
+
+        public static final double agitatorSpeed = 1;
+        public static final int agitatorID = 9;
+
     }
 }

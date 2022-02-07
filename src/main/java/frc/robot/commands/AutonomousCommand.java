@@ -12,20 +12,11 @@
 
 package frc.robot.commands;
 
-import java.nio.file.Path;
-import java.util.List;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants.FollowPathConstants;
+import frc.robot.Paths;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 /**
@@ -44,29 +35,7 @@ public class AutonomousCommand extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        Trajectory m_exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these two interior waypoints, making an 's' curve path
-                List.of(
-                        new Translation2d(Units.feetToMeters(3), Units.feetToMeters(3)),
-                        new Translation2d(Units.feetToMeters(6), Units.feetToMeters(6))),
-                // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(Units.feetToMeters(9), Units.feetToMeters(9), new Rotation2d(0)),
-                // Pass config
-                FollowPathConstants.trajectoryConfig);
-
-        Trajectory m_ballRoutine = TrajectoryGenerator.generateTrajectory(
-                // Start point and rotation
-                
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Way points
-                List.of(),
-                // End point and rotation
-                new Pose2d(6, 0, new Rotation2d(0)),
-                // Pass config
-                FollowPathConstants.trajectoryConfig);
-        Path m_filePath = Filesystem.getDeployDirectory().toPath().resolve("paths/Ball2_0.wpilib.json");
+        Trajectory m_exampleTrajectory = Paths.threeBall2;
 
         m_path = new FollowPath(m_drivetrainSubsystem, m_exampleTrajectory);
         CommandScheduler.getInstance().schedule(m_path.andThen(() -> {m_drivetrainSubsystem.setVoltage(0);}));

@@ -7,7 +7,6 @@ import frc.robot.subsystems.FlywheelSubsystem;
 
 public class SpinFlywheel extends CommandBase {
     private final FlywheelSubsystem m_flywheelSubsystem;
-    private int m_counter = 0;
 
     public SpinFlywheel(FlywheelSubsystem flywheelSubsystem) {
         m_flywheelSubsystem = flywheelSubsystem;
@@ -23,13 +22,7 @@ public class SpinFlywheel extends CommandBase {
     public boolean isFinished() {
         double calculatedError = Math.abs(m_flywheelSubsystem.getFlywheelError() - 30);
         SmartDashboard.putNumber("Calculated Error", calculatedError);
-        if (calculatedError < FlywheelConstants.flywheelMaxError) {
-            m_counter ++;
-        } 
-        else {
-            m_counter = 0;
-        }
-        if (m_counter >= 10) {
+        if (m_flywheelSubsystem.constantSpeed()) {
             return true;
         }
         else {

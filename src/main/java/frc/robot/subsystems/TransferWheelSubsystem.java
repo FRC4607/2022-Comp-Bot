@@ -23,14 +23,14 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 /**
  *
  */
-public class TowerSubsystem extends SubsystemBase {
+public class TransferWheelSubsystem extends SubsystemBase {
 
     private CANSparkMax transferWheel;
 
     /**
     *
     */
-    public TowerSubsystem() {
+    public TransferWheelSubsystem() {
         transferWheel = new CANSparkMax(TowerConstants.transferWheelID, MotorType.kBrushless);
 
         transferWheel.restoreFactoryDefaults();
