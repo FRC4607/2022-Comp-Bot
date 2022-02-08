@@ -59,7 +59,8 @@ public class Auton_TwoBall_A extends CommandBase {
                 new RunAgitator(m_agitatorSubsystem, false).withTimeout(1)
             ),
             new RunTransferWheel(true, m_towerSubsystem).withTimeout(0.2),
-            new RunFlywheel(m_flywheelSubsystem).withTimeout(0.1)
+            new RunFlywheel(m_flywheelSubsystem).withTimeout(0),
+            new FollowPath(m_drivetrainSubsystem, Paths.exit)
         ));
     }
 
