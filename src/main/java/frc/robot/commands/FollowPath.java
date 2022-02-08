@@ -3,6 +3,7 @@ package frc.robot.commands;
 import java.nio.file.Path;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -64,8 +65,12 @@ public class FollowPath extends CommandBase {
             return;
         }
 
+        State nextState = m_trajectory.sample(curTime);
+        SmartDashboard.putNumber("Target Curature deg/m", Math.toDegrees(nextState.curvatureRadPerMeter));
+        SmartDashboard.putNumber("Target Rotation deg", nextState.poseMeters.getRotation().getDegrees());
+
         // Ramset Controler
-        DifferentialDriveWheelSpeeds targetWheelSpeeds = m_drivetrainSubsystem.getRamsetTargetWheelSpeeds(m_trajectory.sample(curTime));
+        DifferentialDriveWheelSpeeds targetWheelSpeeds = m_drivetrainSubsystem.getRamsetTargetWheelSpeeds(nextState);
 
         double leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
         double rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;

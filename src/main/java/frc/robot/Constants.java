@@ -67,7 +67,7 @@ public class Constants {
             //Ramset
             public static final double kRamseteB_radSquaredPerMetersSquared = 2;
             public static final double kRamseteZeta_PerRad = 0.7;
-
+        public static final double maxUnitsPerSecond = 2;
     }
 
     public static final class FlywheelConstants {
