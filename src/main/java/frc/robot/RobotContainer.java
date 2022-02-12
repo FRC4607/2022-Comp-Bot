@@ -12,7 +12,7 @@
 
 package frc.robot;
 
-import frc.robot.Constants.AgitatorConstants;
+import frc.robot.Constants.TowerConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -39,8 +39,8 @@ public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
-  public final TransferWheelSubsystem m_towerSubsystem = new TransferWheelSubsystem();
-  public final AgitatorSubsystem m_agitatorSubsystem = new AgitatorSubsystem();
+  public final TransferWheelSubsystem m_TransferWheelSubsystem = new TransferWheelSubsystem();
+  public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
 
   // Joysticks
   private final XboxController operator = new XboxController(1);
@@ -66,11 +66,11 @@ public class RobotContainer {
 
     // Configure default commands
     m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
-    m_intakeSubsystem.setDefaultCommand(new RunIntakeJoystick(m_intakeSubsystem, driver));
+    m_intakeSubsystem.setDefaultCommand(new RunIntakeJoystick(m_intakeSubsystem, m_towerSubsystem, driver));
     //m_flywheelSubsystem.setDefaultCommand(new RunFlywheelJoystick(m_flywheelSubsystem, operator));
     
     // Configure autonomous sendable chooser
-    m_chooser.setDefaultOption("AutonomousCommand", new Auton_ThreeBall(m_flywheelSubsystem, m_towerSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_agitatorSubsystem));
+    m_chooser.setDefaultOption("AutonomousCommand", new Auton_ThreeBall(m_flywheelSubsystem, m_TransferWheelSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
     // m_chooser.setDefaultOption("name", new AutonomousCommand(m_drivetrainSubsystem));
     
     SmartDashboard.putData("Auto Mode", m_chooser);
@@ -103,8 +103,8 @@ public class RobotContainer {
     
     driver_aButton.whenPressed( new ToggleIntake(m_intakeSubsystem) );
 
-    operator_aButton.whileHeld(new RunTransferWheel(false, m_towerSubsystem));
-    operator_bButton.whileHeld(new RunTransferWheel(true, m_towerSubsystem));
+    operator_aButton.whileHeld(new RunTransferWheel(false, m_TransferWheelSubsystem));
+    operator_bButton.whileHeld(new RunTransferWheel(true, m_TransferWheelSubsystem));
     operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem));
   }
 
