@@ -45,8 +45,7 @@ public class Auton_ThreeBall extends CommandBase {
                 new RunIntake(m_intakeSubsystem, false)
             ),
             new ParallelCommandGroup(
-                new RunIntake(m_intakeSubsystem, false).withTimeout(0.1),
-                new RunTower(m_towerSubsystem, false).withTimeout(0.1)
+                new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)
             ),
             new ParallelCommandGroup(
                 new FollowPath(m_drivetrainSubsystem, Paths.twoBall1_A),
@@ -54,24 +53,21 @@ public class Auton_ThreeBall extends CommandBase {
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             new ParallelCommandGroup(
-                new SpinFlywheel(m_flywheelSubsystem),
-                new RunTower(m_towerSubsystem, false).withTimeout(1)    
+                new SpinFlywheel(m_flywheelSubsystem)    
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             new ParallelDeadlineGroup(
                 new FollowPath(m_drivetrainSubsystem, Paths.threeBall2),
                 new RunFlywheel(m_flywheelSubsystem).withTimeout(0.1),
-                new RunIntake(m_intakeSubsystem, false),
-                new RunTower(m_towerSubsystem, false)
+                new RunIntake(m_intakeSubsystem, false)
             ),
             new ParallelCommandGroup(
                 new FollowPath(m_drivetrainSubsystem, Paths.threeBall3),
-                new SpinFlywheel(m_flywheelSubsystem),
-                new RunTower(m_towerSubsystem, false).withTimeout(0.5)
+                new SpinFlywheel(m_flywheelSubsystem)
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             new RunFlywheel(m_flywheelSubsystem).withTimeout(0.1)
-            ).withTimeout(15));
+            ).withTimeout(15), new AutoTower(m_towerSubsystem).withTimeout(15));
     }
 
     @Override

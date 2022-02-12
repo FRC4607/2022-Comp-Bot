@@ -45,8 +45,7 @@ public class Auton_TwoBall_A extends CommandBase {
                 new RunIntake(m_intakeSubsystem, false)
             ),
             new ParallelCommandGroup(
-                new RunIntake(m_intakeSubsystem, false).withTimeout(0.1),
-                new RunTower(m_towerSubsystem, false).withTimeout(0.1)
+                new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)
             ),
             new ParallelCommandGroup(
                 new FollowPath(m_drivetrainSubsystem, Paths.twoBall1_A),
@@ -55,12 +54,11 @@ public class Auton_TwoBall_A extends CommandBase {
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             new ParallelCommandGroup(
                 new SpinFlywheel(m_flywheelSubsystem),
-                new RunIntake(m_intakeSubsystem, false).withTimeout(1),
-                new RunTower(m_towerSubsystem, false).withTimeout(1)
+                new RunIntake(m_intakeSubsystem, false).withTimeout(1)
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             new RunFlywheel(m_flywheelSubsystem).withTimeout(0.1)
-        ));
+        ).withTimeout(15), new AutoTower(m_towerSubsystem).withTimeout(15));
     }
 
     @Override
