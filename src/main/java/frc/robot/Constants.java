@@ -82,17 +82,16 @@ public class Constants {
     }
 
     public static final class TowerConstants {
-        public static final int agitatiorID = 10;
+        public static final int agitatiorID = 9;
         public static final double agitatiorSpeed = 1;
 
-        public static final int lowBrakeBeamID = 1;
-        public static final int midBrakeBeamID = 2;
-        public static final int highBrakeBeamID = 3;
+        public static final int midBrakeBeamID = 0;
+        public static final int highBrakeBeamID = 1;
     }
     
     public static final class TransferWheelConstants {
-        public static final int transferWheelID = 0;
-        public static final double transferWheelSpeed = 0;
+        public static final int transferWheelID = 10;
+        public static final double transferWheelSpeed = 1;
     }
     
     public static final class FlywheelConstants {

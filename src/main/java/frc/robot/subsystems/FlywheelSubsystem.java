@@ -102,7 +102,7 @@ public class FlywheelSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Flywheel Error", m_flywheelMotor1.getClosedLoopError());
 
         speeds.remove(0);
-        speeds.add( getFlywheelError() );
+        speeds.add( m_flywheelMotor1.getSelectedSensorVelocity() );
     }
 
     @Override

@@ -34,7 +34,7 @@ public class TransferWheelSubsystem extends SubsystemBase {
         m_transferWheel = new CANSparkMax(TransferWheelConstants.transferWheelID, MotorType.kBrushless);
 
         m_transferWheel.restoreFactoryDefaults();
-        m_transferWheel.setInverted(false);
+        m_transferWheel.setInverted(true);
         m_transferWheel.setIdleMode(IdleMode.kBrake);
 
         SmartDashboard.putNumber("Transfer Wheel Speed", 0.8);
