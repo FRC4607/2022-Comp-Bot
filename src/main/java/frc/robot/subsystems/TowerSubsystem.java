@@ -61,10 +61,16 @@ public class TowerSubsystem extends SubsystemBase {
         m_allianceColor = teamColor;
 
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
-		NetworkTable databace = inst.getTable("");
-		NetworkTableEntry entry = databace.getEntry("");
-		inst.startClientTeam(4607);
-		entry.addListener((event) -> {
+		NetworkTable FMSInfo = inst.getTable("FMSInfo");
+		NetworkTableEntry alienceColor = FMSInfo.getEntry("IsRedAllience");
+
+		alienceColor.addListener((event) -> {
+			m_allianceColor = Color.values()[(int)event.getEntry().getNumber(0)];
+		}, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+		NetworkTable PIDatabase = inst.getTable("PiTable");
+		NetworkTableEntry ColorSensor = PIDatabase.getEntry("");
+		ColorSensor.addListener((event) -> {
 			m_ColorSensor = Color.values()[(int)event.getEntry().getNumber(0)];
 		}, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
     }

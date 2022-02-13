@@ -14,6 +14,8 @@ package frc.robot;
 
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -29,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * the project.
  */
 public class Robot extends TimedRobot {
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
     private Command m_autonomousCommand;
 
@@ -46,6 +49,7 @@ public class Robot extends TimedRobot {
         m_robotContainer = RobotContainer.getInstance();
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
         
+        inst.startClientTeam(4607);
     }
 
     /**
@@ -70,6 +74,10 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void disabledInit() {
+        NetworkTable databace = inst.getTable("PiTable");
+		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
+		entry.setBoolean(false);
+
         Shuffleboard.stopRecording();
     }
 
@@ -88,6 +96,10 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();
         }
+
+        NetworkTable databace = inst.getTable("PiTable");
+		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
+		entry.setBoolean(true);
     }
 
     /**
@@ -106,6 +118,10 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
+
+        NetworkTable databace = inst.getTable("PiTable");
+		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
+		entry.setBoolean(true);
 
         Shuffleboard.startRecording();
     }

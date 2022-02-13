@@ -143,6 +143,26 @@ public class Constants {
         .addConstraint(voltageConstraint);
     }
 
-    
+    public static final class ClimberConstants {
+        public static final int motor1ID = 0;
+        public static final int motor2ID = 0;
+
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final double kFF = 0;
+
+        public static final int pistionModule = 1;
+        public static final PneumaticsModuleType pistionType = PneumaticsModuleType.REVPH;
+        public static final int pistionForwardChannel = 0;
+        public static final int pistionReverseChannel = 1;
+
+        public static final int clutchModule = 2;
+        public static final PneumaticsModuleType clutchType = PneumaticsModuleType.REVPH;
+        public static final int clutchForwardChannel = 0;
+        public static final int clutchReverseChannel = 1;
+        public static final double maxHight = 1;
+        public static final double rotationToExtend = 0;
+    } 
 
 }

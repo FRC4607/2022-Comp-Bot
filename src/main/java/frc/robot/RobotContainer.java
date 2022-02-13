@@ -13,6 +13,9 @@
 package frc.robot;
 
 import frc.robot.commands.*;
+import frc.robot.commands.Auto.AutoTower;
+import frc.robot.commands.Auto.Auton_ThreeBall;
+import frc.robot.commands.Auto.AutonomousCommand;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,7 +44,6 @@ public class RobotContainer {
 	public final TransferWheelSubsystem m_TransferWheelSubsystem = new TransferWheelSubsystem();
 	public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 	
-	// Alliance Color 
 	
 	
 	// Joysticks
@@ -80,6 +82,8 @@ public class RobotContainer {
 
 		SmartDashboard.putData("Auto Mode", m_chooser);
 	}
+
+	
 
 	public static RobotContainer getInstance() {
 		return m_robotContainer;

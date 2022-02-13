@@ -439,6 +439,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_pigeonIMU.setYaw(0);
     }
 
+    public double getYaw() {
+        double[] xyz_deg = new double[3];
+        m_pigeonIMU.getAccumGyro(xyz_deg);
+
+        return xyz_deg[1];
+    }
     // Odometry
 
     /**
