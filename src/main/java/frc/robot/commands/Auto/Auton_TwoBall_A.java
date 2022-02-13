@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -6,13 +6,15 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Paths;
+import frc.robot.commands.RunFlywheel;
+import frc.robot.commands.RunTransferWheel;
 import frc.robot.subsystems.TowerSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransferWheelSubsystem;
 
-public class Auton_TwoBall_B extends CommandBase {
+public class Auton_TwoBall_A extends CommandBase {
     private static CommandScheduler m_commandScheduler;
 
     private static DrivetrainSubsystem m_drivetrainSubsystem;
@@ -21,7 +23,7 @@ public class Auton_TwoBall_B extends CommandBase {
     private static TransferWheelSubsystem m_transferWheelSubsystem;
     private static FlywheelSubsystem m_flywheelSubsystem;
 
-    public Auton_TwoBall_B(DrivetrainSubsystem drivetrainSubsystem, IntakeSubsystem intakeSubsystem, TowerSubsystem towerSubsystem, TransferWheelSubsystem transferWheelSubsystem, FlywheelSubsystem flywheelSubsystem) {
+    public Auton_TwoBall_A(DrivetrainSubsystem drivetrainSubsystem, IntakeSubsystem intakeSubsystem, TowerSubsystem towerSubsystem, TransferWheelSubsystem transferWheelSubsystem, FlywheelSubsystem flywheelSubsystem) {
         m_commandScheduler = CommandScheduler.getInstance();
 
         m_drivetrainSubsystem = drivetrainSubsystem;
@@ -48,7 +50,7 @@ public class Auton_TwoBall_B extends CommandBase {
                 new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)
             ),
             new ParallelCommandGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.twoBall1_B),
+                new FollowPath(m_drivetrainSubsystem, Paths.twoBall1_A),
                 new SpinFlywheel(m_flywheelSubsystem)
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),

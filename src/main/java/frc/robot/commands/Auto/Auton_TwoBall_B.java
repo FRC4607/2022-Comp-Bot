@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -6,22 +6,24 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Paths;
+import frc.robot.commands.RunFlywheel;
+import frc.robot.commands.RunTransferWheel;
 import frc.robot.subsystems.TowerSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransferWheelSubsystem;
 
-public class Auton_ThreeBall extends CommandBase {
+public class Auton_TwoBall_B extends CommandBase {
     private static CommandScheduler m_commandScheduler;
 
     private static DrivetrainSubsystem m_drivetrainSubsystem;
-    private static FlywheelSubsystem m_flywheelSubsystem;
     private static IntakeSubsystem m_intakeSubsystem;
     private static TowerSubsystem m_towerSubsystem;
     private static TransferWheelSubsystem m_transferWheelSubsystem;
+    private static FlywheelSubsystem m_flywheelSubsystem;
 
-    public Auton_ThreeBall(DrivetrainSubsystem drivetrainSubsystem, IntakeSubsystem intakeSubsystem, TowerSubsystem towerSubsystem, TransferWheelSubsystem transferWheelSubsystem, FlywheelSubsystem flywheelSubsystem) {
+    public Auton_TwoBall_B(DrivetrainSubsystem drivetrainSubsystem, IntakeSubsystem intakeSubsystem, TowerSubsystem towerSubsystem, TransferWheelSubsystem transferWheelSubsystem, FlywheelSubsystem flywheelSubsystem) {
         m_commandScheduler = CommandScheduler.getInstance();
 
         m_drivetrainSubsystem = drivetrainSubsystem;
@@ -48,26 +50,17 @@ public class Auton_ThreeBall extends CommandBase {
                 new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)
             ),
             new ParallelCommandGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.twoBall1_A),
+                new FollowPath(m_drivetrainSubsystem, Paths.twoBall1_B),
                 new SpinFlywheel(m_flywheelSubsystem)
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             new ParallelCommandGroup(
-                new SpinFlywheel(m_flywheelSubsystem)    
-            ),
-            new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
-            new ParallelDeadlineGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.threeBall2),
-                new RunFlywheel(m_flywheelSubsystem).withTimeout(0.1),
-                new RunIntake(m_intakeSubsystem, false)
-            ),
-            new ParallelCommandGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.threeBall3),
-                new SpinFlywheel(m_flywheelSubsystem)
+                new SpinFlywheel(m_flywheelSubsystem),
+                new RunIntake(m_intakeSubsystem, false).withTimeout(1)
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             new RunFlywheel(m_flywheelSubsystem).withTimeout(0.1)
-            ).withTimeout(15), new AutoTower(m_towerSubsystem).withTimeout(15));
+        ).withTimeout(15), new AutoTower(m_towerSubsystem).withTimeout(15));
     }
 
     @Override

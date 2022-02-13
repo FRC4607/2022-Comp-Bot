@@ -10,57 +10,54 @@
 
 // ROBOTBUILDER TYPE: Command.
 
-package frc.robot.commands;
+package frc.robot.commands.Auto;
 
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.FlywheelSubsystem;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Paths;
+import frc.robot.subsystems.DrivetrainSubsystem;
 
 /**
  *
  */
-public class RunFlywheelJoystick extends CommandBase {
+public class AutonomousCommand extends CommandBase {
 
-    private final FlywheelSubsystem m_flywheelSubsystem;
+    private DrivetrainSubsystem m_drivetrainSubsystem;
+    private Command m_path;
 
-    private XboxController m_operator;
+    public AutonomousCommand(DrivetrainSubsystem drivetrainSubsystem) {
 
-    public RunFlywheelJoystick(FlywheelSubsystem subsystem, XboxController operator) {
-
-        m_operator = operator;
-
-        m_flywheelSubsystem = subsystem;
-        addRequirements(m_flywheelSubsystem);
+        m_drivetrainSubsystem = drivetrainSubsystem;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        Trajectory m_exampleTrajectory = Paths.threeBall2;
+
+        m_path = new FollowPath(m_drivetrainSubsystem, m_exampleTrajectory);
+        CommandScheduler.getInstance().schedule(m_path.andThen(() -> {m_drivetrainSubsystem.setVoltage(0);}));
+
+
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double axis = m_operator.getRawAxis(XboxController.Axis.kRightTrigger.value);
-        //System.out.println(axis);
-        if (axis >= 0.01) {
-            m_flywheelSubsystem.setSpeed(axis);
-        }
-        else {
-            m_flywheelSubsystem.setSpeed(0);
-        }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        
+        m_path.cancel();
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return m_path.isFinished();
     }
 
     @Override
