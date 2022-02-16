@@ -128,8 +128,8 @@ public class Constants {
     }
     
     public static final class FollowPathConstants {
-        public static final double kMaxSpeed_MetersPerSecond = 3.9;
-        public static final double kMaxAcceleration_MetersPerSecondSquared = 5;
+        public static final double kMaxSpeed_MetersPerSecond = 3;
+        public static final double kMaxAcceleration_MetersPerSecondSquared = 2;
 
         public static final DifferentialDriveVoltageConstraint voltageConstraint = new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(DriveConstants.ks_Volts, DriveConstants.kv_VoltSecondsPerMeters,

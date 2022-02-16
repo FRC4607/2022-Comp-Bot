@@ -13,7 +13,6 @@
 package frc.robot;
 
 import frc.robot.commands.*;
-import frc.robot.commands.Auto.SetAutoTower;
 import frc.robot.commands.Auto.Auton_ThreeBall;
 import frc.robot.commands.Auto.Auton_TwoBall_A;
 import frc.robot.commands.Auto.Auton_TwoBall_B;
@@ -43,7 +42,7 @@ public class RobotContainer {
 	public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 	public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 	public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
-	public final TransferWheelSubsystem m_TransferWheelSubsystem = new TransferWheelSubsystem();
+	public final TransferWheelSubsystem m_transferWheelSubsystem = new TransferWheelSubsystem();
 	public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 
 	// Alliance Color
@@ -64,7 +63,6 @@ public class RobotContainer {
 
 		// SmartDashboard Buttons
 		SmartDashboard.putData("Run Flywheel", new RunFlywheel(m_flywheelSubsystem));
-		SmartDashboard.putData("Auto Tower", new SetAutoTower(m_towerSubsystem));
 
 		// Configure the button bindings
 		configureButtonBindings();
@@ -76,12 +74,13 @@ public class RobotContainer {
 		// RunFlywheelJoystick(m_flywheelSubsystem, operator));
 
 		// Configure autonomous sendable chooser
-		m_chooser.setDefaultOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_TransferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.setDefaultOption("Four Ball Auto", new Auton_FourBall(m_flywheelSubsystem, m_transferWheelSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
+		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem,
+				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
 		m_chooser.addOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_TransferWheelSubsystem, m_flywheelSubsystem));
+				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
 		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_TransferWheelSubsystem, m_flywheelSubsystem));
+				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
 
 		SmartDashboard.putData("Auto Mode", m_chooser);
 	}
@@ -115,10 +114,10 @@ public class RobotContainer {
 		driver_aButton.whenPressed(new ToggleIntake(m_intakeSubsystem));
 
 		operator_aButton.whileHeld(new ParallelCommandGroup(
-			new RunTransferWheel(m_TransferWheelSubsystem, true),
+			new RunTransferWheel(m_transferWheelSubsystem, true),
 			new RunTower(m_towerSubsystem, true)
 		));
-		operator_bButton.whileHeld(new RunTransferWheel(m_TransferWheelSubsystem, false));
+		operator_bButton.whileHeld(new RunTransferWheel(m_transferWheelSubsystem, false));
 		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem));
 	}
 
