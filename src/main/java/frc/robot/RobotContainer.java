@@ -13,14 +13,16 @@
 package frc.robot;
 
 import frc.robot.commands.*;
-import frc.robot.commands.Auto.AutoTower;
+import frc.robot.commands.Auto.SetAutoTower;
 import frc.robot.commands.Auto.Auton_ThreeBall;
-import frc.robot.commands.Auto.AutonomousCommand;
+import frc.robot.commands.Auto.Auton_TwoBall_A;
+import frc.robot.commands.Auto.Auton_TwoBall_B;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -43,10 +45,9 @@ public class RobotContainer {
 	public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
 	public final TransferWheelSubsystem m_TransferWheelSubsystem = new TransferWheelSubsystem();
 	public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
-	
-	// Alliance Color 
-	
-	
+
+	// Alliance Color
+
 	// Joysticks
 	private final XboxController operator = new XboxController(1);
 	private final XboxController driver = new XboxController(0);
@@ -62,24 +63,25 @@ public class RobotContainer {
 		// Smartdashboard Subsystems
 
 		// SmartDashboard Buttons
-		SmartDashboard.putData("AutonomousCommand", new AutonomousCommand(m_drivetrainSubsystem));
 		SmartDashboard.putData("Run Flywheel", new RunFlywheel(m_flywheelSubsystem));
+		SmartDashboard.putData("Auto Tower", new SetAutoTower(m_towerSubsystem));
 
 		// Configure the button bindings
 		configureButtonBindings();
 
 		// Configure default commands
 		m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
-		m_intakeSubsystem.setDefaultCommand(new RunIntakeJoystick(m_intakeSubsystem, driver));
-		m_towerSubsystem.setDefaultCommand(new AutoTower(m_towerSubsystem));
+		m_intakeSubsystem.setDefaultCommand(new DriverIntakeTower(m_intakeSubsystem, m_towerSubsystem, driver));
 		// m_flywheelSubsystem.setDefaultCommand(new
 		// RunFlywheelJoystick(m_flywheelSubsystem, operator));
 
 		// Configure autonomous sendable chooser
-		m_chooser.setDefaultOption("AutonomousCommand", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem,
+		m_chooser.setDefaultOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem,
 				m_towerSubsystem, m_TransferWheelSubsystem, m_flywheelSubsystem));
-		// m_chooser.setDefaultOption("name", new
-		// AutonomousCommand(m_drivetrainSubsystem));
+		m_chooser.addOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem,
+				m_towerSubsystem, m_TransferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
+				m_towerSubsystem, m_TransferWheelSubsystem, m_flywheelSubsystem));
 
 		SmartDashboard.putData("Auto Mode", m_chooser);
 	}
@@ -103,6 +105,7 @@ public class RobotContainer {
 		JoystickButton operator_xButton = new JoystickButton(operator, 3);
 		JoystickButton operator_yButton = new JoystickButton(operator, 4);
 		JoystickButton operator_rightBumper = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
+		JoystickButton operator_leftBumper = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
 
 		JoystickButton driver_aButton = new JoystickButton(driver, 1);
 		JoystickButton driver_bButton = new JoystickButton(driver, 2);
@@ -111,8 +114,11 @@ public class RobotContainer {
 
 		driver_aButton.whenPressed(new ToggleIntake(m_intakeSubsystem));
 
-		operator_aButton.whileHeld(new RunTransferWheel(m_TransferWheelSubsystem, false));
-		operator_bButton.whileHeld(new RunTransferWheel(m_TransferWheelSubsystem, true));
+		operator_aButton.whileHeld(new ParallelCommandGroup(
+			new RunTransferWheel(m_TransferWheelSubsystem, true),
+			new RunTower(m_towerSubsystem, true)
+		));
+		operator_bButton.whileHeld(new RunTransferWheel(m_TransferWheelSubsystem, false));
 		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem));
 	}
 
@@ -131,7 +137,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// The selected command will be run in autonomous
-		
+
 		// Reset odometry to the starting pose of the trajectory.
 		return m_chooser.getSelected();
 

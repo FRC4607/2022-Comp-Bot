@@ -14,13 +14,13 @@ public class Paths {
         private static final Pose2d hub_alt = new Pose2d(Units.inchesToMeters(40.479), Units.inchesToMeters(-24.173), Rotation2d.fromDegrees(157.5));
         // new Pose2d(Units.inchesToMeters(46.479), Units.inchesToMeters(-12.173),Rotation2d.fromDegrees(157.5)),
         private static final Pose2d start   = new Pose2d(0, 0, Rotation2d.fromDegrees(180));
-        private static final Pose2d hub     = new Pose2d(Units.inchesToMeters(46.479), Units.inchesToMeters(-12.173),Rotation2d.fromDegrees(157.5));
-        private static final Pose2d hubB    = new Pose2d(Units.inchesToMeters(46.498), Units.inchesToMeters(12.180),Rotation2d.fromDegrees(202.5));
-        private static final Pose2d endA    = new Pose2d(Units.inchesToMeters(0), Units.inchesToMeters(0), Rotation2d.fromDegrees(180));
-        private static final Pose2d endB    = new Pose2d(Units.inchesToMeters(0), Units.inchesToMeters(0), Rotation2d.fromDegrees(180));
+        private static final Pose2d hub     = new Pose2d(Units.inchesToMeters(40.707695), Units.inchesToMeters(-8.024630),Rotation2d.fromDegrees(157.5));
+        private static final Pose2d hubB    = new Pose2d(Units.inchesToMeters(40.707695), Units.inchesToMeters(8.024630),Rotation2d.fromDegrees(202.5));
+        private static final Pose2d endA    = new Pose2d(Units.inchesToMeters(-9.210661), Units.inchesToMeters(61.851785), Rotation2d.fromDegrees(180));
+        private static final Pose2d endB    = new Pose2d(Units.inchesToMeters(-42), Units.inchesToMeters(0),Rotation2d.fromDegrees(180));
         
         private static final Pose2d ball2   = new Pose2d(Units.inchesToMeters(-42), Units.inchesToMeters(0),Rotation2d.fromDegrees(180));
-        private static final Pose2d ball3   = new Pose2d(Units.inchesToMeters(9.883), Units.inchesToMeters(88.708),Rotation2d.fromDegrees(98.5));
+        private static final Pose2d ball3   = new Pose2d(Units.inchesToMeters(-6.883155), Units.inchesToMeters(91.708250),Rotation2d.fromDegrees(98.5));
         
         public static Trajectory twoBall0   = TrajectoryGenerator.generateTrajectory(List.of(start, ball2), FollowPathConstants.trajectoryConfig.setReversed(false));
         public static Trajectory twoBall1_A = TrajectoryGenerator.generateTrajectory(List.of(ball2, hub), FollowPathConstants.trajectoryConfig.setReversed(true));
