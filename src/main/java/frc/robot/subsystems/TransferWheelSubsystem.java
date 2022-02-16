@@ -14,7 +14,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.TowerConstants;
+import frc.robot.Constants.TransferWheelConstants;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax;
@@ -25,17 +25,17 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
  */
 public class TransferWheelSubsystem extends SubsystemBase {
 
-    private CANSparkMax transferWheel;
+    private CANSparkMax m_transferWheel;
 
     /**
     *
     */
     public TransferWheelSubsystem() {
-        transferWheel = new CANSparkMax(TowerConstants.transferWheelID, MotorType.kBrushless);
+        m_transferWheel = new CANSparkMax(TransferWheelConstants.transferWheelID, MotorType.kBrushless);
 
-        transferWheel.restoreFactoryDefaults();
-        transferWheel.setInverted(false);
-        transferWheel.setIdleMode(IdleMode.kBrake);
+        m_transferWheel.restoreFactoryDefaults();
+        m_transferWheel.setInverted(true);
+        m_transferWheel.setIdleMode(IdleMode.kBrake);
 
         SmartDashboard.putNumber("Transfer Wheel Speed", 0.8);
     }
@@ -56,6 +56,6 @@ public class TransferWheelSubsystem extends SubsystemBase {
     // here. Call these from Commands.
 
     public void setTransferWheel(double speed) {
-        transferWheel.set(speed);
+        m_transferWheel.set(speed);
     }
 }

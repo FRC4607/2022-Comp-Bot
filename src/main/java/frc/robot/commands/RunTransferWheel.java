@@ -24,12 +24,11 @@ public class RunTransferWheel extends CommandBase {
     private final TransferWheelSubsystem m_towerSubsystem;
     private boolean m_reverse;
 
-    public RunTransferWheel(boolean reverse, TransferWheelSubsystem subsystem) {
-
-        m_reverse = reverse;
-
+    public RunTransferWheel(TransferWheelSubsystem subsystem, boolean reverse) {
         m_towerSubsystem = subsystem;
         addRequirements(m_towerSubsystem);
+        
+        m_reverse = reverse;
 
     }
 
@@ -37,10 +36,10 @@ public class RunTransferWheel extends CommandBase {
     @Override
     public void initialize() {
         if (!m_reverse) {
-            m_towerSubsystem.setTransferWheel(TowerConstants.transferWheelSpeed);
+            m_towerSubsystem.setTransferWheel(TowerConstants.agitatiorSpeed);
         }
         else {
-            m_towerSubsystem.setTransferWheel(-TowerConstants.transferWheelSpeed);
+            m_towerSubsystem.setTransferWheel(-TowerConstants.agitatiorSpeed);
         }
     }
 

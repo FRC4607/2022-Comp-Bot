@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -6,7 +6,9 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Paths;
-import frc.robot.subsystems.AgitatorSubsystem;
+import frc.robot.commands.RunFlywheel;
+import frc.robot.commands.RunTransferWheel;
+import frc.robot.subsystems.TowerSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -15,20 +17,20 @@ import frc.robot.subsystems.TransferWheelSubsystem;
 public class Auton_TwoBall_A extends CommandBase {
     private static CommandScheduler m_commandScheduler;
 
-    private static FlywheelSubsystem m_flywheelSubsystem;
-    private static TransferWheelSubsystem m_towerSubsystem;
-    private static IntakeSubsystem m_intakeSubsystem;
     private static DrivetrainSubsystem m_drivetrainSubsystem;
-    private static AgitatorSubsystem m_agitatorSubsystem;
+    private static IntakeSubsystem m_intakeSubsystem;
+    private static TowerSubsystem m_towerSubsystem;
+    private static TransferWheelSubsystem m_transferWheelSubsystem;
+    private static FlywheelSubsystem m_flywheelSubsystem;
 
-    public Auton_TwoBall_A(FlywheelSubsystem flywheelSubsystem, TransferWheelSubsystem towerSubsystem, IntakeSubsystem intakeSubsystem, DrivetrainSubsystem drivetrainSubsystem, AgitatorSubsystem agitatorSubsystem) {
+    public Auton_TwoBall_A(DrivetrainSubsystem drivetrainSubsystem, IntakeSubsystem intakeSubsystem, TowerSubsystem towerSubsystem, TransferWheelSubsystem transferWheelSubsystem, FlywheelSubsystem flywheelSubsystem) {
         m_commandScheduler = CommandScheduler.getInstance();
 
-        m_flywheelSubsystem = flywheelSubsystem;
-        m_towerSubsystem = towerSubsystem;
-        m_intakeSubsystem = intakeSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
-        m_agitatorSubsystem = agitatorSubsystem;
+        m_intakeSubsystem = intakeSubsystem;
+        m_towerSubsystem = towerSubsystem;
+        m_transferWheelSubsystem = transferWheelSubsystem;
+        m_flywheelSubsystem = flywheelSubsystem;
     }
 
     @Override
@@ -45,23 +47,20 @@ public class Auton_TwoBall_A extends CommandBase {
                 new RunIntake(m_intakeSubsystem, false)
             ),
             new ParallelCommandGroup(
-                new RunIntake(m_intakeSubsystem, false).withTimeout(0.1),
-                new RunAgitator(m_agitatorSubsystem, false).withTimeout(0.1)
+                new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)
             ),
             new ParallelCommandGroup(
                 new FollowPath(m_drivetrainSubsystem, Paths.twoBall1_A),
                 new SpinFlywheel(m_flywheelSubsystem)
             ),
-            new RunTransferWheel(true, m_towerSubsystem).withTimeout(0.2),
+            new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             new ParallelCommandGroup(
                 new SpinFlywheel(m_flywheelSubsystem),
-                new RunIntake(m_intakeSubsystem, false).withTimeout(1),
-                new RunAgitator(m_agitatorSubsystem, false).withTimeout(1)
+                new RunIntake(m_intakeSubsystem, false).withTimeout(1)
             ),
-            new RunTransferWheel(true, m_towerSubsystem).withTimeout(0.2),
-            new RunFlywheel(m_flywheelSubsystem).withTimeout(0),
-            new FollowPath(m_drivetrainSubsystem, Paths.exit)
-        ));
+            new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
+            new RunFlywheel(m_flywheelSubsystem).withTimeout(0.1)
+        ).withTimeout(15), new RunAutoTower(m_towerSubsystem).withTimeout(15));
     }
 
     @Override

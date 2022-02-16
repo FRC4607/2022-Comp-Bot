@@ -70,12 +70,52 @@ public class Constants {
         public static final double maxUnitsPerSecond = 2;
     }
 
+    public static final class IntakeConstants {
+        public static final int motorID = 7;
+        public static final int solenoidModule = 8;
+        public static final PneumaticsModuleType SolenoidType = PneumaticsModuleType.REVPH;
+        public static final int solenoidForwardChannel = 0;
+        public static final int solenoidReverseChannel = 1;
+
+        public static final double intakeSpeed = 1;
+        public static final double reverseScalar = 0.5;
+    }
+
+    public static final class TowerConstants {
+        public static final int agitatiorID = 9;
+        public static final double agitatiorSpeed = 1;
+
+        public static final int midBrakeBeamID = 0;
+        public static final int highBrakeBeamID = 1;
+    }
+    
+    public static final class TransferWheelConstants {
+        public static final int transferWheelID = 10;
+        public static final double transferWheelSpeed = 1;
+    }
+    
     public static final class FlywheelConstants {
         public static final int flywheelMotor1ID = 11;
         public static final int flywheelMotor2ID = 12;
 
         // This is calculated from the characterization tool's CTRE preset.
         public static final double flywheelP = 0.17121;
+        public static final double flywheelD = 0;
+
+        /*
+            0.17121, 0.0171
+            0.17121, 0.02
+            0.17121, 0.05
+            0.25, 0.1
+            0.15, 0.1
+            0.15, 0.0
+            Peck 1
+                +320
+                +310
+                +300
+                +500
+                +290
+        */
         // kS from characterization tool, used here as an arbitrary feed forward to overcome friction. This is divided by 12 to get the value as a percent of the motor's max output.
         public static final double flywheelKs = 0.64575 / 12;
         // kA from characterization tool, used here as the velocity feed forward. Conversion from v / (rotation/sec) to CTRE units (v (0-1023) / (rotations / 0.1sec) ) is needed.
@@ -88,8 +128,8 @@ public class Constants {
     }
     
     public static final class FollowPathConstants {
-        public static final double kMaxSpeed_MetersPerSecond = 3;
-        public static final double kMaxAcceleration_MetersPerSecondSquared = 1.5;
+        public static final double kMaxSpeed_MetersPerSecond = 3.9;
+        public static final double kMaxAcceleration_MetersPerSecondSquared = 5;
 
         public static final DifferentialDriveVoltageConstraint voltageConstraint = new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(DriveConstants.ks_Volts, DriveConstants.kv_VoltSecondsPerMeters,
@@ -103,26 +143,6 @@ public class Constants {
         .addConstraint(voltageConstraint);
     }
 
-    public static final class TowerConstants {
-        public static final int transferWheelID = 10;
-        public static final double transferWheelSpeed = 1;
-    }
     
-    public static final class IntakeConstants {
-        public static final int motorID = 7;
-        public static final int solenoidModule = 8;
-        public static final PneumaticsModuleType SolenoidType = PneumaticsModuleType.REVPH;
-        public static final int solenoidForwardChannel = 0;
-        public static final int solenoidReverseChannel = 1;
 
-        public static final double intakeSpeed = 1;
-        public static final double reverseScalar = 0.5;
-    }
-
-    public static class AgitatorConstants {
-
-        public static final double agitatorSpeed = 1;
-        public static final int agitatorID = 9;
-
-    }
 }

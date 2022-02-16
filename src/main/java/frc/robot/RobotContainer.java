@@ -13,11 +13,16 @@
 package frc.robot;
 
 import frc.robot.commands.*;
+import frc.robot.commands.Auto.SetAutoTower;
+import frc.robot.commands.Auto.Auton_ThreeBall;
+import frc.robot.commands.Auto.Auton_TwoBall_A;
+import frc.robot.commands.Auto.Auton_TwoBall_B;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -32,100 +37,110 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
 
-  private static RobotContainer m_robotContainer = new RobotContainer();
+	private static RobotContainer m_robotContainer = new RobotContainer();
 
-  // The robot's subsystems
-  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
-  public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
-  public final TransferWheelSubsystem m_towerSubsystem = new TransferWheelSubsystem();
-  public final AgitatorSubsystem m_agitatorSubsystem = new AgitatorSubsystem();
+	// The robot's subsystems
+	public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+	public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+	public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
+	public final TransferWheelSubsystem m_TransferWheelSubsystem = new TransferWheelSubsystem();
+	public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 
-  // Joysticks
-  private final XboxController operator = new XboxController(1);
-  private final XboxController driver = new XboxController(0);
+	// Alliance Color
 
-  // A chooser for autonomous commands
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
+	// Joysticks
+	private final XboxController operator = new XboxController(1);
+	private final XboxController driver = new XboxController(0);
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  private RobotContainer() {
+	// A chooser for autonomous commands
+	SendableChooser<Command> m_chooser = new SendableChooser<>();
 
+	/**
+	 * The container for the robot. Contains subsystems, OI devices, and commands.
+	 */
+	private RobotContainer() {
 
-    // Smartdashboard Subsystems
+		// Smartdashboard Subsystems
 
-    // SmartDashboard Buttons
-    SmartDashboard.putData("AutonomousCommand", new AutonomousCommand(m_drivetrainSubsystem));
-    SmartDashboard.putData("Run Flywheel", new RunFlywheel(m_flywheelSubsystem));
+		// SmartDashboard Buttons
+		SmartDashboard.putData("Run Flywheel", new RunFlywheel(m_flywheelSubsystem));
+		SmartDashboard.putData("Auto Tower", new SetAutoTower(m_towerSubsystem));
 
-    // Configure the button bindings
-    configureButtonBindings();
+		// Configure the button bindings
+		configureButtonBindings();
 
-    // Configure default commands
-    m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
-    m_intakeSubsystem.setDefaultCommand(new RunIntakeJoystick(m_intakeSubsystem, driver));
-    //m_flywheelSubsystem.setDefaultCommand(new RunFlywheelJoystick(m_flywheelSubsystem, operator));
-    
-    // Configure autonomous sendable chooser
-    m_chooser.setDefaultOption("AutonomousCommand", new Auton_ThreeBall(m_flywheelSubsystem, m_towerSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_agitatorSubsystem));
-    // m_chooser.setDefaultOption("name", new AutonomousCommand(m_drivetrainSubsystem));
-    
-    SmartDashboard.putData("Auto Mode", m_chooser);
-  }
+		// Configure default commands
+		m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
+		m_intakeSubsystem.setDefaultCommand(new DriverIntakeTower(m_intakeSubsystem, m_towerSubsystem, driver));
+		// m_flywheelSubsystem.setDefaultCommand(new
+		// RunFlywheelJoystick(m_flywheelSubsystem, operator));
 
-  public static RobotContainer getInstance() {
-    return m_robotContainer;
-  }
+		// Configure autonomous sendable chooser
+		m_chooser.setDefaultOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem,
+				m_towerSubsystem, m_TransferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem,
+				m_towerSubsystem, m_TransferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
+				m_towerSubsystem, m_TransferWheelSubsystem, m_flywheelSubsystem));
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-   * it to a
-   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-    // Create some buttons
-    JoystickButton operator_aButton = new JoystickButton(operator, 1);
-    JoystickButton operator_bButton = new JoystickButton(operator, 2);
-    JoystickButton operator_xButton = new JoystickButton(operator, 3);
-    JoystickButton operator_yButton = new JoystickButton(operator, 4);
-    JoystickButton operator_rightBumper = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
+		SmartDashboard.putData("Auto Mode", m_chooser);
+	}
 
-    JoystickButton driver_aButton = new JoystickButton(driver, 1);
-    JoystickButton driver_bButton = new JoystickButton(driver, 2);
-    JoystickButton driver_xButton = new JoystickButton(driver, 3);
-    JoystickButton driver_yButton = new JoystickButton(driver, 4);
-    
-    driver_aButton.whenPressed( new ToggleIntake(m_intakeSubsystem) );
+	public static RobotContainer getInstance() {
+		return m_robotContainer;
+	}
 
-    operator_aButton.whileHeld(new RunTransferWheel(false, m_towerSubsystem));
-    operator_bButton.whileHeld(new RunTransferWheel(true, m_towerSubsystem));
-    operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem));
-  }
+	/**
+	 * Use this method to define your button->command mappings. Buttons can be
+	 * created by
+	 * instantiating a {@link GenericHID} or one of its subclasses ({@link
+	 * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+	 * it to a
+	 * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+	 */
+	private void configureButtonBindings() {
+		// Create some buttons
+		JoystickButton operator_aButton = new JoystickButton(operator, 1);
+		JoystickButton operator_bButton = new JoystickButton(operator, 2);
+		JoystickButton operator_xButton = new JoystickButton(operator, 3);
+		JoystickButton operator_yButton = new JoystickButton(operator, 4);
+		JoystickButton operator_rightBumper = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
+		JoystickButton operator_leftBumper = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
 
-  public XboxController getDriver() {
-    return driver;
-  }
+		JoystickButton driver_aButton = new JoystickButton(driver, 1);
+		JoystickButton driver_bButton = new JoystickButton(driver, 2);
+		JoystickButton driver_xButton = new JoystickButton(driver, 3);
+		JoystickButton driver_yButton = new JoystickButton(driver, 4);
 
-  public XboxController getOperator() {
-    return operator;
-  }
+		driver_aButton.whenPressed(new ToggleIntake(m_intakeSubsystem));
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // The selected command will be run in autonomous
-    
-    // Reset odometry to the starting pose of the trajectory.
-    return m_chooser.getSelected();
-    
-  }
+		operator_aButton.whileHeld(new ParallelCommandGroup(
+			new RunTransferWheel(m_TransferWheelSubsystem, true),
+			new RunTower(m_towerSubsystem, true)
+		));
+		operator_bButton.whileHeld(new RunTransferWheel(m_TransferWheelSubsystem, false));
+		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem));
+	}
+
+	public XboxController getDriver() {
+		return driver;
+	}
+
+	public XboxController getOperator() {
+		return operator;
+	}
+
+	/**
+	 * Use this to pass the autonomous command to the main {@link Robot} class.
+	 *
+	 * @return the command to run in autonomous
+	 */
+	public Command getAutonomousCommand() {
+		// The selected command will be run in autonomous
+
+		// Reset odometry to the starting pose of the trajectory.
+		return m_chooser.getSelected();
+
+	}
 
 }

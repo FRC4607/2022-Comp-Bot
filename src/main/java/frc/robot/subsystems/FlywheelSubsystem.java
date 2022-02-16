@@ -88,7 +88,7 @@ public class FlywheelSubsystem extends SubsystemBase {
         pidConfig.slot0.kP = FlywheelConstants.flywheelP;
         //pidConfig.slot0.kP = 0;
         //pidConfig.slot0.kI = 0;
-        //pidConfig.slot0.kD = 0;
+        pidConfig.slot0.kD = FlywheelConstants.flywheelD;
 
         m_flywheelMotor1.configAllSettings(pidConfig);
 
@@ -102,7 +102,7 @@ public class FlywheelSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Flywheel Error", m_flywheelMotor1.getClosedLoopError());
 
         speeds.remove(0);
-        speeds.add( getFlywheelError() );
+        speeds.add( m_flywheelMotor1.getSelectedSensorVelocity() );
     }
 
     @Override
