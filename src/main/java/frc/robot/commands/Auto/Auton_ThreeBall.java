@@ -66,7 +66,7 @@ public class Auton_ThreeBall extends CommandBase {
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             new RunFlywheel(m_flywheelSubsystem).withTimeout(0.1)
-            ).withTimeout(15), new AutoTower(m_towerSubsystem).withTimeout(15));
+            ).withTimeout(15), new RunAutoTower(m_towerSubsystem).withTimeout(15));
     }
 
     @Override

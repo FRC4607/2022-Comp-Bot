@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants.DriveConstants;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -139,10 +140,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         m_odometry.update(getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
-        SmartDashboard.putNumber("Front Left Voltage", m_leftMotor1.getMotorOutputVoltage());
-        SmartDashboard.putNumber("Back Left Voltage", m_leftMotor2.getMotorOutputVoltage());
-        SmartDashboard.putNumber("Front Right Voltage", m_rightMotor1.getMotorOutputVoltage());
-        SmartDashboard.putNumber("Back Right Voltage", m_rightMotor2.getMotorOutputVoltage());
+        // SmartDashboard.putNumber("Front Left Voltage", m_leftMotor1.getMotorOutputVoltage());
+        // SmartDashboard.putNumber("Back Left Voltage", m_leftMotor2.getMotorOutputVoltage());
+        // SmartDashboard.putNumber("Front Right Voltage", m_rightMotor1.getMotorOutputVoltage());
+        // SmartDashboard.putNumber("Back Right Voltage", m_rightMotor2.getMotorOutputVoltage());
+        // SmartDashboard.putNumber("Left Encoder", m_leftEncoder.getPosition());
+        // SmartDashboard.putNumber("Right Encoder", m_rightEncoder.getPosition());
     }
 
     @Override
@@ -503,5 +506,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void resetPID() {
         m_leftController.reset();
         m_rightController.reset();
+    }
+
+    public void setBrakeMode(boolean brakeMode) {
+        m_rightMotor1.setNeutralMode(brakeMode? NeutralMode.Brake:NeutralMode.Coast);
     }
 }

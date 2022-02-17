@@ -20,7 +20,6 @@ public class TowerSubsystem extends SubsystemBase {
     private DigitalInput m_midBrakeBeam;
     private DigitalInput m_highBrakeBeam;
 
-    private boolean m_autoTower = false;
     private Color m_allianceColor = Color.None;
     private Color m_ColorSensor;
 
@@ -48,6 +47,7 @@ public class TowerSubsystem extends SubsystemBase {
         m_midBrakeBeam = new DigitalInput(TowerConstants.midBrakeBeamID);
         m_highBrakeBeam = new DigitalInput(TowerConstants.highBrakeBeamID);
     }
+
     public TowerSubsystem(Color teamColor) {
 
         m_agitatior = new CANSparkMax(TowerConstants.agitatiorID, MotorType.kBrushless);
@@ -61,33 +61,24 @@ public class TowerSubsystem extends SubsystemBase {
         m_allianceColor = teamColor;
 
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
-		NetworkTable FMSInfo = inst.getTable("FMSInfo");
-		NetworkTableEntry alienceColor = FMSInfo.getEntry("IsRedAllience");
+        NetworkTable FMSInfo = inst.getTable("FMSInfo");
+        NetworkTableEntry alienceColor = FMSInfo.getEntry("IsRedAllience");
+        alienceColor.addListener((event) -> {
+            m_allianceColor = Color.values()[(int) event.getEntry().getNumber(0)];
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-		alienceColor.addListener((event) -> {
-			m_allianceColor = Color.values()[(int)event.getEntry().getNumber(0)];
-		}, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-		NetworkTable PIDatabase = inst.getTable("PiTable");
-		NetworkTableEntry ColorSensor = PIDatabase.getEntry("");
-		ColorSensor.addListener((event) -> {
-			m_ColorSensor = Color.values()[(int)event.getEntry().getNumber(0)];
-		}, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        NetworkTable PIDatabase = inst.getTable("PiTable");
+        NetworkTableEntry ColorSensor = PIDatabase.getEntry("");
+        ColorSensor.addListener((event) -> {
+            m_ColorSensor = Color.values()[(int) event.getEntry().getNumber(0)];
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Mid Brake Beam", m_midBrakeBeam.get());
         SmartDashboard.putBoolean("High Brake Beam", m_highBrakeBeam.get());
-        
-        if ( m_autoTower && 
-            (m_midBrakeBeam.get() || m_highBrakeBeam.get()) && 
-            (getColorSensor() == m_allianceColor || getColorSensor() == Color.None || m_allianceColor == Color.None) 
-        ) {
-            setSpeed(TowerConstants.agitatiorSpeed);
-        } else {
-            setSpeed(0);
-        }
+
 
     }
 
@@ -97,14 +88,11 @@ public class TowerSubsystem extends SubsystemBase {
 
     /**
      * Sets the voltage of the motor
+     * 
      * @param voltage
      */
     public void setVoltage(double voltage) {
         m_agitatior.setVoltage(voltage);
-    }
-
-    public void AutoTower(boolean enabled) {
-        m_autoTower = enabled;
     }
 
     public Color getColorSensor() {
@@ -113,5 +101,17 @@ public class TowerSubsystem extends SubsystemBase {
 
     public void setAllianceColor(Color allianceColor) {
         m_allianceColor = allianceColor;
+    }
+
+    public Color getAllianceColor() {
+        return m_allianceColor;
+    }
+
+    public boolean getMidBrakeBeam() {
+        return m_midBrakeBeam.get();
+    }
+
+    public boolean getHighBrakeBeam() {
+        return m_highBrakeBeam.get();
     }
 }
