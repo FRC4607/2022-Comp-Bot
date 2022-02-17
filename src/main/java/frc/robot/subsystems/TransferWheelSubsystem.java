@@ -37,7 +37,7 @@ public class TransferWheelSubsystem extends SubsystemBase {
         m_transferWheel.setInverted(true);
         m_transferWheel.setIdleMode(IdleMode.kBrake);
 
-        SmartDashboard.putNumber("Transfer Wheel Speed", 0.8);
+        // SmartDashboard.putNumber("Transfer Wheel Speed", 0.8);
     }
 
     @Override

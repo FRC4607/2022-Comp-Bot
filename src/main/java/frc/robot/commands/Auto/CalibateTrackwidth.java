@@ -32,11 +32,13 @@ public class CalibateTrackwidth extends CommandBase {
     public void end(boolean interrupted) {
         m_endingRoatition = m_drivetrainSubsystem.getGyroscopeReadingContinuous();
 
-        double AverageDistanceTravled = (m_drivetrainSubsystem.getLeftEncoderPosition() + m_drivetrainSubsystem.getRightEncoderPosition()) / 2;
+        double AverageDistanceTravled = (m_drivetrainSubsystem.getLeftEncoderPosition() - m_drivetrainSubsystem.getRightEncoderPosition()) / 2;
         double rotations = (m_endingRoatition - m_startingRotation)/360;
         double trackWidth = AverageDistanceTravled / (rotations * Math.PI);
 
         SmartDashboard.putNumber("Track Width", trackWidth);
+        // SmartDashboard.putNumber("Number of Rotations", rotations);
+        // SmartDashboard.putNumber("Average Distave Travled", AverageDistanceTravled);
     }
 
 }

@@ -1,16 +1,14 @@
-package frc.robot.commands;
+package frc.robot.commands.Auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Paths;
-import frc.robot.commands.Auto.FollowPath;
-import frc.robot.commands.Auto.RunAutoTower;
-import frc.robot.commands.Auto.RunIntake;
-import frc.robot.commands.Auto.SetIntake;
-import frc.robot.commands.Auto.SpinFlywheel;
+import frc.robot.commands.RunFlywheel;
+import frc.robot.commands.RunTransferWheel;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -46,6 +44,7 @@ public class Auton_FourBall extends CommandBase {
         m_commandScheduler.schedule(new SequentialCommandGroup(
             // Extend the intake
             new SetIntake(m_intakeSubsystem, false),
+            new InstantCommand(() -> {m_drivetrainSubsystem.setBrakeMode(true);}),
             // Go to ball 2 and intake
             new ParallelDeadlineGroup(
                 new FollowPath(m_drivetrainSubsystem, Paths.twoBall0),
@@ -72,7 +71,7 @@ public class Auton_FourBall extends CommandBase {
             new ParallelCommandGroup(
                 new FollowPath(m_drivetrainSubsystem, Paths.fourBall3),
                 new SpinFlywheel(m_flywheelSubsystem),
-                new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)
+                new RunIntake(m_intakeSubsystem, false).withTimeout(0.5)
             ),
             // Shoot ball 3
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
@@ -81,7 +80,8 @@ public class Auton_FourBall extends CommandBase {
             ),
             // Shoot ball 4
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
-            new RunFlywheel(m_flywheelSubsystem).withTimeout(0)
+            new RunFlywheel(m_flywheelSubsystem).withTimeout(0),
+            new InstantCommand(() -> {m_drivetrainSubsystem.setBrakeMode(false);})
             ), new RunAutoTower(m_towerSubsystem));
     }
 

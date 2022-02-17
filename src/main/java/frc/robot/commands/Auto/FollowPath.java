@@ -66,8 +66,8 @@ public class FollowPath extends CommandBase {
         }
 
         State nextState = m_trajectory.sample(curTime);
-        SmartDashboard.putNumber("Target Curature deg/m", Math.toDegrees(nextState.curvatureRadPerMeter));
-        SmartDashboard.putNumber("Target Rotation deg", nextState.poseMeters.getRotation().getDegrees());
+        // SmartDashboard.putNumber("Target Curature deg/m", Math.toDegrees(nextState.curvatureRadPerMeter));
+        // SmartDashboard.putNumber("Target Rotation deg", nextState.poseMeters.getRotation().getDegrees());
 
         // Ramset Controler
         DifferentialDriveWheelSpeeds targetWheelSpeeds = m_drivetrainSubsystem.getRamsetTargetWheelSpeeds(nextState);
@@ -75,8 +75,8 @@ public class FollowPath extends CommandBase {
         double leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
         double rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
 
-        SmartDashboard.putNumber("Left Ramsette Setpoint", leftSpeedSetpoint);
-        SmartDashboard.putNumber("Right Ramsette Setpoint", rightSpeedSetpoint);
+        // SmartDashboard.putNumber("Left Ramsette Setpoint", leftSpeedSetpoint);
+        // SmartDashboard.putNumber("Right Ramsette Setpoint", rightSpeedSetpoint);
 
         // Feed Forward
         double leftFeedforward = m_drivetrainSubsystem.Feedforward().calculate(
@@ -85,21 +85,21 @@ public class FollowPath extends CommandBase {
         double rightFeedforward = m_drivetrainSubsystem.Feedforward().calculate(
                 rightSpeedSetpoint, (rightSpeedSetpoint - m_prevSpeeds.rightMetersPerSecond) / dt);
 
-        SmartDashboard.putNumber("Left FF Setpoint", leftFeedforward);
-        SmartDashboard.putNumber("Right FF Setpoint", rightFeedforward);
+        // SmartDashboard.putNumber("Left FF Setpoint", leftFeedforward);
+        // SmartDashboard.putNumber("Right FF Setpoint", rightFeedforward);
 
         // PID
         double leftPID = m_drivetrainSubsystem.getLeftPID(leftSpeedSetpoint);
         double rightPID = m_drivetrainSubsystem.getRightPID(rightSpeedSetpoint);
 
-        SmartDashboard.putNumber("Left PID", leftPID);
-        SmartDashboard.putNumber("Right PID", rightPID);
+        // SmartDashboard.putNumber("Left PID", leftPID);
+        // SmartDashboard.putNumber("Right PID", rightPID);
 
         double leftOutput = leftFeedforward + leftPID;
         double rightOutput = rightFeedforward + rightPID;
 
-        SmartDashboard.putNumber("Left Output", leftOutput);
-        SmartDashboard.putNumber("Right Output", rightOutput);
+        // SmartDashboard.putNumber("Left Output", leftOutput);
+        // SmartDashboard.putNumber("Right Output", rightOutput);
 
         m_drivetrainSubsystem.tankDriveVolts(leftOutput, rightOutput);
         m_prevSpeeds = targetWheelSpeeds;

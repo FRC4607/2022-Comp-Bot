@@ -13,9 +13,7 @@
 package frc.robot;
 
 import frc.robot.commands.*;
-import frc.robot.commands.Auto.Auton_ThreeBall;
-import frc.robot.commands.Auto.Auton_TwoBall_A;
-import frc.robot.commands.Auto.Auton_TwoBall_B;
+import frc.robot.commands.Auto.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -62,7 +60,7 @@ public class RobotContainer {
 		// Smartdashboard Subsystems
 
 		// SmartDashboard Buttons
-		SmartDashboard.putData("Run Flywheel", new RunFlywheel(m_flywheelSubsystem));
+		// SmartDashboard.putData("Run Flywheel", new RunFlywheel(m_flywheelSubsystem));
 
 		// Configure the button bindings
 		configureButtonBindings();
@@ -81,6 +79,9 @@ public class RobotContainer {
 				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
 		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
 				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+				
+		m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
+		m_chooser.addOption("Calibate Trackwidth", new CalibateTrackwidth(m_drivetrainSubsystem, false));
 
 		SmartDashboard.putData("Auto Mode", m_chooser);
 	}

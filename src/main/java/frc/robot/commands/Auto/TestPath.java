@@ -1,0 +1,54 @@
+package frc.robot.commands.Auto;
+
+import java.util.List;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.FollowPathConstants;
+import frc.robot.subsystems.DrivetrainSubsystem;
+
+public class TestPath extends CommandBase {
+    private DrivetrainSubsystem m_drivetrainSubsystem;
+
+    public TestPath(DrivetrainSubsystem drivetrainSubsystem) {
+        m_drivetrainSubsystem = drivetrainSubsystem;
+    }
+
+    @Override
+    public void initialize() {
+        Trajectory SCurve = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                List.of(
+                        new Translation2d(Units.feetToMeters(3), Units.feetToMeters(3)),
+                        new Translation2d(Units.feetToMeters(3), Units.feetToMeters(3))),
+                new Pose2d(Units.feetToMeters(9), Units.feetToMeters(9), Rotation2d.fromDegrees(0)),
+                FollowPathConstants.trajectoryConfig.setReversed(false));
+
+        Trajectory Strate = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0, 0, Rotation2d.fromDegrees(0)), List.of(),
+                new Pose2d(Units.feetToMeters(9), Units.feetToMeters(0), Rotation2d.fromDegrees(0)),
+                FollowPathConstants.trajectoryConfig.setReversed(false));
+
+        /* Trajectory Turn = TrajectoryGenerator.generateTrajectory(
+            List.of(
+                    new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                    new Pose2d(0, 0, Rotation2d.fromDegrees(180)),
+                    new Pose2d(Units.feetToMeters(0), Units.feetToMeters(0), Rotation2d.fromDegrees(360))
+                ),
+                FollowPathConstants.trajectoryConfig.setReversed(false));
+*/
+        m_drivetrainSubsystem.setBrakeMode(true);
+        CommandScheduler.getInstance().schedule(new FollowPath(m_drivetrainSubsystem, SCurve));
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        m_drivetrainSubsystem.setBrakeMode(false);
+    }
+}
