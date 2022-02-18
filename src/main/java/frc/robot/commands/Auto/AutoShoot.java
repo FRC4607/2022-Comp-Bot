@@ -38,7 +38,7 @@ public class AutoShoot extends CommandBase {
     public void execute() {
         switch (state) {
             case ACQUIRE_BALL:
-                if (m_towerSubsystem.getHighBeam()) {
+                if (m_towerSubsystem.getHighBrakeBeam()) {
                     state = AUTOSHOOT_STATE.WAIT_FOR_FLYWHEEL;
                     break;
                 }
@@ -50,7 +50,7 @@ public class AutoShoot extends CommandBase {
                 }
                 m_flywheelSubsystem.setRPM(FlywheelConstants.flywheeelRPM);
             case SHOOT:
-                if (m_towerSubsystem.getHighBeam()) {
+                if (m_towerSubsystem.getHighBrakeBeam()) {
                     checkForBalls();
                     break;
                 }
@@ -62,8 +62,8 @@ public class AutoShoot extends CommandBase {
 
     private void checkForBalls() {
         // True if there is a ball in that spot.
-        boolean high = !m_towerSubsystem.getHighBeam();
-        boolean low = !m_towerSubsystem.getMidBeam();
+        boolean high = !m_towerSubsystem.getHighBrakeBeam();
+        boolean low = !m_towerSubsystem.getMidBrakeBeam();
 
         if (high) {
             state = AUTOSHOOT_STATE.WAIT_FOR_FLYWHEEL;
