@@ -24,8 +24,8 @@ public class RunTransferWheel extends CommandBase {
     private final TransferWheelSubsystem m_towerSubsystem;
     private boolean m_reverse;
 
-    public RunTransferWheel(TransferWheelSubsystem subsystem, boolean reverse) {
-        m_towerSubsystem = subsystem;
+    public RunTransferWheel(TransferWheelSubsystem transferWheelSubsystem, boolean reverse) {
+        m_towerSubsystem = transferWheelSubsystem;
         addRequirements(m_towerSubsystem);
         
         m_reverse = reverse;

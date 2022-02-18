@@ -99,7 +99,7 @@ public class FlywheelSubsystem extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Flywheel RPM", m_flywheelMotor1.getSelectedSensorVelocity() / 2048 * 600);
-        SmartDashboard.putNumber("Flywheel Error", m_flywheelMotor1.getClosedLoopError());
+        // SmartDashboard.putNumber("Flywheel Error", m_flywheelMotor1.getClosedLoopError());
 
         speeds.remove(0);
         speeds.add( m_flywheelMotor1.getSelectedSensorVelocity() );

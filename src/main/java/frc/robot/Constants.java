@@ -50,16 +50,16 @@ public class Constants {
         public static final int pigeonID = 6;
         public static final int countsPerRevolution = 4096;
         public static final double sensorCoefficient = (Math.PI * Units.inchesToMeters(6)) / countsPerRevolution; // 0.478777
-        public static final double ks_Volts = 0.58644; // [0.58644, 0.5908]
-        public static final double kv_VoltSecondsPerMeters = 2.5377; // [2.5331, 2.5377]
-        public static final double ka_VoltSecondsSquaredPerMeters = 0.25145; // [0.20049, 0.25145]
-        public static final double trackWidth_Meters = Units.inchesToMeters(28); // Theoretical
+        public static final double ks_Volts = 0.65852; // [0.58644, 0.5908, 0.65852]
+        public static final double kv_VoltSecondsPerMeters = 2.4524; // [2.5331, 2.5377, 2.4524]
+        public static final double ka_VoltSecondsSquaredPerMeters = 0.42348; // [0.20049, 0.25145, 0.42348]
+        public static final double trackWidth_Meters = Units.inchesToMeters(24.86193); // Theoretical
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
             trackWidth_Meters);
             public static final double maxVoltage = 10;
             
             // PID drive
-            public static final double kPDriveVel = 2.9445 * 1.2;
+            public static final double kPDriveVel = 2.9025 * 0.8; // 2.9445, 2.9025
             
             public static final double maxSpeed = 1;
             public static final double maxTurning = 0.9;
@@ -122,14 +122,14 @@ public class Constants {
         //public static final double flywheelKf = 0.05103092783505154639175257731959;
         public static final double flywheelKf = 0.046775;
 
-        public static final int flywheeelRPM = 3800;
+        public static final int flywheeelRPM = 3900;
 
         public static final float flywheelMaxError = 200; // 50
     }
     
     public static final class FollowPathConstants {
         public static final double kMaxSpeed_MetersPerSecond = 3;
-        public static final double kMaxAcceleration_MetersPerSecondSquared = 1.5;
+        public static final double kMaxAcceleration_MetersPerSecondSquared = 3;
 
         public static final DifferentialDriveVoltageConstraint voltageConstraint = new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(DriveConstants.ks_Volts, DriveConstants.kv_VoltSecondsPerMeters,

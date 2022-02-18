@@ -50,6 +50,8 @@ public class Robot extends TimedRobot {
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
         
         inst.startClientTeam(4607);
+
+        Paths.generateTrajectories();
     }
 
     /**
