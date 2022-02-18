@@ -113,4 +113,12 @@ public class TowerSubsystem extends SubsystemBase {
     public void setAllianceColor(Color allianceColor) {
         m_allianceColor = allianceColor;
     }
+
+    public boolean getMidBeam() {
+        return m_midBrakeBeam.get();
+    }
+
+    public boolean getHighBeam() {
+        return m_highBrakeBeam.get();
+    }
 }
