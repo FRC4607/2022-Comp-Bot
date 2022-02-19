@@ -80,8 +80,8 @@ public class RobotContainer {
 		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
 				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
 				
-		m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
-		m_chooser.addOption("Calibate Trackwidth", new CalibateTrackwidth(m_drivetrainSubsystem, false));
+		// m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
+		// m_chooser.addOption("Calibate Trackwidth", new CalibateTrackwidth(m_drivetrainSubsystem, false));
 
 		SmartDashboard.putData("Auto Mode", m_chooser);
 	}
@@ -114,10 +114,10 @@ public class RobotContainer {
 
 		driver_aButton.whenPressed(new ToggleIntake(m_intakeSubsystem));
 
-		operator_aButton.whileHeld(new ParallelCommandGroup(
-			new RunTransferWheel(m_transferWheelSubsystem, true),
-			new RunTower(m_towerSubsystem, true)
-		));
+		// operator_aButton.whileHeld(new ParallelCommandGroup(
+		// 	new RunTransferWheel(m_transferWheelSubsystem, true),
+		// 	new RunTower(m_towerSubsystem, true)
+		// ));
 		operator_bButton.whileHeld(new RunTransferWheel(m_transferWheelSubsystem, false));
 		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem));
 	}

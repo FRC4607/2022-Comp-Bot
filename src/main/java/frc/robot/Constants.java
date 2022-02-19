@@ -83,7 +83,7 @@ public class Constants {
 
     public static final class TowerConstants {
         public static final int agitatiorID = 9;
-        public static final double agitatiorSpeed = 1;
+        public static final double agitatiorSpeed = 0.5;
 
         public static final int midBrakeBeamID = 0;
         public static final int highBrakeBeamID = 1;
