@@ -169,5 +169,6 @@ public class Constants {
         public static final double maxRoatation = 90;
         public static final double minRoatation = -45;
     } 
-
+    public static final int pnumaticHub = 14;
+    public static final int PDH = 13;
 }

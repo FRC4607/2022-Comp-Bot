@@ -42,7 +42,7 @@ public class RobotContainer {
 	public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
 	public final TransferWheelSubsystem m_transferWheelSubsystem = new TransferWheelSubsystem();
 	public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
-	public final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+	// public final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
 
 	// Alliance Color
@@ -122,7 +122,7 @@ public class RobotContainer {
 			new RunTransferWheel(m_transferWheelSubsystem, true),
 			new RunTower(m_towerSubsystem, true)
 		));
-		operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem));
+		// operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem));
 		operator_bButton.whileHeld(new RunTransferWheel(m_transferWheelSubsystem, false));
 		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem));
 	}
