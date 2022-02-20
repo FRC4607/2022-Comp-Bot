@@ -40,14 +40,14 @@ public class Auton_ThreeBall extends CommandBase {
         m_commandScheduler.schedule(new SequentialCommandGroup(
             new SetIntake(m_intakeSubsystem, false),
             new ParallelDeadlineGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.twoBall0),
+                new FollowPath(m_drivetrainSubsystem, Paths.Start_Ball2),
                 new RunIntake(m_intakeSubsystem, false)
             ),
             new ParallelCommandGroup(
                 new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)
             ),
             new ParallelCommandGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.twoBall1_A),
+                new FollowPath(m_drivetrainSubsystem, Paths.Ball2_Hub),
                 new SpinFlywheel(m_flywheelSubsystem)
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
@@ -56,12 +56,12 @@ public class Auton_ThreeBall extends CommandBase {
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             new ParallelDeadlineGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.threeBall2),
+                new FollowPath(m_drivetrainSubsystem, Paths.Hub_Ball3),
                 new RunFlywheel(m_flywheelSubsystem).withTimeout(0.1),
                 new RunIntake(m_intakeSubsystem, false)
             ),
             new ParallelCommandGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.threeBall3),
+                new FollowPath(m_drivetrainSubsystem, Paths.Ball3_Hub),
                 new SpinFlywheel(m_flywheelSubsystem)
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),

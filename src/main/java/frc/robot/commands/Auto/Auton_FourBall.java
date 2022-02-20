@@ -47,12 +47,12 @@ public class Auton_FourBall extends CommandBase {
             new InstantCommand(() -> {m_drivetrainSubsystem.setBrakeMode(true);}),
             // Go to ball 2 and intake
             new ParallelDeadlineGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.twoBall0),
+                new FollowPath(m_drivetrainSubsystem, Paths.Start_Ball2),
                 new RunIntake(m_intakeSubsystem, false)
             ),
             // Go to hub and spin flywheel to speed
             new ParallelCommandGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.twoBall1_A),
+                new FollowPath(m_drivetrainSubsystem, Paths.Ball2_Hub),
                 new SpinFlywheel(m_flywheelSubsystem)
             ),
             // Shoot ball 1
@@ -63,13 +63,13 @@ public class Auton_FourBall extends CommandBase {
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
             // Go to ball 3, and ball 4, stop the flywheel, Intake ball 3, and move ball 3 into position
             new ParallelDeadlineGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.fourBall2),
+                new FollowPath(m_drivetrainSubsystem, Paths.Hub_Ball3_Ball4),
                 new RunFlywheel(m_flywheelSubsystem).withTimeout(0),
                 new RunIntake(m_intakeSubsystem, false)
             ),
             // Return to hub, Get flywheel up to speed, Run intake and aditator to get ball 4 into position
             new ParallelCommandGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.fourBall3),
+                new FollowPath(m_drivetrainSubsystem, Paths.Ball4_Hub),
                 new SpinFlywheel(m_flywheelSubsystem),
                 new RunIntake(m_intakeSubsystem, false).withTimeout(0.5)
             ),

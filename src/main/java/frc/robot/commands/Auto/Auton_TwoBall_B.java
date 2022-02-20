@@ -39,14 +39,14 @@ public class Auton_TwoBall_B extends CommandBase {
         m_commandScheduler.schedule(new SequentialCommandGroup(
             new SetIntake(m_intakeSubsystem, false),
             new ParallelDeadlineGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.twoBall0),
+                new FollowPath(m_drivetrainSubsystem, Paths.Start_Ball2),
                 new RunIntake(m_intakeSubsystem, false)
             ),
             new ParallelCommandGroup(
                 new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)
             ),
             new ParallelCommandGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.twoBall1_B),
+                new FollowPath(m_drivetrainSubsystem, Paths.Ball2B_Hub),
                 new SpinFlywheel(m_flywheelSubsystem)
             ),
             new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
