@@ -144,8 +144,8 @@ public class Constants {
     }
 
     public static final class ClimberConstants {
-        public static final int motor1ID = 0;
-        public static final int motor2ID = 0;
+        public static final int motor1ID = 17;
+        public static final int motor2ID = 16;
 
         public static final double kP = 0;
         public static final double kI = 0;
@@ -163,6 +163,11 @@ public class Constants {
         public static final int clutchReverseChannel = 1;
         public static final double maxHight = 1;
         public static final double rotationToExtend = 0;
+        public static final int limitSwitchID = 2;
+        public static final double conversenFactor_SensorUnitsPerInch = 8192;
+
+        public static final double maxRoatation = 90;
+        public static final double minRoatation = -45;
     } 
 
 }
