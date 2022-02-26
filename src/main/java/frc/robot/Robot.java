@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
     private RobotContainer m_robotContainer;
-    private Compressor m_compresor;
+    //private Compressor m_compresor;
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
         inst.startClientTeam(4607);
         Paths.generateTrajectories();
 
-        m_compresor = new Compressor(Constants.pnumaticHub, PneumaticsModuleType.REVPH);
+        //m_compresor = new Compressor(Constants.pnumaticHub, PneumaticsModuleType.REVPH);
     }
 
     /**
@@ -84,7 +84,7 @@ public class Robot extends TimedRobot {
 		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
 		entry.setBoolean(false);
 
-        Shuffleboard.stopRecording();
+        // Shuffleboard.stopRecording();
     }
 
     @Override
@@ -129,9 +129,9 @@ public class Robot extends TimedRobot {
 		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
 		entry.setBoolean(true);
 
-        Shuffleboard.startRecording();
+        // Shuffleboard.startRecording();
 
-        m_compresor.enableDigital();
+        //m_compresor.enableDigital();
     }
 
     /**
@@ -139,7 +139,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        SmartDashboard.putNumber("Compresor Curent", m_compresor.getCurrent());
+        //SmartDashboard.putNumber("Compresor Curent", m_compresor.getCurrent());
     }
 
     @Override

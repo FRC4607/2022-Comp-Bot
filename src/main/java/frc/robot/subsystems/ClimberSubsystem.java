@@ -4,11 +4,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 
@@ -24,9 +26,11 @@ public class ClimberSubsystem extends SubsystemBase {
 
     private DigitalInput m_limitSwitch;
 
-    public ClimberState climberState;
-    public ClutchState clutchState;
-    public PistonState pistonState;
+    public ClimberState climberState = ClimberState.Retracted;
+    public ClutchState clutchState = ClutchState.Engaged;
+    public PistonState pistonState = PistonState.Extended;
+
+    public LimitSwitchState limitSwitchState;
 
     public enum ClimberState {
         Retracted,
@@ -45,13 +49,23 @@ public class ClimberSubsystem extends SubsystemBase {
         Retracted
     }
 
+    public enum LimitSwitchState {
+        min,
+        max,
+        changing
+    }
+
     public ClimberSubsystem() {
         m_motor1 = new CANSparkMax(ClimberConstants.motor1ID, MotorType.kBrushless);
         m_motor2 = new CANSparkMax(ClimberConstants.motor2ID, MotorType.kBrushless);
 
         m_motor2.follow(m_motor1);
-        m_encoder = m_motor1.getEncoder();
-        m_encoder.setPositionConversionFactor(ClimberConstants.conversenFactor_SensorUnitsPerInch);
+
+        m_motor1.setIdleMode(IdleMode.kBrake);
+        m_motor2.setIdleMode(IdleMode.kBrake);
+
+        // m_encoder = m_motor1.getEncoder();
+        // m_encoder.setPositionConversionFactor(ClimberConstants.conversenFactor_SensorUnitsPerInch);
 
         m_PIDController = m_motor1.getPIDController();
         m_PIDController.setFeedbackDevice(m_motor1.getEncoder());
@@ -73,7 +87,7 @@ public class ClimberSubsystem extends SubsystemBase {
         clutchState = ClutchState.Engaged;
 
         m_limitSwitch = new DigitalInput(ClimberConstants.limitSwitchID);
-
+        limitSwitchState = LimitSwitchState.changing;
     }
 
     @Override
@@ -87,18 +101,24 @@ public class ClimberSubsystem extends SubsystemBase {
                 }
                 break;
             case Extending:
-                m_PIDController.setReference(ClimberConstants.maxHight, ControlType.kPosition);
-                if (m_encoder.getPosition() >= ClimberConstants.maxHight) {
+                m_PIDController.setReference(ClimberConstants.maxHight_Rotations, ControlType.kPosition);
+                if (m_encoder.getPosition() >= ClimberConstants.maxHight_Rotations) {
                     climberState = ClimberState.Extended;
                 }
                 break;
             default:
                 break;
         }
+        // SmartDashboard.putNumber("Climber Curent", m_motor1.getOutputCurrent());
     }
 
     public void extendClimber(boolean extended) {
         climberState = extended ? ClimberState.Extending : ClimberState.Retracting;
+    }
+
+    public void setClimber(double speed) {
+        m_motor1.set(speed);
+        m_motor2.set(speed);
     }
 
     public void setClutch(boolean engaged) {
@@ -109,6 +129,14 @@ public class ClimberSubsystem extends SubsystemBase {
     public void setPistion(boolean extended) {
         m_pistion.set(extended ? Value.kForward : Value.kReverse);
         pistonState = extended ? PistonState.Extended : PistonState.Retracted;
+    }
+
+    public void togglePiston() {
+        m_pistion.toggle();
+    }
+
+    public void toggleClutch() {
+        m_clutch.toggle();
     }
 
     public boolean atPosition() {

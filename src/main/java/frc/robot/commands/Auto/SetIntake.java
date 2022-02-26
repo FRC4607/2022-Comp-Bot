@@ -11,6 +11,7 @@ public class SetIntake extends CommandBase {
     public SetIntake(IntakeSubsystem intakeSubsystem, boolean extended) {
         m_intakeSubsytem = intakeSubsystem;
         m_extended = extended;
+        addRequirements(m_intakeSubsytem);
     }
 
     @Override

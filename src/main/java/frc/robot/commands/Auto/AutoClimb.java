@@ -23,7 +23,7 @@ public class AutoClimb extends CommandBase {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_climberSubsystem = climberSubsystem;
 
-        BooleanSupplier ValidRotation = () -> {return (ClimberConstants.minRoatation <= m_drivetrainSubsystem.getYaw() && m_drivetrainSubsystem.getYaw() <= ClimberConstants.maxRoatation); };
+        BooleanSupplier ValidRotation = () -> {return (ClimberConstants.minRoatation <= /*m_drivetrainSubsystem.getYaw()*/ 0 && /*m_drivetrainSubsystem.getYaw()*/0 <= ClimberConstants.maxRoatation); };
         m_commandScheduler.schedule(new SequentialCommandGroup(
             new ExtendClimberPistion(m_climberSubsystem, true),
             new WaitUntilCommand(ValidRotation),

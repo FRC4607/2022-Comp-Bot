@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -42,7 +42,7 @@ public class RobotContainer {
 	public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
 	public final TransferWheelSubsystem m_transferWheelSubsystem = new TransferWheelSubsystem();
 	public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
-	// public final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+	public final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
 
 	// Alliance Color
@@ -70,6 +70,7 @@ public class RobotContainer {
 		// Configure default commands
 		m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
 		m_intakeSubsystem.setDefaultCommand(new DriverIntakeTower(m_intakeSubsystem, m_towerSubsystem, driver));
+		m_climberSubsystem.setDefaultCommand(new ClimberTrigers(m_climberSubsystem, operator));
 		// m_flywheelSubsystem.setDefaultCommand(new
 		// RunFlywheelJoystick(m_flywheelSubsystem, operator));
 
@@ -79,8 +80,8 @@ public class RobotContainer {
 				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
 		m_chooser.addOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem,
 				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		// m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
+		// 		m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
 				
 		m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
 		m_chooser.addOption("Calibate Trackwidth", new CalibateTrackwidth(m_drivetrainSubsystem, false));
@@ -118,13 +119,10 @@ public class RobotContainer {
 
 		driver_aButton.whenPressed(new ToggleIntake(m_intakeSubsystem));
 
-		operator_aButton.whileHeld(new ParallelCommandGroup(
-			new RunTransferWheel(m_transferWheelSubsystem, true),
-			new RunTower(m_towerSubsystem, true)
-		));
-		// operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem));
+		operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem));
 		operator_bButton.whileHeld(new RunTransferWheel(m_transferWheelSubsystem, false));
-		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem));
+		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem, m_transferWheelSubsystem));
+		operator_yButton.whenPressed(new ToggelClutch(m_climberSubsystem));
 	}
 
 	public XboxController getDriver() {

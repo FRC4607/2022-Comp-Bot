@@ -8,9 +8,10 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -26,6 +27,7 @@ import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -33,8 +35,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  *
  */
 public class DrivetrainSubsystem extends SubsystemBase {
-    // private CANCoder m_leftEncoder;
-    // private CANCoder m_rightEncoder;
+    private CANCoder m_leftEncoder;
+    private CANCoder m_rightEncoder;
     private WPI_TalonFX m_leftMotor1;
     private WPI_TalonFX m_leftMotor2;
     private WPI_TalonFX m_rightMotor1;
@@ -42,73 +44,80 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private MotorControllerGroup m_leftDrive;
     private MotorControllerGroup m_rightDrive;
     private DifferentialDrive m_drivetrain;
-    // private final CANCoderConfiguration m_encoderConfig;
+    private final CANCoderConfiguration m_encoderConfig;
     private final TalonFXConfiguration m_motorConfig;
-    private Pigeon2 m_pigeonIMU;
+    // private Pigeon2 m_pigeon2;
+    private PigeonIMU m_pigeonIMU;
     private final SlewRateLimiter m_rateLimiter;
 
     private final DifferentialDriveOdometry m_odometry;
 
+    public final Field2d m_field = new Field2d();
+
     // Motion Planing
-    private final RamseteController m_follower = new RamseteController(
+    public final RamseteController m_ramseteController = new RamseteController(
             DriveConstants.kRamseteB_radSquaredPerMetersSquared, DriveConstants.kRamseteZeta_PerRad);
-    private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.ks_Volts,
+    public final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.ks_Volts,
             DriveConstants.kv_VoltSecondsPerMeters, DriveConstants.ka_VoltSecondsSquaredPerMeters);
-    private final DifferentialDriveKinematics m_kinematics = DriveConstants.kDriveKinematics;
-    private final PIDController m_leftController = new PIDController(DriveConstants.kPDriveVel, 0, 0);
-    private final PIDController m_rightController = new PIDController(DriveConstants.kPDriveVel, 0, 0);
+
+    public final DifferentialDriveKinematics m_kinematics = DriveConstants.kDriveKinematics;
+    public final PIDController m_leftController = new PIDController(DriveConstants.kPDriveVel, 0, 0);
+    public final PIDController m_rightController = new PIDController(DriveConstants.kPDriveVel, 0, 0);
 
     /**
     *
     */
     public DrivetrainSubsystem() {
-        // m_encoderConfig = new CANCoderConfiguration();
-        // m_encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-        // m_encoderConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
-        // m_encoderConfig.sensorCoefficient = DriveConstants.sensorCoefficient;
-        // m_encoderConfig.unitString = "meters";
+        m_encoderConfig = new CANCoderConfiguration();
+        m_encoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
+        m_encoderConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
+        m_encoderConfig.sensorCoefficient = DriveConstants.sensorCoefficient;
+        m_encoderConfig.unitString = "meters";
 
-        // m_leftEncoder = new CANCoder(DriveConstants.leftEncoderID);
-        // m_leftEncoder.configFactoryDefault();
-        // m_leftEncoder.configAllSettings(m_encoderConfig);
-        // m_leftEncoder.configSensorDirection(true);
+        m_leftEncoder = new CANCoder(DriveConstants.leftEncoderID);
+        m_leftEncoder.configFactoryDefault();
+        m_leftEncoder.configAllSettings(m_encoderConfig);
+        m_leftEncoder.configSensorDirection(true);
 
-        // m_rightEncoder = new CANCoder(DriveConstants.rightEncoderID);
-        // m_rightEncoder.configFactoryDefault();
-        // m_rightEncoder.configAllSettings(m_encoderConfig);
+        m_rightEncoder = new CANCoder(DriveConstants.rightEncoderID);
+        m_rightEncoder.configFactoryDefault();
+        m_rightEncoder.configAllSettings(m_encoderConfig);
 
+        // Motor config
         m_motorConfig = new TalonFXConfiguration();
         m_motorConfig.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, 35, 40, 0.2);
         // m_motorConfig.statorCurrLimit = new StatorCurrentLimitConfiguration(true, 20,
         // 40, 0.1);
         m_motorConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-        // m_motorConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
-        // m_motorConfig.remoteFilter0.remoteSensorDeviceID = m_leftEncoder.getDeviceID();
-        // m_motorConfig.remoteFilter1.remoteSensorSource = RemoteSensorSource.CANCoder;
-        // m_motorConfig.remoteFilter1.remoteSensorDeviceID = m_rightEncoder.getDeviceID();
+        m_motorConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
+        m_motorConfig.remoteFilter0.remoteSensorDeviceID = m_leftEncoder.getDeviceID();
+        m_motorConfig.remoteFilter1.remoteSensorSource = RemoteSensorSource.CANCoder;
+        m_motorConfig.remoteFilter1.remoteSensorDeviceID = m_rightEncoder.getDeviceID();
 
         m_leftMotor1 = new WPI_TalonFX(DriveConstants.leftMotor1ID);
         m_leftMotor1.configFactoryDefault();
         m_leftMotor1.configAllSettings(m_motorConfig);
-        // m_leftMotor1.setNeutralMode(NeutralMode.Brake);
+        //m_leftMotor1.setNeutralMode(NeutralMode.Brake);
         m_leftMotor2 = new WPI_TalonFX(DriveConstants.leftMotor2ID);
         m_leftMotor2.configFactoryDefault();
         m_leftMotor2.configAllSettings(m_motorConfig);
-        // m_leftMotor2.setNeutralMode(NeutralMode.Brake);
+        //m_leftMotor2.setNeutralMode(NeutralMode.Brake);
 
         m_leftDrive = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
         addChild("LeftDrive", m_leftDrive);
 
+        // Right motors
         m_rightMotor1 = new WPI_TalonFX(DriveConstants.rightMotor1ID);
         m_rightMotor1.configFactoryDefault();
         m_rightMotor1.configAllSettings(m_motorConfig);
         m_rightMotor1.setInverted(true);
-        // m_rightMotor1.setNeutralMode(NeutralMode.Brake);
+        //m_rightMotor1.setNeutralMode(NeutralMode.Brake);
         m_rightMotor2 = new WPI_TalonFX(DriveConstants.rightMotor2ID);
         m_rightMotor2.configFactoryDefault();
         m_rightMotor2.configAllSettings(m_motorConfig);
         m_rightMotor2.setInverted(true);
-        // m_rightMotor2.setNeutralMode(NeutralMode.Brake);
+        //m_rightMotor2.follow(m_rightMotor1);
+        //m_rightMotor2.setNeutralMode(NeutralMode.Brake);
 
         m_rightDrive = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
         addChild("RightDrive", m_rightDrive);
@@ -121,25 +130,32 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_drivetrain.setExpiration(0.1);
         m_drivetrain.setMaxOutput(1.0);
 
-        // ADISIMU = new ADIS16470_IMU();
-        m_pigeonIMU = new Pigeon2(DriveConstants.pigeonID);
+        // Set up encoder for left side
+        // Pidion IMU
+        // m_pigeon2 = new Pigeon2(DriveConstants.pigeonID);
+        // m_pigeon2.configFactoryDefault();
+        // m_pigeon2.configMountPose(-90, -90, 0);
+        // m_pigeon2.setYaw(0);
 
-        m_pigeonIMU.configFactoryDefault();
-        m_pigeonIMU.configMountPose(-90, -90, 0);
-        m_pigeonIMU.setYaw(0);
+        m_pigeonIMU = new PigeonIMU(DriveConstants.pigeonID);
+        m_pigeonIMU.setFusedHeading(0);
 
         m_odometry = new DifferentialDriveOdometry(
                 new Rotation2d(getGyroscopeReadingRad()));
 
         m_rateLimiter = new SlewRateLimiter(DriveConstants.maxUnitsPerSecond);
 
-        SmartDashboard.putNumber("Max drive speed", DriveConstants.maxSpeed);
-        SmartDashboard.putNumber("Max drive turning", DriveConstants.maxTurning);
+        SmartDashboard.putData("Field", m_field);
+
+        // SmartDashboard.putNumber("Max drive speed", DriveConstants.maxSpeed);
+        // SmartDashboard.putNumber("Max drive turning", DriveConstants.maxTurning);
     }
 
     @Override
     public void periodic() {
-        // m_odometry.update(getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
+        m_odometry.update(getRotation2d(), getLeftEncoderPosition(), getRightEncoderPosition());
+        m_field.setRobotPose(m_odometry.getPoseMeters());
+
         // SmartDashboard.putNumber("Front Left Voltage",
         // m_leftMotor1.getMotorOutputVoltage());
         // SmartDashboard.putNumber("Back Left Voltage",
@@ -148,8 +164,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // m_rightMotor1.getMotorOutputVoltage());
         // SmartDashboard.putNumber("Back Right Voltage",
         // m_rightMotor2.getMotorOutputVoltage());
-        // SmartDashboard.putNumber("Left Encoder", m_leftEncoder.getPosition());
-        // SmartDashboard.putNumber("Right Encoder", m_rightEncoder.getPosition());
+        SmartDashboard.putNumber("Left Encoder", getLeftEncoderPosition());
+        SmartDashboard.putNumber("Right Encoder", getRightEncoderPosition());
+
+        SmartDashboard.putNumber("Gyroscrope", getGyroscopeReadingContinuous());
     }
 
     @Override
@@ -220,6 +238,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         leftVolts = Math.max(Math.min(leftVolts, 12), -12);
         rightVolts = Math.max(Math.min(rightVolts, 12), -12);
+        SmartDashboard.putNumber("Left Volts", leftVolts);
+        SmartDashboard.putNumber("Right Volts", rightVolts);
         m_leftDrive.setVoltage(leftVolts);
         m_rightDrive.setVoltage(rightVolts);
         m_drivetrain.feed();
@@ -233,7 +253,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @return The position of the right side of the drivetrain in meters.
      */
     public double getLeftEncoderPosition() {
-        return 0; // m_leftEncoder.getPosition();
+        return m_leftEncoder.getPosition();
+        // return (m_leftMotor1.getSelectedSensorPosition() + m_leftMotor2.getSelectedSensorPosition()) * 0.5 * DriveConstants.MeterPerFalconCount;
     }
 
     /**
@@ -242,7 +263,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @return The position of the right side of the drivetrain in meters.
      */
     public double getRightEncoderPosition() {
-        return 0;// m_rightEncoder.getPosition();
+        return m_rightEncoder.getPosition();
+        // return (m_rightMotor1.getSelectedSensorPosition() + m_rightMotor2.getSelectedSensorPosition()) * 0.5 * DriveConstants.MeterPerFalconCount;
     }
 
     /**
@@ -251,7 +273,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param position The position of the left side of the drivetrain in meters.
      */
     public void setLeftEncoderPostion(double position) {
-        // m_leftEncoder.setPosition(position);
+        m_leftEncoder.setPosition(position);
+        // m_leftMotor1.setSelectedSensorPosition(position / DriveConstants.MeterPerFalconCount);
+        // m_leftMotor2.setSelectedSensorPosition(position / DriveConstants.MeterPerFalconCount);
     }
 
     /**
@@ -260,7 +284,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param position The position of the right side of the drivetrain in meters.
      */
     public void setRightEncoderPostion(double position) {
-        // m_rightEncoder.setPosition(position);
+        m_rightEncoder.setPosition(position);
+        // m_rightMotor1.setSelectedSensorPosition(position / DriveConstants.MeterPerFalconCount);
+        // m_rightMotor2.setSelectedSensorPosition(position / DriveConstants.MeterPerFalconCount);
     }
 
     /**
@@ -269,8 +295,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param position The position of the two sides of the drivetrain in meters.
      */
     public void setEncoderPostion(double position) {
-        // m_leftEncoder.setPosition(position);
-        // m_rightEncoder.setPosition(position);
+        m_leftEncoder.setPosition(position);
+        m_rightEncoder.setPosition(position);
+        // setLeftEncoderPostion(position);
+        // setRightEncoderPostion(position);
     }
 
     /**
@@ -284,14 +312,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * Return the Velocity of the left Encoder
      */
     public double getLeftVelocity() {
-        return 0; // m_leftEncoder.getVelocity();
+        return m_leftEncoder.getVelocity();
+        // return (m_leftMotor1.getSelectedSensorVelocity() + m_leftMotor2.getSelectedSensorVelocity()) * 5
+        //         * DriveConstants.MeterPerFalconCount;
     }
 
     /**
      * Return the Velocity of the right Encoder
      */
     public double getRightVelocity() {
-        return 0; // m_rightEncoder.getVelocity();
+        return m_rightEncoder.getVelocity();
+        // return (m_rightMotor1.getSelectedSensorVelocity() + m_rightMotor2.getSelectedSensorVelocity()) * 5
+        //         * DriveConstants.MeterPerFalconCount;
     }
 
     // Gyroscope
@@ -326,59 +358,64 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @return The rotation of the robot in degrees.
      */
     public double getGyroscopeReadingContinuous(boolean ccwPositive) {
+        // if (ccwPositive) {
+        //     return m_pigeon2.getYaw();
+        // } else {
+        //     return -m_pigeon2.getYaw();
+        // }
         if (ccwPositive) {
-            return m_pigeonIMU.getYaw();
+            return m_pigeonIMU.getFusedHeading();
         } else {
-            return -m_pigeonIMU.getYaw();
-        }
-
-    }
-
-    /**
-     * Returns the robot's heading, with a range of [-180, 180], with
-     * counterclockwise being positive.
-     * 
-     * @return The rotation of the robot in degrees, with counterclockwise rotations
-     *         increasing this value.
-     */
-    public double getGyroscopeReading() {
-        return getGyroscopeReading(true);
-    }
-
-    /**
-     * Returns the robot's heading, with a range of [-180, 180].
-     * 
-     * @param ccwPositive Whether the reading should be returned treating
-     *                    counterclockwise as positive or negative, with true
-     *                    meaning ccw is positive.
-     * @return The rotation of the robot in degrees.
-     */
-    public double getGyroscopeReading(boolean ccwPositive) {
-        double continuousHeading = getGyroscopeReadingContinuous(ccwPositive);
-
-        /**
-         * Corrects the values to the range of [-180, 180]
-         * 
-         * First the value is caped to [-360, 360],
-         * than if the value is outside of [-180, 180]
-         * 360 is added or subtracted as nesasary to get within the desiered range
-         */
-        double correctedValue = continuousHeading % 360;
-
-        if (correctedValue > 180) {
-            return correctedValue - 360;
-        } else if (correctedValue < -180) {
-            return correctedValue + 360;
-        } else {
-            return correctedValue;
+            return -m_pigeonIMU.getFusedHeading();
         }
     }
+
+
+    // /**
+    //  * Returns the robot's heading, with a range of [-180, 180], with
+    //  * counterclockwise being positive.
+    //  * 
+    //  * @return The rotation of the robot in degrees, with counterclockwise rotations
+    //  *         increasing this value.
+    //  */
+    // public double getGyroscopeReading() {
+    //     return getGyroscopeReading(true);
+    // }
+
+    // /**
+    //  * Returns the robot's heading, with a range of [-180, 180].
+    //  * 
+    //  * @param ccwPositive Whether the reading should be returned treating
+    //  *                    counterclockwise as positive or negative, with true
+    //  *                    meaning ccw is positive.
+    //  * @return The rotation of the robot in degrees.
+    //  */
+    // public double getGyroscopeReading(boolean ccwPositive) {
+    //     double continuousHeading = getGyroscopeReadingContinuous(ccwPositive);
+
+    //     /**
+    //      * Corrects the values to the range of [-180, 180]
+    //      * 
+    //      * First the value is caped to [-360, 360],
+    //      * than if the value is outside of [-180, 180]
+    //      * 360 is added or subtracted as nesasary to get within the desiered range
+    //      */
+    //     double correctedValue = continuousHeading % 360;
+
+    //     if (correctedValue > 180) {
+    //         return correctedValue - 360;
+    //     } else if (correctedValue < -180) {
+    //         return correctedValue + 360;
+    //     } else {
+    //         return correctedValue;
+    //     }
+    // }
 
     /**
      * returns the rotation of the gyrosope in Radians
      */
     public double getGyroscopeReadingRad() {
-        return Units.degreesToRadians(getGyroscopeReading());
+        return Units.degreesToRadians(getGyroscopeReadingContinuous());
     }
 
     /**
@@ -394,15 +431,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * Sets the yaw to 0 deg.
      */
     public void zeroHeading() {
+        // m_pigeon2.setYaw(0);
         m_pigeonIMU.setYaw(0);
     }
 
-    public double getYaw() {
-        double[] xyz_deg = new double[3];
-        m_pigeonIMU.getAccumGyro(xyz_deg);
-
-        return xyz_deg[1];
-    }
     // Odometry
 
     /**
@@ -430,13 +462,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @return The current wheel speeds.
      */
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        return new DifferentialDriveWheelSpeeds( 0, 0); //m_leftEncoder.getVelocity(), m_rightEncoder.getVelocity());
+        return new DifferentialDriveWheelSpeeds(getLeftVelocity(), getRightVelocity());
     }
 
     // PID, FF, Ramset
 
     public DifferentialDriveWheelSpeeds getRamsetTargetWheelSpeeds(State tragectorySample) {
-        return m_kinematics.toWheelSpeeds(m_follower.calculate(getPose(), tragectorySample));
+        return m_kinematics.toWheelSpeeds(m_ramseteController.calculate(getPose(), tragectorySample));
 
     }
 
@@ -450,12 +482,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public double getRightPID(double rightSpeedSetpoint) {
-        return m_rightController.calculate(getWheelSpeeds().leftMetersPerSecond,
+        return m_rightController.calculate(getWheelSpeeds().rightMetersPerSecond,
                 rightSpeedSetpoint);
-    }
-
-    public DifferentialDriveKinematics getKinematics() {
-        return m_kinematics;
     }
 
     public void resetPID() {
@@ -466,4 +494,83 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void setBrakeMode(boolean brakeMode) {
         m_rightMotor1.setNeutralMode(brakeMode ? NeutralMode.Brake : NeutralMode.Coast);
     }
+
+    // This is taken from CTRE's sample code at
+    // https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/MotionMagic_ArbFeedForward/src/main/java/frc/robot/Robot.java.
+
+    /**
+     * Determines if SensorSum or SensorDiff should be used
+     * for combining left/right sensors into Robot Distance.
+     * 
+     * Assumes Aux Position is set as Remote Sensor 0.
+     * 
+     * configAllSettings must still be called on the master config
+     * after this function modifies the config values.
+     * 
+     * @param masterInvertType Invert of the Master Talon
+     * @param masterConfig     Configuration object to fill
+     */
+    // void setRobotDistanceConfigs(TalonFXInvertType masterInvertType, TalonFXConfiguration masterConfig) {
+    //     /**
+    //      * Determine if we need a Sum or Difference.
+    //      * 
+    //      * The auxiliary Talon FX will always be positive
+    //      * in the forward direction because it's a selected sensor
+    //      * over the CAN bus.
+    //      * 
+    //      * The master's native integrated sensor may not always be positive when forward
+    //      * because
+    //      * sensor phase is only applied to *Selected Sensors*, not native
+    //      * sensor sources. And we need the native to be combined with the
+    //      * aux (other side's) distance into a single robot distance.
+    //      */
+
+    //     /*
+    //      * THIS FUNCTION should not need to be modified.
+    //      * This setup will work regardless of whether the master
+    //      * is on the Right or Left side since it only deals with
+    //      * distance magnitude.
+    //      */
+
+    //     /* Check if we're inverted */
+    //     if (masterInvertType == TalonFXInvertType.Clockwise) {
+    //         /*
+    //          * If master is inverted, that means the integrated sensor
+    //          * will be negative in the forward direction.
+    //          * If master is inverted, the final sum/diff result will also be inverted.
+    //          * This is how Talon FX corrects the sensor phase when inverting
+    //          * the motor direction. This inversion applies to the *Selected Sensor*,
+    //          * not the native value.
+    //          * Will a sensor sum or difference give us a positive total magnitude?
+    //          * Remember the Master is one side of your drivetrain distance and
+    //          * Auxiliary is the other side's distance.
+    //          * Phase | Term 0 | Term 1 | Result
+    //          * Sum: -((-)Master + (+)Aux )| NOT OK, will cancel each other out
+    //          * Diff: -((-)Master - (+)Aux )| OK - This is what we want, magnitude will be
+    //          * correct and positive.
+    //          * Diff: -((+)Aux - (-)Master)| NOT OK, magnitude will be correct but negative
+    //          */
+
+    //         masterConfig.diff0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); // Local Integrated
+    //                                                                                             // Sensor
+    //         masterConfig.diff1Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice(); // Aux Selected Sensor
+    //         masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorDifference.toFeedbackDevice(); // Diff0
+    //                                                                                                                     // -
+    //                                                                                                                     // Diff1
+    //     } else {
+    //         /* Master is not inverted, both sides are positive so we can sum them. */
+    //         masterConfig.sum0Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice(); // Aux Selected Sensor
+    //         masterConfig.sum1Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); // Local IntegratedSensor
+    //         masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorSum.toFeedbackDevice(); // Sum0
+    //                                                                                                              // +
+    //                                                                                                              // Sum1
+    //     }
+
+    //     /*
+    //      * Since the Distance is the sum of the two sides, divide by 2 so the total
+    //      * isn't double
+    //      * the real-world value
+    //      */
+    //     masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
+    // }
 }
