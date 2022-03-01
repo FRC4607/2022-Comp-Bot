@@ -42,7 +42,7 @@ public class FlywheelSubsystem extends SubsystemBase {
     private WPI_TalonFX m_flywheelMotor2;
     private final TalonFXConfiguration motorConfig;
 
-    private ArrayList<Double> speeds = new ArrayList<>(Arrays.asList(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0));
+    private ArrayList<Double> speeds = new ArrayList<>(Arrays.asList(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)); // 10 items
 
     /**
     *

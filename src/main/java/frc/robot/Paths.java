@@ -25,9 +25,9 @@ public class Paths {
         // private static final Pose2d ball4   = new Pose2d(Units.inchesToMeters(-30.863335), Units.inchesToMeters(242.360533), Rotation2d.fromDegrees(132.251156));
 
         public static Path Start_Ball2 = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Start-Ball2.wpilib.json");
-        public static Path Start_Ball2B = Filesystem.getDeployDirectory().toPath().resolve("");
+        public static Path Start_Ball2B = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Start-Ball2B.wpilib.json");
         public static Path Ball2_Hub = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Ball2-Hub.wpilib.json");
-        public static Path Ball2B_Hub = Filesystem.getDeployDirectory().toPath().resolve("");
+        public static Path Ball2B_Hub = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Ball2B-HubB.wpilib.json");
         public static Path Hub_Ball3 = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Hub-Ball3.wpilib.json");
         public static Path Ball3_Hub = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Ball3-Hub.wpilib.json");
         public static Path Hub_Ball3_Ball4 = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Hub-Ball3-Ball4.wpilib.json");

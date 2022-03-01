@@ -145,7 +145,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         m_rateLimiter = new SlewRateLimiter(DriveConstants.maxUnitsPerSecond);
 
-        SmartDashboard.putData("Field", m_field);
+        // SmartDashboard.putData("Field", m_field);
 
         // SmartDashboard.putNumber("Max drive speed", DriveConstants.maxSpeed);
         // SmartDashboard.putNumber("Max drive turning", DriveConstants.maxTurning);
@@ -164,10 +164,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // m_rightMotor1.getMotorOutputVoltage());
         // SmartDashboard.putNumber("Back Right Voltage",
         // m_rightMotor2.getMotorOutputVoltage());
-        SmartDashboard.putNumber("Left Encoder", getLeftEncoderPosition());
-        SmartDashboard.putNumber("Right Encoder", getRightEncoderPosition());
+        // SmartDashboard.putNumber("Left Encoder", getLeftEncoderPosition());
+        // SmartDashboard.putNumber("Right Encoder", getRightEncoderPosition());
 
-        SmartDashboard.putNumber("Gyroscrope", getGyroscopeReadingContinuous());
+        // SmartDashboard.putNumber("Gyroscrope", getGyroscopeReadingContinuous());
     }
 
     @Override
@@ -220,8 +220,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param y The y-axis of the controller.
      */
     public void setArcadeDrive(double x, double y) {
-        double maxSpeed = SmartDashboard.getNumber("Max speed", DriveConstants.maxSpeed);
-        double maxTurning = SmartDashboard.getNumber("Max turning", DriveConstants.maxTurning);
+        double maxSpeed = DriveConstants.maxSpeed;
+        double maxTurning = DriveConstants.maxTurning;
 
         // The y is inverted so forward will be positive and backward will be negative.
         m_drivetrain.arcadeDrive(m_rateLimiter.calculate(-y * maxSpeed), x * maxTurning);
@@ -238,8 +238,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         leftVolts = Math.max(Math.min(leftVolts, 12), -12);
         rightVolts = Math.max(Math.min(rightVolts, 12), -12);
-        SmartDashboard.putNumber("Left Volts", leftVolts);
-        SmartDashboard.putNumber("Right Volts", rightVolts);
+        // SmartDashboard.putNumber("Left Volts", leftVolts);
+        // SmartDashboard.putNumber("Right Volts", rightVolts);
         m_leftDrive.setVoltage(leftVolts);
         m_rightDrive.setVoltage(rightVolts);
         m_drivetrain.feed();

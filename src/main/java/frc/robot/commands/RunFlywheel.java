@@ -8,8 +8,8 @@ import frc.robot.subsystems.TransferWheelSubsystem;
 
 public class RunFlywheel extends CommandBase {
 
-    private FlywheelSubsystem m_flywheelSubsystem;
-    private TransferWheelSubsystem m_transferWheelSubsystem;
+    private final FlywheelSubsystem m_flywheelSubsystem;
+    private final TransferWheelSubsystem m_transferWheelSubsystem;
 
     public RunFlywheel(FlywheelSubsystem flywheelSubsystem, TransferWheelSubsystem transferWheelSubsystem) {
         m_flywheelSubsystem = flywheelSubsystem;

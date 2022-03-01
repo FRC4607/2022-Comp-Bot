@@ -7,8 +7,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class RunIntakeJoystick extends CommandBase {
     
-    private IntakeSubsystem m_intakeSubsystem;
-    private XboxController m_driver;
+    private final IntakeSubsystem m_intakeSubsystem;
+    private final XboxController m_driver;
 
     public RunIntakeJoystick(IntakeSubsystem intakeSubsystem, XboxController driver) {
         m_intakeSubsystem = intakeSubsystem;

@@ -16,8 +16,8 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 public class AutoClimb extends CommandBase {
     private static CommandScheduler m_commandScheduler;
 
-    private DrivetrainSubsystem m_drivetrainSubsystem;
-    private ClimberSubsystem m_climberSubsystem;
+    private final DrivetrainSubsystem m_drivetrainSubsystem;
+    private final ClimberSubsystem m_climberSubsystem;
 
     public AutoClimb(DrivetrainSubsystem drivetrainSubsystem, ClimberSubsystem climberSubsystem) {
         m_drivetrainSubsystem = drivetrainSubsystem;

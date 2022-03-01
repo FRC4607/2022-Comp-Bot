@@ -5,8 +5,8 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
 
 public class SetClimber extends CommandBase {
-    private ClimberSubsystem m_climberSubsystem;
-    private boolean extended;
+    private final ClimberSubsystem m_climberSubsystem;
+    private final boolean extended;
 
     public SetClimber(ClimberSubsystem climberSubsystem, boolean extended) {
         m_climberSubsystem = climberSubsystem;

@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class ToggelClutch extends CommandBase {
-    ClimberSubsystem m_climberSubsystem;
+    private final ClimberSubsystem m_climberSubsystem;
 
     public ToggelClutch(ClimberSubsystem climberSubsystem) {
         m_climberSubsystem = climberSubsystem;

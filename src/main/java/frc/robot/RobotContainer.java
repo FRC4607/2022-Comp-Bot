@@ -75,16 +75,13 @@ public class RobotContainer {
 		// RunFlywheelJoystick(m_flywheelSubsystem, operator));
 
 		// Configure autonomous sendable chooser
-		m_chooser.setDefaultOption("Four Ball Auto", new Auton_FourBall(m_flywheelSubsystem, m_transferWheelSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
-		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
-		// m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
-		// 		m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.setDefaultOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Four Ball Auto", new Auton_FourBall(m_flywheelSubsystem, m_transferWheelSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
 				
-		m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
-		m_chooser.addOption("Calibate Trackwidth", new CalibateTrackwidth(m_drivetrainSubsystem, false));
+		// m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
+		// m_chooser.addOption("Calibate Trackwidth", new CalibateTrackwidth(m_drivetrainSubsystem, false));
 
 		SmartDashboard.putData("Auto Mode", m_chooser);
 	}
@@ -120,9 +117,9 @@ public class RobotContainer {
 		driver_aButton.whenPressed(new ToggleIntake(m_intakeSubsystem));
 
 		operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem));
-		operator_bButton.whileHeld(new RunTransferWheel(m_transferWheelSubsystem, false));
+		operator_bButton.whileHeld(new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2));
 		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem, m_transferWheelSubsystem));
-		operator_yButton.whenPressed(new ToggelClutch(m_climberSubsystem));
+		// operator_yButton.whenPressed(new ToggelClutch(m_climberSubsystem));
 	}
 
 	public XboxController getDriver() {

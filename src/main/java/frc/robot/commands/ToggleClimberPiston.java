@@ -5,7 +5,7 @@ import frc.robot.subsystems.ClimberSubsystem;
 
 
 public class ToggleClimberPiston extends CommandBase {
-    ClimberSubsystem m_climberSubsystem;
+    private final ClimberSubsystem m_climberSubsystem;
 
     public ToggleClimberPiston(ClimberSubsystem climberSubsystem) {
         m_climberSubsystem = climberSubsystem;

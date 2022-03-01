@@ -49,10 +49,10 @@ public class Auton_ThreeBall extends CommandBase {
                 new ParallelCommandGroup(
                         new FollowPath(m_drivetrainSubsystem, Paths.Ball2_Hub),
                         new SpinFlywheel(m_flywheelSubsystem)),
-                new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
                 new ParallelCommandGroup(
                         new SpinFlywheel(m_flywheelSubsystem)),
-                new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
                 new ParallelDeadlineGroup(
                         new FollowPath(m_drivetrainSubsystem, Paths.Hub_Ball3),
                         new InstantCommand(() -> {
@@ -62,7 +62,7 @@ public class Auton_ThreeBall extends CommandBase {
                 new ParallelCommandGroup(
                         new FollowPath(m_drivetrainSubsystem, Paths.Ball3_Hub),
                         new SpinFlywheel(m_flywheelSubsystem)),
-                new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
                 new InstantCommand(() -> {
                     m_flywheelSubsystem.setSpeed(0);
                 }, m_flywheelSubsystem)).withTimeout(15), new RunAutoTower(m_towerSubsystem).withTimeout(15));

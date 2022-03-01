@@ -33,32 +33,31 @@ public class Auton_TwoBall_A extends CommandBase {
 
     @Override
     public void initialize() {
-        /*m_commandScheduler.schedule(new SequentialCommandGroup(
-            new SetIntake(m_intakeSubsystem, true),
-            new SpinFlywheel(m_flywheelSubsystem),
-            new RunTransferWheel(true, m_towerSubsystem).withTimeout(0.5),
-        ));*/
+        /*
+         * m_commandScheduler.schedule(new SequentialCommandGroup(
+         * new SetIntake(m_intakeSubsystem, true),
+         * new SpinFlywheel(m_flywheelSubsystem),
+         * new RunTransferWheel(true, m_towerSubsystem).withTimeout(0.5),
+         * ));
+         */
         m_commandScheduler.schedule(new SequentialCommandGroup(
-            new SetIntake(m_intakeSubsystem, true),
-            new ParallelDeadlineGroup(
-                new FollowPath(m_drivetrainSubsystem, Paths.Start_Ball2),
-                new RunIntake(m_intakeSubsystem, false)
-            ),
-            new ParallelDeadlineGroup(
+                new SetIntake(m_intakeSubsystem, true),
+                new ParallelDeadlineGroup(
+                        new FollowPath(m_drivetrainSubsystem, Paths.Start_Ball2),
+                        new RunIntake(m_intakeSubsystem, false)),
+                new ParallelDeadlineGroup(
+                        new ParallelCommandGroup(
+                                new FollowPath(m_drivetrainSubsystem, Paths.Ball2_Hub),
+                                new SpinFlywheel(m_flywheelSubsystem)),
+                        new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)),
+                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
                 new ParallelCommandGroup(
-                    new FollowPath(m_drivetrainSubsystem, Paths.Ball2_Hub),
-                    new SpinFlywheel(m_flywheelSubsystem)
-                    ),
-                new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)
-            ),
-            new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
-            new ParallelCommandGroup(
-                new SpinFlywheel(m_flywheelSubsystem),
-                new RunIntake(m_intakeSubsystem, false).withTimeout(1)
-            ),
-            new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
-            new InstantCommand(() -> {m_flywheelSubsystem.setSpeed(0);}, m_flywheelSubsystem)
-        ).withTimeout(15), new RunAutoTower(m_towerSubsystem).withTimeout(15));
+                        new SpinFlywheel(m_flywheelSubsystem),
+                        new RunIntake(m_intakeSubsystem, false).withTimeout(1)),
+                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
+                new InstantCommand(() -> {
+                    m_flywheelSubsystem.setSpeed(0);
+                }, m_flywheelSubsystem)).withTimeout(15), new RunAutoTower(m_towerSubsystem).withTimeout(15));
     }
 
     @Override

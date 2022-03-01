@@ -20,7 +20,7 @@ public class FollowPath extends CommandBase {
     private DifferentialDriveWheelSpeeds m_prevSpeeds;
     private double m_prevTime;
 
-    private DrivetrainSubsystem m_drivetrainSubsystem;
+    private final DrivetrainSubsystem m_drivetrainSubsystem;
 
     private SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.ks_Volts,
             DriveConstants.kv_VoltSecondsPerMeters, DriveConstants.ka_VoltSecondsSquaredPerMeters);
@@ -95,8 +95,8 @@ public class FollowPath extends CommandBase {
         double rightFeedforward = m_feedforward.calculate(wheelSpeeds.rightMetersPerSecond,
                 (wheelSpeeds.rightMetersPerSecond - m_prevSpeeds.rightMetersPerSecond) / dt);
 
-        SmartDashboard.putNumber("Left FF Setpoint", leftFeedforward);
-        SmartDashboard.putNumber("Right FF Setpoint", rightFeedforward);
+        // SmartDashboard.putNumber("Left FF Setpoint", leftFeedforward);
+        // SmartDashboard.putNumber("Right FF Setpoint", rightFeedforward);
 
         // PID
         double leftPID = m_drivetrainSubsystem.getLeftPID(wheelSpeeds.leftMetersPerSecond);

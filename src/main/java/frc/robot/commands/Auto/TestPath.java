@@ -1,6 +1,5 @@
 package frc.robot.commands.Auto;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,7 +15,7 @@ import frc.robot.Constants.FollowPathConstants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class TestPath extends CommandBase {
-    private DrivetrainSubsystem m_drivetrainSubsystem;
+    private final DrivetrainSubsystem m_drivetrainSubsystem;
 
     public TestPath(DrivetrainSubsystem drivetrainSubsystem) {
         m_drivetrainSubsystem = drivetrainSubsystem;

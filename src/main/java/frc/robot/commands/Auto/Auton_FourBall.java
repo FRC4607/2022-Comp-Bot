@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Paths;
 import frc.robot.commands.RunTransferWheel;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -58,11 +59,11 @@ public class Auton_FourBall extends CommandBase {
                         new FollowPath(m_drivetrainSubsystem, Paths.Ball2_Hub),
                         new SpinFlywheel(m_flywheelSubsystem)),
                 // Shoot ball 1
-                new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
                 // Spin flywheel up to speed
                 new SpinFlywheel(m_flywheelSubsystem),
                 // Shoot ball 2
-                new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
                 // Go to ball 3, and ball 4, stop the flywheel, Intake ball 3, and move ball 3
                 // into position
                 new ParallelDeadlineGroup(
@@ -75,13 +76,13 @@ public class Auton_FourBall extends CommandBase {
                 // 4 into position
                 new ParallelCommandGroup(
                         new FollowPath(m_drivetrainSubsystem, Paths.Ball4_Hub),
-                        new SpinFlywheel(m_flywheelSubsystem),
-                        new RunIntake(m_intakeSubsystem, false).withTimeout(0.5)),
+                        new SpinFlywheel(m_flywheelSubsystem).beforeStarting(new WaitCommand(2)),
+                        new RunIntake(m_intakeSubsystem, false).withTimeout(1)),
                 // Shoot ball 3
-                new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
                 new SpinFlywheel(m_flywheelSubsystem),
                 // Shoot ball 4
-                new RunTransferWheel(m_transferWheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
                 new InstantCommand(() -> {
                     m_flywheelSubsystem.setSpeed(0);
                 }, m_flywheelSubsystem),

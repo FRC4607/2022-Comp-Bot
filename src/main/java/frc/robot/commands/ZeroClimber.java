@@ -5,7 +5,8 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
 
 public class ZeroClimber extends CommandBase {
-    private ClimberSubsystem m_climberSubsystem;
+    private final ClimberSubsystem m_climberSubsystem;
+    
     public ZeroClimber(ClimberSubsystem climberSubsystem) {
         m_climberSubsystem = climberSubsystem;
     }

@@ -5,7 +5,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class ToggleIntake extends CommandBase {
     
-    private IntakeSubsystem m_intakeSubsytem;
+    private final IntakeSubsystem m_intakeSubsytem;
 
     public ToggleIntake(IntakeSubsystem intakeSubsystem) {
         m_intakeSubsytem = intakeSubsystem;
