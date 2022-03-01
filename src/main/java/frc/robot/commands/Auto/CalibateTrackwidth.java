@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class CalibateTrackwidth extends CommandBase {
-    private DrivetrainSubsystem m_drivetrainSubsystem;
+    private final DrivetrainSubsystem m_drivetrainSubsystem;
     private double m_startingRotation;
     private double m_endingRoatition;
     private boolean m_clockwise;

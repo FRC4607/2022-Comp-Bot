@@ -16,7 +16,7 @@ public class IntakeSubsystem extends SubsystemBase {
         m_solenoid = new DoubleSolenoid(IntakeConstants.solenoidModule, IntakeConstants.SolenoidType,
                 IntakeConstants.solenoidForwardChannel, IntakeConstants.solenoidReverseChannel);
         m_solenoid.set(Value.kForward);
-        
+
         m_intakeMotor = new CANSparkMax(IntakeConstants.motorID, MotorType.kBrushless);
         m_intakeMotor.restoreFactoryDefaults();
         m_intakeMotor.setInverted(true);
@@ -30,15 +30,24 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param speed the speed the motor is set to. [-1, 1]
      */
     public void setSpeed(double speed) {
-        m_intakeMotor.set(speed);
+        if (m_solenoid.get() == Value.kReverse) {
+            m_intakeMotor.set(speed);
+        } else {
+            m_intakeMotor.set(0);
+        }
     }
 
     /**
      * Sets the voltage of the motor
+     * 
      * @param voltage
      */
     public void setVoltage(double voltage) {
-        m_intakeMotor.setVoltage(voltage);
+        if (m_solenoid.get() == Value.kReverse) {
+            m_intakeMotor.setVoltage(voltage);
+        } else {
+            m_intakeMotor.setVoltage(0);
+        }
     }
 
     /**

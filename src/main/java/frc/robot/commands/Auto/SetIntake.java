@@ -5,12 +5,13 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class SetIntake extends CommandBase {
     
-    private IntakeSubsystem m_intakeSubsytem;
-    private boolean m_extended;
+    private final IntakeSubsystem m_intakeSubsytem;
+    private final boolean m_extended;
 
     public SetIntake(IntakeSubsystem intakeSubsystem, boolean extended) {
         m_intakeSubsytem = intakeSubsystem;
         m_extended = extended;
+        addRequirements(m_intakeSubsytem);
     }
 
     @Override

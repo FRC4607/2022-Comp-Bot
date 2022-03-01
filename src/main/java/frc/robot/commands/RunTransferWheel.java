@@ -14,6 +14,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.TowerConstants;
+import frc.robot.Constants.TransferWheelConstants;
+import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.TransferWheelSubsystem;
 
 /**
@@ -21,12 +23,14 @@ import frc.robot.subsystems.TransferWheelSubsystem;
  */
 public class RunTransferWheel extends CommandBase {
 
-    private final TransferWheelSubsystem m_towerSubsystem;
-    private boolean m_reverse;
+    private final TransferWheelSubsystem m_transferWheelSubsystem;
+    private final FlywheelSubsystem m_flywheelSubsystem;
+    private final boolean m_reverse;
 
-    public RunTransferWheel(TransferWheelSubsystem transferWheelSubsystem, boolean reverse) {
-        m_towerSubsystem = transferWheelSubsystem;
-        addRequirements(m_towerSubsystem);
+    public RunTransferWheel(TransferWheelSubsystem transferWheelSubsystem, FlywheelSubsystem flywheelSubsystem, boolean reverse) {
+        m_transferWheelSubsystem = transferWheelSubsystem;
+        m_flywheelSubsystem = flywheelSubsystem;
+        addRequirements(m_transferWheelSubsystem);
         
         m_reverse = reverse;
 
@@ -35,18 +39,28 @@ public class RunTransferWheel extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        if (!m_reverse) {
-            m_towerSubsystem.setTransferWheel(TowerConstants.agitatiorSpeed);
-        }
-        else {
-            m_towerSubsystem.setTransferWheel(-TowerConstants.agitatiorSpeed);
+        
+    }
+
+    @Override
+    public void execute() {
+        if (m_flywheelSubsystem.constantSpeed()) {
+            if (!m_reverse) {
+                //System.out.println("Spining Transfer Wheel");
+                m_transferWheelSubsystem.setTransferWheel(TransferWheelConstants.transferWheelSpeed);
+            }
+            else {
+                m_transferWheelSubsystem.setTransferWheel(-TransferWheelConstants.transferWheelSpeed);
+            }
+        } else {
+                m_transferWheelSubsystem.setTransferWheel(0);
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_towerSubsystem.setTransferWheel(0);
+        m_transferWheelSubsystem.setTransferWheel(0);
     }
 
     // Returns true when the command should end.

@@ -19,9 +19,13 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,7 +40,7 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
     private RobotContainer m_robotContainer;
-
+    //private Compressor m_compresor;
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -45,13 +49,15 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
-        NetworkTableInstance.getDefault().setUpdateRate(0.02);
+        // NetworkTableInstance.getDefault().setUpdateRate(0.02);
+        LiveWindow.disableAllTelemetry();
         m_robotContainer = RobotContainer.getInstance();
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
         
         inst.startClientTeam(4607);
-
         Paths.generateTrajectories();
+
+        //m_compresor = new Compressor(Constants.pnumaticHub, PneumaticsModuleType.REVPH);
     }
 
     /**
@@ -80,7 +86,7 @@ public class Robot extends TimedRobot {
 		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
 		entry.setBoolean(false);
 
-        Shuffleboard.stopRecording();
+        // Shuffleboard.stopRecording();
     }
 
     @Override
@@ -125,7 +131,9 @@ public class Robot extends TimedRobot {
 		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
 		entry.setBoolean(true);
 
-        Shuffleboard.startRecording();
+        // Shuffleboard.startRecording();
+
+        //m_compresor.enableDigital();
     }
 
     /**
@@ -133,6 +141,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+        //SmartDashboard.putNumber("Compresor Curent", m_compresor.getCurrent());
     }
 
     @Override

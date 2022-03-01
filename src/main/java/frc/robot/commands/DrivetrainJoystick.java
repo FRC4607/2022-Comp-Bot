@@ -23,7 +23,7 @@ public class DrivetrainJoystick extends CommandBase {
 
     private final DrivetrainSubsystem m_drivetrainSubsystem;
 
-    private XboxController m_driver;
+    private final XboxController m_driver;
 
     public DrivetrainJoystick(DrivetrainSubsystem subsystem, XboxController driver) {
 

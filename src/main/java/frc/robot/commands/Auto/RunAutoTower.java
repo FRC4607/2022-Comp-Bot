@@ -6,10 +6,12 @@ import frc.robot.subsystems.TowerSubsystem;
 import frc.robot.subsystems.TowerSubsystem.Color;
 
 public class RunAutoTower extends CommandBase {
-    private TowerSubsystem m_towerSubsystem;
+    private final TowerSubsystem m_towerSubsystem;
 
     public RunAutoTower(TowerSubsystem towerSubsystem) {
         m_towerSubsystem = towerSubsystem;
+
+        addRequirements(m_towerSubsystem);
     }
 
     @Override

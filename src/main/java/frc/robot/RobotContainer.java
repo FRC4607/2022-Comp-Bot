@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -42,6 +42,8 @@ public class RobotContainer {
 	public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
 	public final TransferWheelSubsystem m_transferWheelSubsystem = new TransferWheelSubsystem();
 	public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
+	public final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+
 
 	// Alliance Color
 
@@ -68,23 +70,25 @@ public class RobotContainer {
 		// Configure default commands
 		m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
 		m_intakeSubsystem.setDefaultCommand(new DriverIntakeTower(m_intakeSubsystem, m_towerSubsystem, driver));
+		m_climberSubsystem.setDefaultCommand(new ClimberTrigers(m_climberSubsystem, operator));
 		// m_flywheelSubsystem.setDefaultCommand(new
 		// RunFlywheelJoystick(m_flywheelSubsystem, operator));
 
 		// Configure autonomous sendable chooser
-		m_chooser.setDefaultOption("Four Ball Auto", new Auton_FourBall(m_flywheelSubsystem, m_transferWheelSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
-		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.setDefaultOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Four Ball Auto", new Auton_FourBall(m_flywheelSubsystem, m_transferWheelSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
 				
 		// m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
 		// m_chooser.addOption("Calibate Trackwidth", new CalibateTrackwidth(m_drivetrainSubsystem, false));
 
 		SmartDashboard.putData("Auto Mode", m_chooser);
+
+		SmartDashboard.putData("Reset Climber", new InstantCommand(() -> {m_climberSubsystem.resetEncoder();}));
 	}
+
+	
 
 	public static RobotContainer getInstance() {
 		return m_robotContainer;
@@ -114,12 +118,10 @@ public class RobotContainer {
 
 		driver_aButton.whenPressed(new ToggleIntake(m_intakeSubsystem));
 
-		// operator_aButton.whileHeld(new ParallelCommandGroup(
-		// 	new RunTransferWheel(m_transferWheelSubsystem, true),
-		// 	new RunTower(m_towerSubsystem, true)
-		// ));
-		operator_bButton.whileHeld(new RunTransferWheel(m_transferWheelSubsystem, false));
-		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem));
+		operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem));
+		operator_bButton.whileHeld(new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2));
+		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem, m_transferWheelSubsystem));
+		// operator_yButton.whenPressed(new ToggelClutch(m_climberSubsystem));
 	}
 
 	public XboxController getDriver() {
