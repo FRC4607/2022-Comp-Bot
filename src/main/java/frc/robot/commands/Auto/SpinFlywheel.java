@@ -27,6 +27,6 @@ public class SpinFlywheel extends CommandBase {
         // double calculatedError = Math.abs(m_flywheelSubsystem.getFlywheelError() - 30);
         // SmartDashboard.putNumber("Calculated Error", calculatedError);
         SmartDashboard.putBoolean("Cosntant Speed", m_flywheelSubsystem.constantSpeed());
-        return m_flywheelSubsystem.constantSpeed() && timer.hasElapsed(0.1);
+        return m_flywheelSubsystem.constantSpeed() && timer.hasElapsed(0.2);
     }  
 }

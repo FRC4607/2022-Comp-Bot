@@ -9,6 +9,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,7 +19,8 @@ import frc.robot.Constants.ClimberConstants;
 public class ClimberSubsystem extends SubsystemBase {
     private CANSparkMax m_motor1;
     private CANSparkMax m_motor2;
-    private RelativeEncoder m_encoder;
+    private Encoder m_encoder;
+    private DutyCycleEncoder m_absolutEncoder;
 
     private SparkMaxPIDController m_PIDController;
 
@@ -64,6 +67,9 @@ public class ClimberSubsystem extends SubsystemBase {
         m_motor1.setIdleMode(IdleMode.kBrake);
         m_motor2.setIdleMode(IdleMode.kBrake);
 
+        // m_encoder = new Encoder(3, 4, 5);
+        m_absolutEncoder = new DutyCycleEncoder(2);
+
         // m_encoder = m_motor1.getEncoder();
         // m_encoder.setPositionConversionFactor(ClimberConstants.conversenFactor_SensorUnitsPerInch);
 
@@ -86,30 +92,39 @@ public class ClimberSubsystem extends SubsystemBase {
         pistonState = PistonState.Extended;
         clutchState = ClutchState.Engaged;
 
-        m_limitSwitch = new DigitalInput(ClimberConstants.limitSwitchID);
-        limitSwitchState = LimitSwitchState.changing;
+        // m_limitSwitch = new DigitalInput(ClimberConstants.limitSwitchID);
+        // limitSwitchState = LimitSwitchState.changing;
     }
 
     @Override
     public void periodic() {
-        switch (climberState) {
-            case Retracting:
-                m_PIDController.setReference(0, ControlType.kPosition);
-                if (m_limitSwitch.get()) {
-                    climberState = ClimberState.Retracted;
-                    m_encoder.setPosition(0);
-                }
-                break;
-            case Extending:
-                m_PIDController.setReference(ClimberConstants.maxHight_Rotations, ControlType.kPosition);
-                if (m_encoder.getPosition() >= ClimberConstants.maxHight_Rotations) {
-                    climberState = ClimberState.Extended;
-                }
-                break;
-            default:
-                break;
-        }
+        // switch (climberState) {
+        // case Retracting:
+        // m_PIDController.setReference(0, ControlType.kPosition);
+        // if (m_limitSwitch.get()) {
+        // climberState = ClimberState.Retracted;
+        // m_encoder.reset();
+        // }
+        // break;
+        // case Extending:
+        // m_PIDController.setReference(ClimberConstants.maxHight_Rotations,
+        // ControlType.kPosition);
+        // if (m_encoder.getDistance() >= ClimberConstants.maxHight_Rotations) {
+        // climberState = ClimberState.Extended;
+        // }
+        // break;
+        // default:
+        // break;
+        // }
         // SmartDashboard.putNumber("Climber Curent", m_motor1.getOutputCurrent());
+
+        // SmartDashboard.putNumber("Encoder Distance", m_encoder.getDistance());
+        // SmartDashboard.putNumber("Absolut Encoder", m_absolutEncoder.get());
+        SmartDashboard.putNumber("Absolut Encoder Distance", m_absolutEncoder.getDistance());
+
+        if (m_absolutEncoder.getDistance() < 0) {
+            m_absolutEncoder.reset();
+        }
     }
 
     public void extendClimber(boolean extended) {
@@ -117,8 +132,19 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void setClimber(double speed) {
-        m_motor1.set(speed);
-        m_motor2.set(speed);
+        if (speed > 0) {
+            if (m_absolutEncoder.getDistance() >= ClimberConstants.maxHight_Rotations) {
+                m_motor1.set(0);
+                m_motor2.set(0);
+            } else {
+                m_motor1.set(speed);
+                m_motor2.set(speed);
+            }
+        } else {
+            m_motor1.set(speed);
+            m_motor2.set(speed);
+        }
+
     }
 
     public void setClutch(boolean engaged) {
@@ -144,6 +170,10 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public double getEncoder() {
-        return m_encoder.getPosition();
+        return m_absolutEncoder.getDistance();
+    }
+
+    public void resetEncoder() {
+        m_absolutEncoder.reset();
     }
 }

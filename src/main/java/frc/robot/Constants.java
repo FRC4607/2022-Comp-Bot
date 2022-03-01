@@ -170,7 +170,7 @@ public class Constants {
         public static final PneumaticsModuleType clutchType = PneumaticsModuleType.REVPH;
         public static final int clutchForwardChannel = 8;
         public static final int clutchReverseChannel = 9;
-        public static final double maxHight_Rotations = 1;
+        public static final double maxHight_Rotations = 6.8;
         public static final double rotationToExtend = 0;
         public static final int limitSwitchID = 2;
         public static final double conversenFactor_SensorUnitsPerInch = 8192;

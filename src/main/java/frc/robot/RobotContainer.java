@@ -84,6 +84,8 @@ public class RobotContainer {
 		// m_chooser.addOption("Calibate Trackwidth", new CalibateTrackwidth(m_drivetrainSubsystem, false));
 
 		SmartDashboard.putData("Auto Mode", m_chooser);
+
+		SmartDashboard.putData("Reset Climber", new InstantCommand(() -> {m_climberSubsystem.resetEncoder();}));
 	}
 
 	
