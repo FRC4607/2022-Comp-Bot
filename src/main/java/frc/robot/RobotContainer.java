@@ -12,11 +12,17 @@
 
 package frc.robot;
 
+import frc.robot.Constants.FlywheelConstants;
 import frc.robot.commands.*;
 import frc.robot.commands.Auto.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -44,7 +50,7 @@ public class RobotContainer {
 	public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 	public final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
-
+	// 320, 240
 	// Alliance Color
 
 	// Joysticks
@@ -75,20 +81,52 @@ public class RobotContainer {
 		// RunFlywheelJoystick(m_flywheelSubsystem, operator));
 
 		// Configure autonomous sendable chooser
-		m_chooser.setDefaultOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Four Ball Auto", new Auton_FourBall(m_flywheelSubsystem, m_transferWheelSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
-				
+		m_chooser.setDefaultOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem,
+				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
+				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem,
+				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
+		m_chooser.addOption("Four Ball Auto", new Auton_FourBall(m_flywheelSubsystem, m_transferWheelSubsystem,
+				m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
+
 		// m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
-		// m_chooser.addOption("Calibate Trackwidth", new CalibateTrackwidth(m_drivetrainSubsystem, false));
+		// m_chooser.addOption("Calibate Trackwidth", new
+		// CalibateTrackwidth(m_drivetrainSubsystem, false));
 
 		SmartDashboard.putData("Auto Mode", m_chooser);
 
-		SmartDashboard.putData("Reset Climber", new InstantCommand(() -> {m_climberSubsystem.resetEncoder();}));
-	}
+		SmartDashboard.putData("Reset Climber", new InstantCommand(() -> {
+			m_climberSubsystem.resetEncoder();
+		}));
 
-	
+		// Camera
+
+		// // Creates UsbCamera and MjpegServer [1] and connects them
+		// CameraServer.startAutomaticCapture();
+
+		// // Creates the CvSink and connects it to the UsbCamera
+		// CvSink cvSink = CameraServer.getVideo();
+
+		// Creates the CvSource and MjpegServer [2] and connects them
+		// CvSource outputStream = CameraServer.putVideo("Main Cam", 320, 240);
+
+		// // Creates UsbCamera and MjpegServer [1] and connects them
+		// UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+		// MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+		// mjpegServer1.setSource(usbCamera);
+
+		// // Creates the CvSink and connects it to the UsbCamera
+		// CvSink cvSink = new CvSink("opencv_USB Camera 0");
+		// cvSink.setSource(usbCamera);
+
+		// // Creates the CvSource and MjpegServer [2] and connects them
+		// CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+		// MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+		// mjpegServer2.setSource(outputStream);
+
+		// SmartDashboard.putNumber("Flywheel Speed RPM", FlywheelConstants.flywheeelRPM);
+	}
 
 	public static RobotContainer getInstance() {
 		return m_robotContainer;
@@ -119,7 +157,8 @@ public class RobotContainer {
 		driver_aButton.whenPressed(new ToggleIntake(m_intakeSubsystem));
 
 		operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem));
-		operator_bButton.whileHeld(new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2));
+		operator_bButton
+				.whileHeld(new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2));
 		operator_rightBumper.whileHeld(new RunFlywheel(m_flywheelSubsystem, m_transferWheelSubsystem));
 		// operator_yButton.whenPressed(new ToggelClutch(m_climberSubsystem));
 	}

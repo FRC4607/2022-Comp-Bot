@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -34,6 +35,8 @@ public class ClimberSubsystem extends SubsystemBase {
     public PistonState pistonState = PistonState.Extended;
 
     public LimitSwitchState limitSwitchState;
+
+    private final SlewRateLimiter m_limiter;
 
     public enum ClimberState {
         Retracted,
@@ -92,6 +95,8 @@ public class ClimberSubsystem extends SubsystemBase {
         pistonState = PistonState.Extended;
         clutchState = ClutchState.Engaged;
 
+        m_limiter = new SlewRateLimiter(2);
+
         // m_limitSwitch = new DigitalInput(ClimberConstants.limitSwitchID);
         // limitSwitchState = LimitSwitchState.changing;
     }
@@ -137,12 +142,12 @@ public class ClimberSubsystem extends SubsystemBase {
                 m_motor1.set(0);
                 m_motor2.set(0);
             } else {
-                m_motor1.set(speed);
-                m_motor2.set(speed);
+                m_motor1.set(m_limiter.calculate(speed));
+                m_motor2.set(m_limiter.calculate(speed));
             }
         } else {
-            m_motor1.set(speed);
-            m_motor2.set(speed);
+            m_motor1.set(m_limiter.calculate(speed));
+            m_motor2.set(m_limiter.calculate(speed));
         }
 
     }

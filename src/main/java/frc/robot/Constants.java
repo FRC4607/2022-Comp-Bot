@@ -129,9 +129,9 @@ public class Constants {
         // public static final double flywheelKf = 0.05103092783505154639175257731959;
         public static final double flywheelKf = 0.046775;
 
-        public static final int flywheeelRPM = 3900;
+        public static final double flywheeelRPM = 2000; // 3900 * 0.98;
 
-        public static final float flywheelMaxError = 200; // 50
+        public static final double flywheelMaxError = 200; // 50
     }
 
     public static final class FollowPathConstants {

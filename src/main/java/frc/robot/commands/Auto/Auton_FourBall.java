@@ -57,7 +57,8 @@ public class Auton_FourBall extends CommandBase {
                 // Go to hub and spin flywheel to speed
                 new ParallelCommandGroup(
                         new FollowPath(m_drivetrainSubsystem, Paths.Ball2_Hub),
-                        new SpinFlywheel(m_flywheelSubsystem)),
+                        new SpinFlywheel(m_flywheelSubsystem),
+                        new RunIntake(m_intakeSubsystem, false).withTimeout(1)),
                 // Shoot ball 1
                 new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
                 // Spin flywheel up to speed

@@ -41,25 +41,30 @@ public class Auton_TwoBall_B extends CommandBase {
 		 * ));
 		 */
 		m_commandScheduler.schedule(new SequentialCommandGroup(
+				// Extend the intake
 				new SetIntake(m_intakeSubsystem, true),
+				new InstantCommand(() -> {
+					m_drivetrainSubsystem.setBrakeMode(true);
+				}),
 				new ParallelDeadlineGroup(
-						new FollowPath(m_drivetrainSubsystem, Paths.Start_Ball2),
+						new FollowPath(m_drivetrainSubsystem, Paths.Start_Ball2B),
 						new RunIntake(m_intakeSubsystem, false)),
-				new RunIntake(m_intakeSubsystem, false).withTimeout(0.1),
-				new ParallelCommandGroup(
-						new FollowPath(m_drivetrainSubsystem, Paths.Ball2B_Hub),
-						new SpinFlywheel(m_flywheelSubsystem)),
-				new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false)
-						.withTimeout(0.2),
+				new ParallelDeadlineGroup(
+						new ParallelCommandGroup(
+								new FollowPath(m_drivetrainSubsystem, Paths.Ball2_Hub),
+								new SpinFlywheel(m_flywheelSubsystem)),
+						new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)),
+				new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
 				new ParallelCommandGroup(
 						new SpinFlywheel(m_flywheelSubsystem),
 						new RunIntake(m_intakeSubsystem, false).withTimeout(1)),
-				new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false)
-						.withTimeout(0.2),
+				new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
 				new InstantCommand(() -> {
 					m_flywheelSubsystem.setSpeed(0);
-				}, m_flywheelSubsystem)).withTimeout(15),
-				new RunAutoTower(m_towerSubsystem).withTimeout(15));
+				}, m_flywheelSubsystem),
+				new InstantCommand(() -> {
+					m_drivetrainSubsystem.setBrakeMode(false);
+				})), new RunAutoTower(m_towerSubsystem));
 	}
 
 	@Override

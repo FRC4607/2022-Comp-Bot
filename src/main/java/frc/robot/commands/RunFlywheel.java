@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.FlywheelConstants;
 import frc.robot.Constants.TransferWheelConstants;
@@ -24,6 +25,7 @@ public class RunFlywheel extends CommandBase {
     @Override
     public void execute() {
         m_flywheelSubsystem.setRPM(FlywheelConstants.flywheeelRPM);
+        // m_flywheelSubsystem.setRPM(SmartDashboard.getNumber("Flywheel Speed RPM", FlywheelConstants.flywheeelRPM));
         // if (m_flywheelSubsystem.constantSpeed()) {
         //     m_transferWheelSubsystem.setTransferWheel(TransferWheelConstants.transferWheelSpeed);
         // } else {
