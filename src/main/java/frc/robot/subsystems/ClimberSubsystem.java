@@ -6,6 +6,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -65,10 +66,16 @@ public class ClimberSubsystem extends SubsystemBase {
         m_motor1 = new CANSparkMax(ClimberConstants.motor1ID, MotorType.kBrushless);
         m_motor2 = new CANSparkMax(ClimberConstants.motor2ID, MotorType.kBrushless);
 
+        m_motor1.restoreFactoryDefaults();
+        m_motor2.restoreFactoryDefaults();
+
         m_motor2.follow(m_motor1);
 
         m_motor1.setIdleMode(IdleMode.kBrake);
         m_motor2.setIdleMode(IdleMode.kBrake);
+
+        m_motor1.setSmartCurrentLimit(120, 40);
+        m_motor2.setSmartCurrentLimit(120, 40);
 
         // m_encoder = new Encoder(3, 4, 5);
         m_absolutEncoder = new DutyCycleEncoder(2);
@@ -117,8 +124,6 @@ public class ClimberSubsystem extends SubsystemBase {
         // if (m_encoder.getDistance() >= ClimberConstants.maxHight_Rotations) {
         // climberState = ClimberState.Extended;
         // }
-        // break;
-        // default:
         // break;
         // }
         // SmartDashboard.putNumber("Climber Curent", m_motor1.getOutputCurrent());

@@ -30,8 +30,10 @@ public class Paths {
         public static Path Ball2B_Hub = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Ball2B-HubB.wpilib.json");
         public static Path Hub_Ball3 = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Hub-Ball3.wpilib.json");
         public static Path Ball3_Hub = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Ball3-Hub.wpilib.json");
-        public static Path Hub_Ball3_Ball4 = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Hub-Ball3-Ball4.wpilib.json");
-        public static Path Ball4_Hub = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Ball4-Hub.wpilib.json");
+        public static Path Hub_Ball3_Ball4_Red = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Hub-Ball3-Ball4.wpilib.json");
+        public static Path Ball4_Hub_Red = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Ball4-Hub.wpilib.json");
+        public static Path Hub_Ball3_Ball4_Blue = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Hub-Ball3-Ball4-Blue.wpilib.json");
+        public static Path Ball4_Hub_Blue = Filesystem.getDeployDirectory().toPath().resolve("./pathplanner/generatedJSON/Ball4-Hub-Blue.wpilib.json");
 
         public static void generateTrajectories() {
                 // twoBall0   = TrajectoryGenerator.generateTrajectory(List.of(start, ball2), FollowPathConstants.trajectoryConfig.setReversed(false));

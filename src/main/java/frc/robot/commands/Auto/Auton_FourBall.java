@@ -1,7 +1,12 @@
 package frc.robot.commands.Auto;
 
+import java.util.function.BooleanSupplier;
+
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -24,8 +29,10 @@ public class Auton_FourBall extends CommandBase {
     private static DrivetrainSubsystem m_drivetrainSubsystem;
     private static TowerSubsystem m_towerSubsystem;
 
+    private final boolean m_isRed;
+
     public Auton_FourBall(FlywheelSubsystem flywheelSubsystem, TransferWheelSubsystem transferWheelSubsystem,
-            IntakeSubsystem intakeSubsystem, DrivetrainSubsystem drivetrainSubsystem, TowerSubsystem towerSubsystem) {
+            IntakeSubsystem intakeSubsystem, DrivetrainSubsystem drivetrainSubsystem, TowerSubsystem towerSubsystem, boolean red) {
         m_commandScheduler = CommandScheduler.getInstance();
 
         m_flywheelSubsystem = flywheelSubsystem;
@@ -33,6 +40,8 @@ public class Auton_FourBall extends CommandBase {
         m_intakeSubsystem = intakeSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_towerSubsystem = towerSubsystem;
+
+        m_isRed = red;
     }
 
     @Override
@@ -68,15 +77,15 @@ public class Auton_FourBall extends CommandBase {
                 // Go to ball 3, and ball 4, stop the flywheel, Intake ball 3, and move ball 3
                 // into position
                 new ParallelDeadlineGroup(
-                        new FollowPath(m_drivetrainSubsystem, Paths.Hub_Ball3_Ball4),
-                        new InstantCommand(() -> {
-                            m_flywheelSubsystem.setSpeed(0);
-                        }, m_flywheelSubsystem),
-                        new RunIntake(m_intakeSubsystem, false)),
+                    new FollowPath(m_drivetrainSubsystem, m_isRed ? Paths.Hub_Ball3_Ball4_Red : Paths.Hub_Ball3_Ball4_Blue),
+                    new InstantCommand(() -> {
+                        m_flywheelSubsystem.setSpeed(0);
+                    }, m_flywheelSubsystem),
+                    new RunIntake(m_intakeSubsystem, false)),
                 // Return to hub, Get flywheel up to speed, Run intake and aditator to get ball
                 // 4 into position
                 new ParallelCommandGroup(
-                        new FollowPath(m_drivetrainSubsystem, Paths.Ball4_Hub),
+                        new FollowPath(m_drivetrainSubsystem, m_isRed ? Paths.Ball4_Hub_Red : Paths.Ball4_Hub_Blue),
                         new SpinFlywheel(m_flywheelSubsystem).beforeStarting(new WaitCommand(2)),
                         new RunIntake(m_intakeSubsystem, false).withTimeout(1)),
                 // Shoot ball 3

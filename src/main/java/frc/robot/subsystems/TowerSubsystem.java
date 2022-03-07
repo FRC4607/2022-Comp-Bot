@@ -44,6 +44,8 @@ public class TowerSubsystem extends SubsystemBase {
         m_agitatior.setInverted(false);
         m_agitatior.setIdleMode(IdleMode.kBrake);
 
+        m_agitatior.setSmartCurrentLimit(40, 20);
+
         m_midBrakeBeam = new DigitalInput(TowerConstants.midBrakeBeamID);
         m_highBrakeBeam = new DigitalInput(TowerConstants.highBrakeBeamID);
     }

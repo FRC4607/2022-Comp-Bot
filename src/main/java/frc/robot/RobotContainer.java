@@ -87,8 +87,10 @@ public class RobotContainer {
 				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
 		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem,
 				m_towerSubsystem, m_transferWheelSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Four Ball Auto", new Auton_FourBall(m_flywheelSubsystem, m_transferWheelSubsystem,
-				m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
+		m_chooser.addOption("Four Ball Auto Blue", new Auton_FourBall(m_flywheelSubsystem, m_transferWheelSubsystem,
+				m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem, false));
+		m_chooser.addOption("Four Ball Auto Red", new Auton_FourBall(m_flywheelSubsystem, m_transferWheelSubsystem,
+				m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem, true));
 
 		// m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
 		// m_chooser.addOption("Calibate Trackwidth", new

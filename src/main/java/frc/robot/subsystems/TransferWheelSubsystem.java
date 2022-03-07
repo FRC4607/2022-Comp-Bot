@@ -37,6 +37,8 @@ public class TransferWheelSubsystem extends SubsystemBase {
         m_transferWheel.setInverted(false);
         m_transferWheel.setIdleMode(IdleMode.kBrake);
 
+        m_transferWheel.setSmartCurrentLimit(40, 20);
+
         // SmartDashboard.putNumber("Transfer Wheel Speed", 0.8);
     }
 
