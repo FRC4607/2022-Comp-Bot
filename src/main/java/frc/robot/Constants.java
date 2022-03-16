@@ -15,7 +15,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -75,10 +74,8 @@ public class Constants {
 
     public static final class IntakeConstants {
         public static final int motorID = 7;
-        public static final int solenoidModule = 8;
-        public static final PneumaticsModuleType SolenoidType = PneumaticsModuleType.REVPH;
-        public static final int solenoidForwardChannel = 13;
-        public static final int solenoidReverseChannel = 12;
+        
+        public static final int solenoidChannel = 14;
 
         public static final double intakeSpeed = 1;
         public static final double reverseScalar = 0.5;
@@ -92,17 +89,13 @@ public class Constants {
         public static final int highBrakeBeamID = 1;
     }
 
-    public static final class TransferWheelConstants {
-        public static final int transferWheelID = 10;
-        public static final double transferWheelSpeed = 1;
-    }
-
     public static final class FlywheelConstants {
         public static final int flywheelMotor1ID = 11;
         public static final int flywheelMotor2ID = 12;
 
         // This is calculated from the characterization tool's CTRE preset.
-        public static final double flywheelP = 0.17121;
+        //public static final double flywheelP =  0.15;// 0.17121;
+        public static final double flywheelP =  0.05;
         public static final double flywheelD = 0;
 
         /*
@@ -122,16 +115,21 @@ public class Constants {
         // kS from characterization tool, used here as an arbitrary feed forward to
         // overcome friction. This is divided by 12 to get the value as a percent of the
         // motor's max output.
-        public static final double flywheelKs = 0.64575 / 12;
+        public static final double flywheelKs = 0.7983;
         // kA from characterization tool, used here as the velocity feed forward.
         // Conversion from v / (rotation/sec) to CTRE units (v (0-1023) / (rotations /
         // 0.1sec) ) is needed.
         // public static final double flywheelKf = 0.05103092783505154639175257731959;
-        public static final double flywheelKf = 0.046775;
+        public static final double flywheelKv = 0.11287;
 
-        public static final double flywheeelRPM = 2000; // 3900 * 0.98;
+        public static final double flywheeelRPM = 2500;// 2000; // 3900 * 0.98;
 
         public static final double flywheelMaxError = 200; // 50
+        
+        public static final int transferWheelID = 10;
+        public static final double transferWheelSpeed = 1;
+
+        public static final int pistionChannel = 15;
     }
 
     public static final class FollowPathConstants {
@@ -156,20 +154,10 @@ public class Constants {
         public static final int motor1ID = 17;
         public static final int motor2ID = 16;
 
-        public static final double kP = 0;
+        public static final double kP = 0.5;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final double kFF = 0;
 
-        public static final int pistionModule = 8;
-        public static final PneumaticsModuleType pistionType = PneumaticsModuleType.REVPH;
-        public static final int pistionForwardChannel = 10;
-        public static final int pistionReverseChannel = 11;
-
-        public static final int clutchModule = 8;
-        public static final PneumaticsModuleType clutchType = PneumaticsModuleType.REVPH;
-        public static final int clutchForwardChannel = 8;
-        public static final int clutchReverseChannel = 9;
         public static final double maxHight_Rotations = 6.8;
         public static final double rotationToExtend = 0;
         public static final int limitSwitchID = 2;
@@ -177,6 +165,11 @@ public class Constants {
 
         public static final double maxRoatation = 90;
         public static final double minRoatation = -45;
+        
+        public static final int pistionChannel = 13;
+
+        public static final double maxVelocity = 200;
+        public static final double maxAcceleration = 200;
     }
 
     public static final int pnumaticHub = 8;

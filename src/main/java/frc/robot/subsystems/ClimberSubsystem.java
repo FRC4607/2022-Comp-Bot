@@ -1,35 +1,28 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ClimberConstants;
 
 public class ClimberSubsystem extends SubsystemBase {
     private CANSparkMax m_motor1;
     private CANSparkMax m_motor2;
-    private Encoder m_encoder;
     private DutyCycleEncoder m_absolutEncoder;
+    private ProfiledPIDController m_PIDController;
 
-    private SparkMaxPIDController m_PIDController;
-
-    private DoubleSolenoid m_pistion;
-    private DoubleSolenoid m_clutch;
-
-    private DigitalInput m_limitSwitch;
+    private Solenoid m_pistion;
 
     public ClimberState climberState = ClimberState.Retracted;
     public ClutchState clutchState = ClutchState.Engaged;
@@ -62,6 +55,12 @@ public class ClimberSubsystem extends SubsystemBase {
         changing
     }
 
+    public enum ClimberPosition {
+        retracted,
+        relesed,
+        extended
+    }
+
     public ClimberSubsystem() {
         m_motor1 = new CANSparkMax(ClimberConstants.motor1ID, MotorType.kBrushless);
         m_motor2 = new CANSparkMax(ClimberConstants.motor2ID, MotorType.kBrushless);
@@ -79,25 +78,15 @@ public class ClimberSubsystem extends SubsystemBase {
 
         // m_encoder = new Encoder(3, 4, 5);
         m_absolutEncoder = new DutyCycleEncoder(2);
+        m_absolutEncoder.reset();
 
         // m_encoder = m_motor1.getEncoder();
         // m_encoder.setPositionConversionFactor(ClimberConstants.conversenFactor_SensorUnitsPerInch);
 
-        m_PIDController = m_motor1.getPIDController();
-        m_PIDController.setFeedbackDevice(m_motor1.getEncoder());
-        m_PIDController.setP(ClimberConstants.kP);
-        m_PIDController.setI(ClimberConstants.kI);
-        m_PIDController.setD(ClimberConstants.kD);
-        m_PIDController.setFF(ClimberConstants.kFF);
+        m_pistion = new Solenoid(Constants.pnumaticHub, PneumaticsModuleType.REVPH,
+                ClimberConstants.pistionChannel);
 
-        m_pistion = new DoubleSolenoid(ClimberConstants.pistionModule, ClimberConstants.pistionType,
-                ClimberConstants.pistionForwardChannel, ClimberConstants.pistionReverseChannel);
-
-        m_clutch = new DoubleSolenoid(ClimberConstants.clutchModule, ClimberConstants.clutchType,
-                ClimberConstants.clutchForwardChannel, ClimberConstants.clutchReverseChannel);
-
-        m_pistion.set(Value.kForward);
-        m_clutch.set(Value.kReverse);
+        m_pistion.set(false);
 
         pistonState = PistonState.Extended;
         clutchState = ClutchState.Engaged;
@@ -106,64 +95,42 @@ public class ClimberSubsystem extends SubsystemBase {
 
         // m_limitSwitch = new DigitalInput(ClimberConstants.limitSwitchID);
         // limitSwitchState = LimitSwitchState.changing;
+
+        m_PIDController = new ProfiledPIDController(ClimberConstants.kP, ClimberConstants.kI, ClimberConstants.kD,
+                new TrapezoidProfile.Constraints(ClimberConstants.maxVelocity, ClimberConstants.maxAcceleration));
     }
 
     @Override
     public void periodic() {
-        // switch (climberState) {
-        // case Retracting:
-        // m_PIDController.setReference(0, ControlType.kPosition);
-        // if (m_limitSwitch.get()) {
-        // climberState = ClimberState.Retracted;
-        // m_encoder.reset();
-        // }
-        // break;
-        // case Extending:
-        // m_PIDController.setReference(ClimberConstants.maxHight_Rotations,
-        // ControlType.kPosition);
-        // if (m_encoder.getDistance() >= ClimberConstants.maxHight_Rotations) {
-        // climberState = ClimberState.Extended;
-        // }
-        // break;
-        // }
-        // SmartDashboard.putNumber("Climber Curent", m_motor1.getOutputCurrent());
-
-        // SmartDashboard.putNumber("Encoder Distance", m_encoder.getDistance());
-        // SmartDashboard.putNumber("Absolut Encoder", m_absolutEncoder.get());
-        SmartDashboard.putNumber("Absolut Encoder Distance", m_absolutEncoder.getDistance());
+        SmartDashboard.putNumber("Absolut Encoder Distance", m_absolutEncoder.get());
 
         if (m_absolutEncoder.getDistance() < 0) {
             m_absolutEncoder.reset();
         }
-    }
 
-    public void extendClimber(boolean extended) {
-        climberState = extended ? ClimberState.Extending : ClimberState.Retracting;
+        setClimber(m_PIDController.calculate(m_absolutEncoder.get()));
     }
 
     public void setClimber(double speed) {
-        if (speed > 0) {
-            if (m_absolutEncoder.getDistance() >= ClimberConstants.maxHight_Rotations) {
-                m_motor1.set(0);
-                m_motor2.set(0);
-            } else {
-                m_motor1.set(m_limiter.calculate(speed));
-                m_motor2.set(m_limiter.calculate(speed));
-            }
-        } else {
-            m_motor1.set(m_limiter.calculate(speed));
-            m_motor2.set(m_limiter.calculate(speed));
-        }
+        m_motor1.set(speed);
+        m_motor2.set(speed);
+        // if (speed > 0) {
+        //     if (m_absolutEncoder.getDistance() >= ClimberConstants.maxHight_Rotations) {
+        //         m_motor1.set(0);
+        //         m_motor2.set(0);
+        //     } else {
+        //         m_motor1.set(m_limiter.calculate(speed));
+        //         m_motor2.set(m_limiter.calculate(speed));
+        //     }
+        // } else {
+        //     m_motor1.set(m_limiter.calculate(speed));
+        //     m_motor2.set(m_limiter.calculate(speed));
+        // }
 
-    }
-
-    public void setClutch(boolean engaged) {
-        m_clutch.set(engaged ? Value.kReverse : Value.kForward);
-        clutchState = engaged ? ClutchState.Engaged : ClutchState.Disengaged;
     }
 
     public void setPistion(boolean extended) {
-        m_pistion.set(extended ? Value.kForward : Value.kReverse);
+        m_pistion.set(extended);
         pistonState = extended ? PistonState.Extended : PistonState.Retracted;
     }
 
@@ -171,12 +138,20 @@ public class ClimberSubsystem extends SubsystemBase {
         m_pistion.toggle();
     }
 
-    public void toggleClutch() {
-        m_clutch.toggle();
-    }
+    public void setPosition(ClimberPosition position) {
+        switch (position) {
+            case retracted:
+                m_PIDController.setGoal(0);
+                break;
 
-    public boolean atPosition() {
-        return climberState == ClimberState.Retracted || climberState == ClimberState.Extended;
+            case relesed:
+                m_PIDController.setGoal(1);
+                break;
+            case extended:
+                m_PIDController.setGoal(ClimberConstants.maxHight_Rotations);
+                break;
+        }
+
     }
 
     public double getEncoder() {

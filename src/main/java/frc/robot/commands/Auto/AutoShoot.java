@@ -1,17 +1,16 @@
 package frc.robot.commands.Auto;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.FlywheelConstants;
 import frc.robot.Constants.TowerConstants;
-import frc.robot.Constants.TransferWheelConstants;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.TowerSubsystem;
-import frc.robot.subsystems.TransferWheelSubsystem;
 
 public class AutoShoot extends CommandBase {
     private final TowerSubsystem m_towerSubsystem;
     private final FlywheelSubsystem m_flywheelSubsystem;
-    private final TransferWheelSubsystem m_transferWheelSubsystem;
+    private Timer timer;
 
     private AUTOSHOOT_STATE state;
 
@@ -21,12 +20,12 @@ public class AutoShoot extends CommandBase {
         SHOOT,
         DONE
     }
-    
-    public AutoShoot(TowerSubsystem towerSubsystem, FlywheelSubsystem flywheelSubsystem, TransferWheelSubsystem transferWheelSubsystem) {
+
+    public AutoShoot(TowerSubsystem towerSubsystem, FlywheelSubsystem flywheelSubsystem) {
         m_towerSubsystem = towerSubsystem;
         m_flywheelSubsystem = flywheelSubsystem;
-        m_transferWheelSubsystem = transferWheelSubsystem;
-        addRequirements(towerSubsystem, flywheelSubsystem, transferWheelSubsystem);
+        addRequirements(towerSubsystem, flywheelSubsystem);
+        timer = new Timer();
     }
 
     @Override
@@ -38,25 +37,29 @@ public class AutoShoot extends CommandBase {
     public void execute() {
         switch (state) {
             case ACQUIRE_BALL:
-                if (m_towerSubsystem.getHighBrakeBeam()) {
+                if (!m_towerSubsystem.getHighBrakeBeam()) {
                     state = AUTOSHOOT_STATE.WAIT_FOR_FLYWHEEL;
+                    timer.reset();
+                    timer.start();
                     break;
                 }
-                m_towerSubsystem.setSpeed(TowerConstants.agitatiorSpeed);
             case WAIT_FOR_FLYWHEEL:
-                if (m_flywheelSubsystem.constantSpeed()) {
+                m_flywheelSubsystem.setRPM(FlywheelConstants.flywheeelRPM);
+                if (m_flywheelSubsystem.constantSpeed() & timer.hasElapsed(0.1)) {
                     state = AUTOSHOOT_STATE.SHOOT;
                     break;
                 }
-                m_flywheelSubsystem.setRPM(FlywheelConstants.flywheeelRPM);
             case SHOOT:
                 if (m_towerSubsystem.getHighBrakeBeam()) {
                     checkForBalls();
                     break;
                 }
-                m_transferWheelSubsystem.setTransferWheel(TransferWheelConstants.transferWheelSpeed);
+                m_flywheelSubsystem.setTransferWheel(FlywheelConstants.transferWheelSpeed);
             case DONE:
                 break;
+        }
+        if (m_towerSubsystem.getHighBrakeBeam() || m_towerSubsystem.getMidBrakeBeam()) {
+            m_towerSubsystem.setSpeed(TowerConstants.agitatiorSpeed);
         }
     }
 
@@ -67,11 +70,9 @@ public class AutoShoot extends CommandBase {
 
         if (high) {
             state = AUTOSHOOT_STATE.WAIT_FOR_FLYWHEEL;
-        }
-        else if (low) {
+        } else if (low) {
             state = AUTOSHOOT_STATE.ACQUIRE_BALL;
-        }
-        else {
+        } else {
             state = AUTOSHOOT_STATE.DONE;
         }
     }
@@ -83,7 +84,7 @@ public class AutoShoot extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        m_transferWheelSubsystem.setTransferWheel(0);
+        m_flywheelSubsystem.setTransferWheel(0);
         m_towerSubsystem.setSpeed(0);
         m_flywheelSubsystem.setSpeed(0);
     }

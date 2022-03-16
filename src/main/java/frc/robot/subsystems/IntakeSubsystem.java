@@ -1,21 +1,21 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class IntakeSubsystem extends SubsystemBase {
 
     private CANSparkMax m_intakeMotor;
-    private DoubleSolenoid m_solenoid;
+    private Solenoid m_solenoid;
 
     public IntakeSubsystem() {
-        m_solenoid = new DoubleSolenoid(IntakeConstants.solenoidModule, IntakeConstants.SolenoidType,
-                IntakeConstants.solenoidForwardChannel, IntakeConstants.solenoidReverseChannel);
-        m_solenoid.set(Value.kForward);
+        m_solenoid = new Solenoid(Constants.pnumaticHub, PneumaticsModuleType.REVPH, IntakeConstants.solenoidChannel);
+        m_solenoid.set(false);
 
         m_intakeMotor = new CANSparkMax(IntakeConstants.motorID, MotorType.kBrushless);
         m_intakeMotor.restoreFactoryDefaults();
@@ -30,7 +30,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param speed the speed the motor is set to. [-1, 1]
      */
     public void setSpeed(double speed) {
-        if (m_solenoid.get() == Value.kReverse) {
+        if (m_solenoid.get()) {
             m_intakeMotor.set(speed);
         } else {
             m_intakeMotor.set(0);
@@ -43,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param voltage
      */
     public void setVoltage(double voltage) {
-        if (m_solenoid.get() == Value.kReverse) {
+        if (m_solenoid.get()) {
             m_intakeMotor.setVoltage(voltage);
         } else {
             m_intakeMotor.setVoltage(0);
@@ -54,14 +54,14 @@ public class IntakeSubsystem extends SubsystemBase {
      * Extends the solenoid
      */
     public void extendIntake() {
-        m_solenoid.set(Value.kReverse);
+        m_solenoid.set(true);
     }
 
     /**
      * Retracts the solenoid
      */
     public void retractIntake() {
-        m_solenoid.set(Value.kForward);
+        m_solenoid.set(false);
     }
 
     /**

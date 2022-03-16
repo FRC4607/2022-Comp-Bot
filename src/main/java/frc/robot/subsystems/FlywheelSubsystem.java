@@ -14,6 +14,8 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.Constants.FlywheelConstants;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -22,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
@@ -32,6 +35,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 /**
  *
@@ -42,7 +48,9 @@ public class FlywheelSubsystem extends SubsystemBase {
     private WPI_TalonFX m_flywheelMotor2;
     private final TalonFXConfiguration motorConfig;
 
-    private ArrayList<Double> speeds = new ArrayList<>(Arrays.asList(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)); // 10 items
+    private ArrayList<Double> speeds = new ArrayList<>(Arrays.asList(0.0,0.0,0.0,0.0,0.0)); // 5 items
+    private CANSparkMax m_transferWheel;
+    private Solenoid m_piston;
 
     /**
     *
@@ -83,7 +91,7 @@ public class FlywheelSubsystem extends SubsystemBase {
 
         setRobotDistanceConfigs(TalonFXInvertType.Clockwise, pidConfig);
 
-        pidConfig.slot0.kF = FlywheelConstants.flywheelKf;
+        // pidConfig.slot0.kF = FlywheelConstants.flywheelKf;
         //pidConfig.slot0.kF = 0;
         pidConfig.slot0.kP = FlywheelConstants.flywheelP;
         //pidConfig.slot0.kP = 0;
@@ -93,6 +101,17 @@ public class FlywheelSubsystem extends SubsystemBase {
         m_flywheelMotor1.configAllSettings(pidConfig);
 
         m_flywheelMotor2.follow(m_flywheelMotor1);
+
+        m_transferWheel = new CANSparkMax(FlywheelConstants.transferWheelID, MotorType.kBrushless);
+
+        m_transferWheel.restoreFactoryDefaults();
+        m_transferWheel.setInverted(false);
+        m_transferWheel.setIdleMode(IdleMode.kCoast);
+
+        m_transferWheel.setSmartCurrentLimit(40, 20);
+
+        m_piston = new Solenoid(Constants.pnumaticHub, PneumaticsModuleType.REVPH, FlywheelConstants.pistionChannel);
+        m_piston.set(false);
     }
 
     @Override
@@ -120,9 +139,7 @@ public class FlywheelSubsystem extends SubsystemBase {
 
     public void setRPM(double rpm) {
         double target = rpm * 2048 / 600; // Taken from CTRE's code on how to convert to native units.
-        //m_flywheelMotor1.set(ControlMode.Velocity, target, DemandType.ArbitraryFeedForward, FlywheelConstants.flywheelKs);
-        m_flywheelMotor1.set(ControlMode.Velocity, target);
-
+        m_flywheelMotor1.set(ControlMode.Velocity, target, DemandType.ArbitraryFeedForward, (FlywheelConstants.flywheelKs + rpm * FlywheelConstants.flywheelKv / 60) / m_flywheelMotor1.getBusVoltage());
     }
 
     public double getFlywheelError() {
@@ -197,5 +214,17 @@ public class FlywheelSubsystem extends SubsystemBase {
 		/* Since the Distance is the sum of the two sides, divide by 2 so the total isn't double
 		   the real-world value */
 		masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
-	 }
+	}
+
+    public void setTransferWheel(double speed) {
+        m_transferWheel.set(speed);
+    }
+
+    public void setPiston(boolean extended) {
+        m_piston.set(extended);
+    }
+
+    public void togglePsiton() {
+        m_piston.toggle();
+    }
 }

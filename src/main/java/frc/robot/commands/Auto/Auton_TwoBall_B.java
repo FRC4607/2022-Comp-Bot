@@ -16,18 +16,16 @@ public class Auton_TwoBall_B extends CommandBase {
 	private static DrivetrainSubsystem m_drivetrainSubsystem;
 	private static IntakeSubsystem m_intakeSubsystem;
 	private static TowerSubsystem m_towerSubsystem;
-	private static TransferWheelSubsystem m_transferWheelSubsystem;
 	private static FlywheelSubsystem m_flywheelSubsystem;
 
 	public Auton_TwoBall_B(DrivetrainSubsystem drivetrainSubsystem, IntakeSubsystem intakeSubsystem,
-			TowerSubsystem towerSubsystem, TransferWheelSubsystem transferWheelSubsystem,
+			TowerSubsystem towerSubsystem,
 			FlywheelSubsystem flywheelSubsystem) {
 		m_commandScheduler = CommandScheduler.getInstance();
 
 		m_drivetrainSubsystem = drivetrainSubsystem;
 		m_intakeSubsystem = intakeSubsystem;
 		m_towerSubsystem = towerSubsystem;
-		m_transferWheelSubsystem = transferWheelSubsystem;
 		m_flywheelSubsystem = flywheelSubsystem;
 	}
 
@@ -54,11 +52,11 @@ public class Auton_TwoBall_B extends CommandBase {
 								new FollowPath(m_drivetrainSubsystem, Paths.Ball2_Hub),
 								new SpinFlywheel(m_flywheelSubsystem)),
 						new RunIntake(m_intakeSubsystem, false).withTimeout(0.1)),
-				new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
+				new RunTransferWheel(m_flywheelSubsystem, false).withTimeout(0.2),
 				new ParallelCommandGroup(
 						new SpinFlywheel(m_flywheelSubsystem),
 						new RunIntake(m_intakeSubsystem, false).withTimeout(1)),
-				new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
+				new RunTransferWheel(m_flywheelSubsystem, false).withTimeout(0.2),
 				new InstantCommand(() -> {
 					m_flywheelSubsystem.setSpeed(0);
 				}, m_flywheelSubsystem),

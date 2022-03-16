@@ -25,21 +25,21 @@ public class AutoClimb extends CommandBase {
 
         BooleanSupplier ValidRotation = () -> {return (ClimberConstants.minRoatation <= /*m_drivetrainSubsystem.getYaw()*/ 0 && /*m_drivetrainSubsystem.getYaw()*/0 <= ClimberConstants.maxRoatation); };
         m_commandScheduler.schedule(new SequentialCommandGroup(
-            new ExtendClimberPistion(m_climberSubsystem, true),
-            new WaitUntilCommand(ValidRotation),
-            new SetClimber(m_climberSubsystem, true),
-            new ExtendClimberPistion(m_climberSubsystem, false),
-            new SetClimber(m_climberSubsystem, false),
-            new ExtendClimberPistion(m_climberSubsystem, true),
-            new WaitUntilCommand(ValidRotation),
-            new SetClimber(m_climberSubsystem, true),
-            new ExtendClimberPistion(m_climberSubsystem, false),
-            new SetClimber(m_climberSubsystem, false),
-            new ExtendClimberPistion(m_climberSubsystem, true),
-            new WaitUntilCommand(ValidRotation),
-            new SetClimber(m_climberSubsystem, true),
-            new ExtendClimberPistion(m_climberSubsystem, false),
-            new SetClimber(m_climberSubsystem, false)
+            // new ExtendClimberPistion(m_climberSubsystem, true),
+            // new WaitUntilCommand(ValidRotation),
+            // new SetClimber(m_climberSubsystem, true),
+            // new ExtendClimberPistion(m_climberSubsystem, false),
+            // new SetClimber(m_climberSubsystem, false),
+            // new ExtendClimberPistion(m_climberSubsystem, true),
+            // new WaitUntilCommand(ValidRotation),
+            // new SetClimber(m_climberSubsystem, true),
+            // new ExtendClimberPistion(m_climberSubsystem, false),
+            // new SetClimber(m_climberSubsystem, false),
+            // new ExtendClimberPistion(m_climberSubsystem, true),
+            // new WaitUntilCommand(ValidRotation),
+            // new SetClimber(m_climberSubsystem, true),
+            // new ExtendClimberPistion(m_climberSubsystem, false),
+            // new SetClimber(m_climberSubsystem, false)
         ));
 
     }

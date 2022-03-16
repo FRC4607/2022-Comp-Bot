@@ -1,12 +1,7 @@
 package frc.robot.commands.Auto;
 
-import java.util.function.BooleanSupplier;
-
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -18,25 +13,22 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TowerSubsystem;
-import frc.robot.subsystems.TransferWheelSubsystem;
 
 public class Auton_FourBall extends CommandBase {
     private static CommandScheduler m_commandScheduler;
 
     private static FlywheelSubsystem m_flywheelSubsystem;
-    private static TransferWheelSubsystem m_transferWheelSubsystem;
     private static IntakeSubsystem m_intakeSubsystem;
     private static DrivetrainSubsystem m_drivetrainSubsystem;
     private static TowerSubsystem m_towerSubsystem;
 
     private final boolean m_isRed;
 
-    public Auton_FourBall(FlywheelSubsystem flywheelSubsystem, TransferWheelSubsystem transferWheelSubsystem,
+    public Auton_FourBall(FlywheelSubsystem flywheelSubsystem,
             IntakeSubsystem intakeSubsystem, DrivetrainSubsystem drivetrainSubsystem, TowerSubsystem towerSubsystem, boolean red) {
         m_commandScheduler = CommandScheduler.getInstance();
 
         m_flywheelSubsystem = flywheelSubsystem;
-        m_transferWheelSubsystem = transferWheelSubsystem;
         m_intakeSubsystem = intakeSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_towerSubsystem = towerSubsystem;
@@ -69,11 +61,11 @@ public class Auton_FourBall extends CommandBase {
                         new SpinFlywheel(m_flywheelSubsystem),
                         new RunIntake(m_intakeSubsystem, false).withTimeout(1)),
                 // Shoot ball 1
-                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_flywheelSubsystem, false).withTimeout(0.2),
                 // Spin flywheel up to speed
                 new SpinFlywheel(m_flywheelSubsystem),
                 // Shoot ball 2
-                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_flywheelSubsystem, false).withTimeout(0.2),
                 // Go to ball 3, and ball 4, stop the flywheel, Intake ball 3, and move ball 3
                 // into position
                 new ParallelDeadlineGroup(
@@ -89,10 +81,10 @@ public class Auton_FourBall extends CommandBase {
                         new SpinFlywheel(m_flywheelSubsystem).beforeStarting(new WaitCommand(2)),
                         new RunIntake(m_intakeSubsystem, false).withTimeout(1)),
                 // Shoot ball 3
-                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_flywheelSubsystem, false).withTimeout(0.2),
                 new SpinFlywheel(m_flywheelSubsystem),
                 // Shoot ball 4
-                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_flywheelSubsystem, false).withTimeout(0.2),
                 new InstantCommand(() -> {
                     m_flywheelSubsystem.setSpeed(0);
                 }, m_flywheelSubsystem),

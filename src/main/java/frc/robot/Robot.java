@@ -20,7 +20,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -40,7 +39,7 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
     private RobotContainer m_robotContainer;
-    //private Compressor m_compresor;
+    private Compressor m_compresor;
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -57,7 +56,9 @@ public class Robot extends TimedRobot {
         inst.startClientTeam(4607);
         Paths.generateTrajectories();
 
-        //m_compresor = new Compressor(Constants.pnumaticHub, PneumaticsModuleType.REVPH);
+        m_compresor = new Compressor(Constants.pnumaticHub, PneumaticsModuleType.REVPH);
+        m_compresor.enableDigital();
+        // m_compresor.disable();
     }
 
     /**
@@ -108,6 +109,8 @@ public class Robot extends TimedRobot {
         NetworkTable databace = inst.getTable("PiTable");
 		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
 		entry.setBoolean(true);
+        
+        //m_compresor.disable();
     }
 
     /**
@@ -133,7 +136,8 @@ public class Robot extends TimedRobot {
 
         // Shuffleboard.startRecording();
 
-        //m_compresor.enableDigital();
+        // m_compresor.disable();
+        m_robotContainer.m_climberSubsystem.resetEncoder();
     }
 
     /**

@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Paths;
 import frc.robot.commands.RunTransferWheel;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.TransferWheelSubsystem;
 
 public class Auton_ThreeBall extends CommandBase {
     private static CommandScheduler m_commandScheduler;
@@ -18,17 +17,15 @@ public class Auton_ThreeBall extends CommandBase {
     private static FlywheelSubsystem m_flywheelSubsystem;
     private static IntakeSubsystem m_intakeSubsystem;
     private static TowerSubsystem m_towerSubsystem;
-    private static TransferWheelSubsystem m_transferWheelSubsystem;
 
     public Auton_ThreeBall(DrivetrainSubsystem drivetrainSubsystem, IntakeSubsystem intakeSubsystem,
-            TowerSubsystem towerSubsystem, TransferWheelSubsystem transferWheelSubsystem,
+            TowerSubsystem towerSubsystem,
             FlywheelSubsystem flywheelSubsystem) {
         m_commandScheduler = CommandScheduler.getInstance();
 
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_intakeSubsystem = intakeSubsystem;
         m_towerSubsystem = towerSubsystem;
-        m_transferWheelSubsystem = transferWheelSubsystem;
         m_flywheelSubsystem = flywheelSubsystem;
     }
 
@@ -49,10 +46,10 @@ public class Auton_ThreeBall extends CommandBase {
                 new ParallelCommandGroup(
                         new FollowPath(m_drivetrainSubsystem, Paths.Ball2_Hub),
                         new SpinFlywheel(m_flywheelSubsystem)),
-                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_flywheelSubsystem, false).withTimeout(0.2),
                 new ParallelCommandGroup(
                         new SpinFlywheel(m_flywheelSubsystem)),
-                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_flywheelSubsystem, false).withTimeout(0.2),
                 new ParallelDeadlineGroup(
                         new FollowPath(m_drivetrainSubsystem, Paths.Hub_Ball3),
                         new InstantCommand(() -> {
@@ -62,7 +59,7 @@ public class Auton_ThreeBall extends CommandBase {
                 new ParallelCommandGroup(
                         new FollowPath(m_drivetrainSubsystem, Paths.Ball3_Hub),
                         new SpinFlywheel(m_flywheelSubsystem)),
-                new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false).withTimeout(0.2),
+                new RunTransferWheel(m_flywheelSubsystem, false).withTimeout(0.2),
                 new InstantCommand(() -> {
                     m_flywheelSubsystem.setSpeed(0);
                 }, m_flywheelSubsystem)).withTimeout(15), new RunAutoTower(m_towerSubsystem).withTimeout(15));

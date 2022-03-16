@@ -29,4 +29,9 @@ public class SpinFlywheel extends CommandBase {
         SmartDashboard.putBoolean("Cosntant Speed", m_flywheelSubsystem.constantSpeed());
         return m_flywheelSubsystem.constantSpeed() && timer.hasElapsed(0.2);
     }  
+    
+    @Override
+    public void end(boolean interrupted) {
+        System.out.println("Spin up Time:" + timer.get());
+    }
 }
