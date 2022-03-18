@@ -12,10 +12,11 @@
 
 package frc.robot;
 
-import frc.robot.Constants.FlywheelConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.*;
 import frc.robot.commands.Auto.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.IntakeSubsystem.IntakeState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
@@ -27,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
+s * the {@link Robot}
  * periodic methods (other than the scheduler calls). Instead, the structure of
  * the robot
  * (including subsystems, commands, and button mappings) should be declared
@@ -41,7 +42,7 @@ public class RobotContainer {
 	public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 	public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 	public final TowerSubsystem m_towerSubsystem = new TowerSubsystem();
-	public final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
+	public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
 	public final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
 	// 320, 240
@@ -59,34 +60,21 @@ public class RobotContainer {
 	 */
 	private RobotContainer() {
 
-		// Smartdashboard Subsystems
-
-		// SmartDashboard Buttons
-		// SmartDashboard.putData("Run Flywheel", new RunFlywheel(m_flywheelSubsystem));
-
 		// Configure the button bindings
 		configureButtonBindings();
 
 		// Configure default commands
 		m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
-		m_intakeSubsystem.setDefaultCommand(new DriverIntake(m_intakeSubsystem, m_towerSubsystem, driver));
-		m_towerSubsystem.setDefaultCommand(new DriverTower(m_towerSubsystem, driver));
-		// m_climberSubsystem.setDefaultCommand(new ClimberTrigers(m_climberSubsystem, operator));
+		m_climberSubsystem.setDefaultCommand(new ClimberTrigers(m_climberSubsystem, operator));
 		// m_flywheelSubsystem.setDefaultCommand(new
 		// RunFlywheelJoystick(m_flywheelSubsystem, operator));
 
 		// Configure autonomous sendable chooser
-		m_chooser.setDefaultOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem,
-				m_towerSubsystem, m_flywheelSubsystem));
-		m_chooser.addOption("Four Ball Auto Blue", new Auton_FourBall(m_flywheelSubsystem,
-				m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem, false));
-		m_chooser.addOption("Four Ball Auto Red", new Auton_FourBall(m_flywheelSubsystem,
-				m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem, true));
-
+		m_chooser.setDefaultOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
+		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
+		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
+		m_chooser.addOption("Four Ball", new Auton_FourBall(m_shooterSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
+		
 		// m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
 		// m_chooser.addOption("Calibate Trackwidth", new
 		// CalibateTrackwidth(m_drivetrainSubsystem, false));
@@ -97,36 +85,7 @@ public class RobotContainer {
 			m_climberSubsystem.resetEncoder();
 		}));
 
-		SmartDashboard.putNumber("Flywheel Speed", FlywheelConstants.flywheeelRPM);
-
-		// Camera
-
-		// // Creates UsbCamera and MjpegServer [1] and connects them
-		// CameraServer.startAutomaticCapture();
-
-		// // Creates the CvSink and connects it to the UsbCamera
-		// CvSink cvSink = CameraServer.getVideo();
-
-		// Creates the CvSource and MjpegServer [2] and connects them
-		// CvSource outputStream = CameraServer.putVideo("Main Cam", 320, 240);
-
-		// // Creates UsbCamera and MjpegServer [1] and connects them
-		// UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-		// MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-		// mjpegServer1.setSource(usbCamera);
-
-		// // Creates the CvSink and connects it to the UsbCamera
-		// CvSink cvSink = new CvSink("opencv_USB Camera 0");
-		// cvSink.setSource(usbCamera);
-
-		// // Creates the CvSource and MjpegServer [2] and connects them
-		// CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480,
-		// 30);
-		// MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-		// mjpegServer2.setSource(outputStream);
-
-		// SmartDashboard.putNumber("Flywheel Speed RPM",
-		// FlywheelConstants.flywheeelRPM);
+		SmartDashboard.putNumber("Flywheel Speed", ShooterConstants.flywheeelRPM);
 	}
 
 	public static RobotContainer getInstance() {
@@ -142,28 +101,30 @@ public class RobotContainer {
 	 * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
-		// Create some buttons
+		// Driver 
+		JoystickButton driver_leftBumper = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+		JoystickButton driver_rightBumper = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+
+		driver_leftBumper.whenHeld(new OutakeBalls(m_intakeSubsystem, m_towerSubsystem));
+		driver_rightBumper.whenHeld(new IntakeBalls(m_intakeSubsystem, m_towerSubsystem));
+		// new JoystickButton(driver, 1).whenPressed(new InstantCommand(() -> {m_intakeSubsystem.togglePiston();}));
+
+		// Operator
 		JoystickButton operator_aButton = new JoystickButton(operator, XboxController.Button.kA.value);
 		JoystickButton operator_bButton = new JoystickButton(operator, XboxController.Button.kB.value);
 		JoystickButton operator_xButton = new JoystickButton(operator, XboxController.Button.kX.value);
 		JoystickButton operator_yButton = new JoystickButton(operator, XboxController.Button.kY.value);
 		JoystickButton operator_leftBumper = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
 		JoystickButton operator_rightBumper = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
+		JoystickButton operator_startButton = new JoystickButton(operator, XboxController.Button.kStart.value);
 
-		JoystickButton driver_aButton = new JoystickButton(driver, 1);
+		operator_rightBumper.whileHeld(new ShootBalls(m_towerSubsystem, m_shooterSubsystem, 0));
+		operator_startButton.whenPressed(new ToggleShooterPiston(m_shooterSubsystem));
+		operator_aButton.whenHeld(new RetractClimber(m_climberSubsystem));
+		operator_bButton.whenHeld(new RelseseClimber(m_climberSubsystem));
+		operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem, m_intakeSubsystem));
+		operator_yButton.whenHeld(new ExtendClimber(m_climberSubsystem));
 
-		driver_aButton.whenPressed(new ToggleIntake(m_intakeSubsystem));
-
-		operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem));
-		operator_rightBumper.whileHeld(new ShootBalls(m_towerSubsystem, m_flywheelSubsystem));
-		// operator_bButton.whileHeld(new RunTransferWheel(m_flywheelSubsystem, false).withTimeout(0.2));
-		operator_yButton.whenPressed(new ToggleFlyweelPiston(m_flywheelSubsystem));
-
-		operator_aButton.whenPressed(new RetractClimber(m_climberSubsystem));
-		operator_bButton.whenPressed(new RelseseClimber(m_climberSubsystem));
-		operator_leftBumper.whenPressed(new ExtendClimber(m_climberSubsystem));
-
-		
 	}
 
 	public XboxController getDriver() {

@@ -37,6 +37,8 @@ public class TowerSubsystem extends SubsystemBase {
         }
     }
 
+    // 27, 26
+
     public TowerSubsystem() {
 
         m_agitatior = new CANSparkMax(TowerConstants.agitatiorID, MotorType.kBrushless);

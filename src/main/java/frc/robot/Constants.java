@@ -77,8 +77,16 @@ public class Constants {
         
         public static final int solenoidChannel = 14;
 
-        public static final double intakeSpeed = 1;
-        public static final double reverseScalar = 0.5;
+        public static final double kP = 0.0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+
+        public static final double kS = 0.24302;
+        public static final double kV = 0.12861;
+
+        public static final double intakeingRPM = 2000;
+        public static final double releasingRPM = 1000;
+
     }
 
     public static final class TowerConstants {
@@ -89,7 +97,7 @@ public class Constants {
         public static final int highBrakeBeamID = 1;
     }
 
-    public static final class FlywheelConstants {
+    public static final class ShooterConstants {
         public static final int flywheelMotor1ID = 11;
         public static final int flywheelMotor2ID = 12;
 
@@ -126,8 +134,8 @@ public class Constants {
 
         public static final double flywheelMaxError = 200; // 50
         
-        public static final int transferWheelID = 10;
-        public static final double transferWheelSpeed = 1;
+        public static final int kickerWheelID = 10;
+        public static final double kickerWheelSpeed = 1;
 
         public static final int pistionChannel = 15;
     }
@@ -155,7 +163,7 @@ public class Constants {
         public static final int motor2ID = 16;
 
         public static final double kP = 0.5;
-        public static final double kI = 0;
+        public static final double kI = 0.1;
         public static final double kD = 0;
 
         public static final double maxHight_Rotations = 6.8;
@@ -170,6 +178,9 @@ public class Constants {
 
         public static final double maxVelocity = 200;
         public static final double maxAcceleration = 200;
+
+        public static final double PositonTolerace = 0.1;
+        public static final double pistionEstenchonTime = 2.0;
     }
 
     public static final int pnumaticHub = 8;

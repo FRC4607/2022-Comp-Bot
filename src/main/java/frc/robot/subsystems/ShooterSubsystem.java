@@ -13,7 +13,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.Constants.FlywheelConstants;
+import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,20 +42,20 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 /**
  *
  */
-public class FlywheelSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
 
     private WPI_TalonFX m_flywheelMotor1;
     private WPI_TalonFX m_flywheelMotor2;
     private final TalonFXConfiguration motorConfig;
 
     private ArrayList<Double> speeds = new ArrayList<>(Arrays.asList(0.0,0.0,0.0,0.0,0.0)); // 5 items
-    private CANSparkMax m_transferWheel;
+    private CANSparkMax m_kickerWheel;
     private Solenoid m_piston;
 
     /**
     *
     */
-    public FlywheelSubsystem() {
+    public ShooterSubsystem() {
         motorConfig = new TalonFXConfiguration();
         motorConfig.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, 35, 40, 0.2);
         motorConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
@@ -65,8 +65,8 @@ public class FlywheelSubsystem extends SubsystemBase {
         motorConfig.peakOutputReverse = -1;
         motorConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
 
-        m_flywheelMotor1 = new WPI_TalonFX(Constants.FlywheelConstants.flywheelMotor1ID);
-        m_flywheelMotor2 = new WPI_TalonFX(Constants.FlywheelConstants.flywheelMotor2ID);
+        m_flywheelMotor1 = new WPI_TalonFX(Constants.ShooterConstants.flywheelMotor1ID);
+        m_flywheelMotor2 = new WPI_TalonFX(Constants.ShooterConstants.flywheelMotor2ID);
 
         /* Factory default hardware to prevent unexpected behavior */
         m_flywheelMotor1.configFactoryDefault();
@@ -93,24 +93,24 @@ public class FlywheelSubsystem extends SubsystemBase {
 
         // pidConfig.slot0.kF = FlywheelConstants.flywheelKf;
         //pidConfig.slot0.kF = 0;
-        pidConfig.slot0.kP = FlywheelConstants.flywheelP;
+        pidConfig.slot0.kP = ShooterConstants.flywheelP;
         //pidConfig.slot0.kP = 0;
         //pidConfig.slot0.kI = 0;
-        pidConfig.slot0.kD = FlywheelConstants.flywheelD;
+        pidConfig.slot0.kD = ShooterConstants.flywheelD;
 
         m_flywheelMotor1.configAllSettings(pidConfig);
 
         m_flywheelMotor2.follow(m_flywheelMotor1);
 
-        m_transferWheel = new CANSparkMax(FlywheelConstants.transferWheelID, MotorType.kBrushless);
+        m_kickerWheel = new CANSparkMax(ShooterConstants.kickerWheelID, MotorType.kBrushless);
 
-        m_transferWheel.restoreFactoryDefaults();
-        m_transferWheel.setInverted(false);
-        m_transferWheel.setIdleMode(IdleMode.kCoast);
+        m_kickerWheel.restoreFactoryDefaults();
+        m_kickerWheel.setInverted(false);
+        m_kickerWheel.setIdleMode(IdleMode.kCoast);
 
-        m_transferWheel.setSmartCurrentLimit(40, 20);
+        m_kickerWheel.setSmartCurrentLimit(40, 20);
 
-        m_piston = new Solenoid(Constants.pnumaticHub, PneumaticsModuleType.REVPH, FlywheelConstants.pistionChannel);
+        m_piston = new Solenoid(Constants.pnumaticHub, PneumaticsModuleType.REVPH, ShooterConstants.pistionChannel);
         m_piston.set(false);
     }
 
@@ -139,7 +139,7 @@ public class FlywheelSubsystem extends SubsystemBase {
 
     public void setRPM(double rpm) {
         double target = rpm * 2048 / 600; // Taken from CTRE's code on how to convert to native units.
-        m_flywheelMotor1.set(ControlMode.Velocity, target, DemandType.ArbitraryFeedForward, (FlywheelConstants.flywheelKs + rpm * FlywheelConstants.flywheelKv / 60) / m_flywheelMotor1.getBusVoltage());
+        m_flywheelMotor1.set(ControlMode.Velocity, target, DemandType.ArbitraryFeedForward, (ShooterConstants.flywheelKs + rpm * ShooterConstants.flywheelKv / 60) / m_flywheelMotor1.getBusVoltage());
     }
 
     public double getFlywheelError() {
@@ -147,7 +147,7 @@ public class FlywheelSubsystem extends SubsystemBase {
     }
 
     public boolean constantSpeed() {
-        return ( Collections.max(speeds) - Collections.min(speeds) ) < FlywheelConstants.flywheelMaxError;
+        return ( Collections.max(speeds) - Collections.min(speeds) ) < ShooterConstants.flywheelMaxError;
     }
     
     // This is taken from CTRE's sample code at https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/MotionMagic_ArbFeedForward/src/main/java/frc/robot/Robot.java.
@@ -216,8 +216,8 @@ public class FlywheelSubsystem extends SubsystemBase {
 		masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
 	}
 
-    public void setTransferWheel(double speed) {
-        m_transferWheel.set(speed);
+    public void setKickerWheel(double speed) {
+        m_kickerWheel.set(speed);
     }
 
     public void setPiston(boolean extended) {

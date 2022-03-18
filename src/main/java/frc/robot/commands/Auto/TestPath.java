@@ -39,7 +39,7 @@ public class TestPath extends CommandBase {
 
         
         m_drivetrainSubsystem.setBrakeMode(false);
-        CommandScheduler.getInstance().schedule(new FollowPath(m_drivetrainSubsystem, Paths.Hub_Ball3_Ball4_Red));
+        CommandScheduler.getInstance().schedule(new FollowPath(m_drivetrainSubsystem, Strate));
 
     }
 

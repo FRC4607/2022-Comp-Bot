@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -11,10 +13,13 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ClimberConstants;
+import frc.robot.commands.ExtendClimber;
 
 public class ClimberSubsystem extends SubsystemBase {
     private CANSparkMax m_motor1;
@@ -61,6 +66,10 @@ public class ClimberSubsystem extends SubsystemBase {
         extended
     }
 
+    private boolean PIDEnabled;
+
+    private boolean ExtendedClimber;
+
     public ClimberSubsystem() {
         m_motor1 = new CANSparkMax(ClimberConstants.motor1ID, MotorType.kBrushless);
         m_motor2 = new CANSparkMax(ClimberConstants.motor2ID, MotorType.kBrushless);
@@ -98,6 +107,10 @@ public class ClimberSubsystem extends SubsystemBase {
 
         m_PIDController = new ProfiledPIDController(ClimberConstants.kP, ClimberConstants.kI, ClimberConstants.kD,
                 new TrapezoidProfile.Constraints(ClimberConstants.maxVelocity, ClimberConstants.maxAcceleration));
+
+        m_PIDController.setTolerance(ClimberConstants.PositonTolerace);
+
+        ExtendedClimber = true;
     }
 
     @Override
@@ -108,42 +121,59 @@ public class ClimberSubsystem extends SubsystemBase {
             m_absolutEncoder.reset();
         }
 
-        setClimber(m_PIDController.calculate(m_absolutEncoder.get()));
+        if (PIDEnabled) {
+            double dutyCycle = m_PIDController.calculate(m_absolutEncoder.get());
+            m_motor1.set(dutyCycle);
+            m_motor2.set(dutyCycle);
+        }
+
+        SmartDashboard.putBoolean("PID Controled", PIDEnabled);
+
     }
 
     public void setClimber(double speed) {
-        m_motor1.set(speed);
-        m_motor2.set(speed);
-        // if (speed > 0) {
-        //     if (m_absolutEncoder.getDistance() >= ClimberConstants.maxHight_Rotations) {
-        //         m_motor1.set(0);
-        //         m_motor2.set(0);
-        //     } else {
-        //         m_motor1.set(m_limiter.calculate(speed));
-        //         m_motor2.set(m_limiter.calculate(speed));
-        //     }
-        // } else {
-        //     m_motor1.set(m_limiter.calculate(speed));
-        //     m_motor2.set(m_limiter.calculate(speed));
-        // }
-
+        if (!PIDEnabled) {
+            if (speed > 0 && m_absolutEncoder.getDistance() >= ClimberConstants.maxHight_Rotations) {
+                m_motor1.set(0);
+                m_motor2.set(0);
+            } else {
+                m_motor1.set(speed);
+                m_motor2.set(speed);
+            }
+        }
     }
 
     public void setPistion(boolean extended) {
-        m_pistion.set(extended);
+        m_pistion.set(!extended);
+        ExtendedClimber = extended;
+
+        if (extended) {
+            RobotContainer.getInstance().m_intakeSubsystem.setForcedExtention(false);
+        } else {
+            RobotContainer.getInstance().m_intakeSubsystem.setForcedExtention(true);
+        }
+
         pistonState = extended ? PistonState.Extended : PistonState.Retracted;
     }
 
     public void togglePiston() {
         m_pistion.toggle();
+        ExtendedClimber = !ExtendedClimber;
+        if (ExtendedClimber) {
+            RobotContainer.getInstance().m_intakeSubsystem.setForcedExtention(false);
+        } else {
+            RobotContainer.getInstance().m_intakeSubsystem.setForcedExtention(true);
+        }
+
+        pistonState = m_pistion.get() ? PistonState.Retracted : PistonState.Extended;
     }
 
     public void setPosition(ClimberPosition position) {
+        PIDEnabled = true;
         switch (position) {
             case retracted:
                 m_PIDController.setGoal(0);
                 break;
-
             case relesed:
                 m_PIDController.setGoal(1);
                 break;
@@ -151,7 +181,10 @@ public class ClimberSubsystem extends SubsystemBase {
                 m_PIDController.setGoal(ClimberConstants.maxHight_Rotations);
                 break;
         }
+    }
 
+    public void DisablePositionContorl() {
+        PIDEnabled = false;
     }
 
     public double getEncoder() {
@@ -160,5 +193,13 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public void resetEncoder() {
         m_absolutEncoder.reset();
+    }
+
+    public boolean atPosition() {
+        if (m_PIDController.getPositionError() < ClimberConstants.PositonTolerace) {
+            return true;
+        } else {
+            return true;
+        }
     }
 }

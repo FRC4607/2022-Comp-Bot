@@ -9,6 +9,8 @@ public class RetractClimber extends CommandBase {
 
     public RetractClimber(ClimberSubsystem climberSubsystem) {
         m_climberSubsystem = climberSubsystem;
+        
+        addRequirements(climberSubsystem);
     }
 
     @Override
@@ -17,7 +19,12 @@ public class RetractClimber extends CommandBase {
     }
     
     @Override
+    public void end(boolean interrupted) {
+        m_climberSubsystem.DisablePositionContorl();
+    }
+    
+    @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }
