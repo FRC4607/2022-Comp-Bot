@@ -84,8 +84,10 @@ public class Constants {
         public static final double kS = 0.24302;
         public static final double kV = 0.12861;
 
-        public static final double intakeingRPM = 2000;
+        public static final double intakeingRPM = 3500;
         public static final double releasingRPM = 1000;
+
+        public static final double intakeSpeed = 0.80;
 
     }
 
@@ -103,23 +105,10 @@ public class Constants {
 
         // This is calculated from the characterization tool's CTRE preset.
         //public static final double flywheelP =  0.15;// 0.17121;
-        public static final double flywheelP =  0.05;
-        public static final double flywheelD = 0;
+        public static final double flywheelF =  0.05;
+        public static final double flywheelP =  0.08;
+        public static final double flywheelD = 5;
 
-        /*
-         * 0.17121, 0.0171
-         * 0.17121, 0.02
-         * 0.17121, 0.05
-         * 0.25, 0.1
-         * 0.15, 0.1
-         * 0.15, 0.0
-         * Peck 1
-         * +320
-         * +310
-         * +300
-         * +500
-         * +290
-         */
         // kS from characterization tool, used here as an arbitrary feed forward to
         // overcome friction. This is divided by 12 to get the value as a percent of the
         // motor's max output.
@@ -130,14 +119,17 @@ public class Constants {
         // public static final double flywheelKf = 0.05103092783505154639175257731959;
         public static final double flywheelKv = 0.11287;
 
-        public static final double flywheeelRPM = 2500;// 2000; // 3900 * 0.98;
-
         public static final double flywheelMaxError = 200; // 50
+        
+        public static final double lowGoalRPM = 900;
+        public static final double highGoalRPM = 2550;
         
         public static final int kickerWheelID = 10;
         public static final double kickerWheelSpeed = 1;
 
         public static final int pistionChannel = 15;
+        public static final double limeLightRPM = 2300;
+        
     }
 
     public static final class FollowPathConstants {
@@ -166,7 +158,7 @@ public class Constants {
         public static final double kI = 0.1;
         public static final double kD = 0;
 
-        public static final double maxHight_Rotations = 6.8;
+        public static final double maxHight_Rotations = 6.9;
         public static final double rotationToExtend = 0;
         public static final int limitSwitchID = 2;
         public static final double conversenFactor_SensorUnitsPerInch = 8192;
@@ -179,8 +171,9 @@ public class Constants {
         public static final double maxVelocity = 200;
         public static final double maxAcceleration = 200;
 
-        public static final double PositonTolerace = 0.1;
-        public static final double pistionEstenchonTime = 2.0;
+        public static final double PositonTolerace = 0.05;
+
+        public static final double pistionEstenchonTime = 5.0;
     }
 
     public static final int pnumaticHub = 8;

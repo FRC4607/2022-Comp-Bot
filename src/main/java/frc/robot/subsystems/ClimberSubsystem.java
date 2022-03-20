@@ -1,25 +1,22 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ClimberConstants;
-import frc.robot.commands.ExtendClimber;
 
 public class ClimberSubsystem extends SubsystemBase {
     private CANSparkMax m_motor1;
@@ -34,8 +31,6 @@ public class ClimberSubsystem extends SubsystemBase {
     public PistonState pistonState = PistonState.Extended;
 
     public LimitSwitchState limitSwitchState;
-
-    private final SlewRateLimiter m_limiter;
 
     public enum ClimberState {
         Retracted,
@@ -70,6 +65,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
     private boolean ExtendedClimber;
 
+    private Timer m_pistonExtentionTimer;
+
     public ClimberSubsystem() {
         m_motor1 = new CANSparkMax(ClimberConstants.motor1ID, MotorType.kBrushless);
         m_motor2 = new CANSparkMax(ClimberConstants.motor2ID, MotorType.kBrushless);
@@ -82,8 +79,8 @@ public class ClimberSubsystem extends SubsystemBase {
         m_motor1.setIdleMode(IdleMode.kBrake);
         m_motor2.setIdleMode(IdleMode.kBrake);
 
-        m_motor1.setSmartCurrentLimit(120, 40);
-        m_motor2.setSmartCurrentLimit(120, 40);
+        m_motor1.setSmartCurrentLimit(60, 40);
+        m_motor2.setSmartCurrentLimit(60, 40);
 
         // m_encoder = new Encoder(3, 4, 5);
         m_absolutEncoder = new DutyCycleEncoder(2);
@@ -100,8 +97,6 @@ public class ClimberSubsystem extends SubsystemBase {
         pistonState = PistonState.Extended;
         clutchState = ClutchState.Engaged;
 
-        m_limiter = new SlewRateLimiter(2);
-
         // m_limitSwitch = new DigitalInput(ClimberConstants.limitSwitchID);
         // limitSwitchState = LimitSwitchState.changing;
 
@@ -111,6 +106,8 @@ public class ClimberSubsystem extends SubsystemBase {
         m_PIDController.setTolerance(ClimberConstants.PositonTolerace);
 
         ExtendedClimber = true;
+
+        m_pistonExtentionTimer = new Timer();
     }
 
     @Override
@@ -147,29 +144,19 @@ public class ClimberSubsystem extends SubsystemBase {
         m_pistion.set(!extended);
         ExtendedClimber = extended;
 
-        if (extended) {
-            RobotContainer.getInstance().m_intakeSubsystem.setForcedExtention(false);
-        } else {
-            RobotContainer.getInstance().m_intakeSubsystem.setForcedExtention(true);
-        }
-
         pistonState = extended ? PistonState.Extended : PistonState.Retracted;
     }
 
     public void togglePiston() {
         m_pistion.toggle();
         ExtendedClimber = !ExtendedClimber;
-        if (ExtendedClimber) {
-            RobotContainer.getInstance().m_intakeSubsystem.setForcedExtention(false);
-        } else {
-            RobotContainer.getInstance().m_intakeSubsystem.setForcedExtention(true);
-        }
 
         pistonState = m_pistion.get() ? PistonState.Retracted : PistonState.Extended;
     }
 
     public void setPosition(ClimberPosition position) {
         PIDEnabled = true;
+        m_PIDController.reset(m_absolutEncoder.get());
         switch (position) {
             case retracted:
                 m_PIDController.setGoal(0);
@@ -199,7 +186,7 @@ public class ClimberSubsystem extends SubsystemBase {
         if (m_PIDController.getPositionError() < ClimberConstants.PositonTolerace) {
             return true;
         } else {
-            return true;
+            return false;
         }
     }
 }

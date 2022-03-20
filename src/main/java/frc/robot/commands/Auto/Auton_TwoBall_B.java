@@ -3,6 +3,7 @@ package frc.robot.commands.Auto;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -37,8 +38,9 @@ public class Auton_TwoBall_B extends CommandBase {
 
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
         NetworkTable FMSInfo = inst.getTable("FMSInfo");
-        NetworkTableEntry alienceColor = FMSInfo.getEntry("IsRedAllience");
+        NetworkTableEntry alienceColor = FMSInfo.getEntry("IsRedAlliance");
         boolean m_isRed = alienceColor.getBoolean(true);
+        SmartDashboard.putBoolean("Is Red Allience", m_isRed);
 
 		m_commandScheduler.schedule(new SequentialCommandGroup(
 			new InstantCommand(() -> {
@@ -51,7 +53,7 @@ public class Auton_TwoBall_B extends CommandBase {
 					new FollowPath(m_drivetrainSubsystem, m_isRed ? Paths.redPaths.Ball2B_Hub : Paths.bluePaths.Ball2B_Hub),
 					new IntakeBalls(m_intakeSubsystem, m_towerSubsystem).withTimeout(1)
 							.andThen(new RunAutoTower(m_towerSubsystem))),
-			new ShootBalls(m_towerSubsystem, m_shooterSubsystem, 2),
+			new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
 			new InstantCommand(() -> {
 				m_shooterSubsystem.setSpeed(0);
 			}, m_shooterSubsystem)));

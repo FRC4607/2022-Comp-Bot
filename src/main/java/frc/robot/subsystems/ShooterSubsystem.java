@@ -48,9 +48,21 @@ public class ShooterSubsystem extends SubsystemBase {
     private WPI_TalonFX m_flywheelMotor2;
     private final TalonFXConfiguration motorConfig;
 
-    private ArrayList<Double> speeds = new ArrayList<>(Arrays.asList(0.0,0.0,0.0,0.0,0.0)); // 5 items
+    private ArrayList<Double> speeds = new ArrayList<>(Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0)); // 5 items
     private CANSparkMax m_kickerWheel;
     private Solenoid m_piston;
+
+    boolean m_lowGoal;
+
+    private ShootingMode m_mode;
+
+    public enum ShootingMode {
+        lowGoal,
+        highGoal,
+        limeLight
+    }
+
+    double m_LimeLightRPM;
 
     /**
     *
@@ -74,7 +86,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         m_flywheelMotor1.configAllSettings(motorConfig);
         m_flywheelMotor2.configAllSettings(motorConfig);
-        
+
         /* Invert Motor? and set Break Mode */
         m_flywheelMotor1.setInverted(true);
         m_flywheelMotor1.setNeutralMode(NeutralMode.Coast);
@@ -91,11 +103,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
         setRobotDistanceConfigs(TalonFXInvertType.Clockwise, pidConfig);
 
-        // pidConfig.slot0.kF = FlywheelConstants.flywheelKf;
-        //pidConfig.slot0.kF = 0;
+        pidConfig.slot0.kF = ShooterConstants.flywheelF;
+        // pidConfig.slot0.kF = 0.05;
         pidConfig.slot0.kP = ShooterConstants.flywheelP;
-        //pidConfig.slot0.kP = 0;
-        //pidConfig.slot0.kI = 0;
+        // pidConfig.slot0.kP = 0;
+        // pidConfig.slot0.kI = 0;
         pidConfig.slot0.kD = ShooterConstants.flywheelD;
 
         m_flywheelMotor1.configAllSettings(pidConfig);
@@ -106,22 +118,28 @@ public class ShooterSubsystem extends SubsystemBase {
 
         m_kickerWheel.restoreFactoryDefaults();
         m_kickerWheel.setInverted(false);
-        m_kickerWheel.setIdleMode(IdleMode.kCoast);
+        m_kickerWheel.setIdleMode(IdleMode.kBrake);
 
         m_kickerWheel.setSmartCurrentLimit(40, 20);
 
         m_piston = new Solenoid(Constants.pnumaticHub, PneumaticsModuleType.REVPH, ShooterConstants.pistionChannel);
         m_piston.set(false);
+
+        SmartDashboard.putNumber("Low goal RPM", ShooterConstants.lowGoalRPM);
+        SmartDashboard.putNumber("High goal RPM", ShooterConstants.highGoalRPM);
+        SmartDashboard.putNumber("Lime Light RPM", 2825);
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Flywheel RPM", m_flywheelMotor1.getSelectedSensorVelocity() / 2048 * 600);
-        // SmartDashboard.putNumber("Flywheel Error", m_flywheelMotor1.getClosedLoopError());
+        // SmartDashboard.putNumber("Flywheel Error",
+        // m_flywheelMotor1.getClosedLoopError());
 
         speeds.remove(0);
-        speeds.add( m_flywheelMotor1.getSelectedSensorVelocity() );
+        speeds.add(m_flywheelMotor1.getSelectedSensorVelocity());
+
     }
 
     @Override
@@ -139,7 +157,27 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void setRPM(double rpm) {
         double target = rpm * 2048 / 600; // Taken from CTRE's code on how to convert to native units.
-        m_flywheelMotor1.set(ControlMode.Velocity, target, DemandType.ArbitraryFeedForward, (ShooterConstants.flywheelKs + rpm * ShooterConstants.flywheelKv / 60) / m_flywheelMotor1.getBusVoltage());
+        m_flywheelMotor1.set(ControlMode.Velocity, target);
+        // , DemandType.ArbitraryFeedForward,
+        //         (ShooterConstants.flywheelKs + rpm * ShooterConstants.flywheelKv / 60)
+        //                 / m_flywheelMotor1.getBusVoltage());
+    }
+
+    public void spinupFlywheel() {
+        switch (m_mode) {
+            case lowGoal:
+                setRPM(SmartDashboard.getNumber("Low goal RPM", ShooterConstants.lowGoalRPM));
+                m_piston.set(true);
+                break;
+            case highGoal:
+                setRPM(SmartDashboard.getNumber("High goal RPM", ShooterConstants.highGoalRPM));
+                m_piston.set(false);
+                break;
+            case limeLight:
+                setRPM(SmartDashboard.getNumber("Lime Light RPM", ShooterConstants.highGoalRPM));
+                m_piston.set(true);
+                break;
+        }
     }
 
     public double getFlywheelError() {
@@ -147,76 +185,92 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public boolean constantSpeed() {
-        return ( Collections.max(speeds) - Collections.min(speeds) ) < ShooterConstants.flywheelMaxError;
+        return (Collections.max(speeds) - Collections.min(speeds)) < ShooterConstants.flywheelMaxError;
     }
-    
-    // This is taken from CTRE's sample code at https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/MotionMagic_ArbFeedForward/src/main/java/frc/robot/Robot.java.
 
-    /** 
-	 * Determines if SensorSum or SensorDiff should be used 
-	 * for combining left/right sensors into Robot Distance.  
-	 * 
-	 * Assumes Aux Position is set as Remote Sensor 0.  
-	 * 
-	 * configAllSettings must still be called on the master config
-	 * after this function modifies the config values. 
-	 * 
-	 * @param masterInvertType Invert of the Master Talon
-	 * @param masterConfig Configuration object to fill
-	 */
-	 void setRobotDistanceConfigs(TalonFXInvertType masterInvertType, TalonFXConfiguration masterConfig){
-		/**
-		 * Determine if we need a Sum or Difference.
-		 * 
-		 * The auxiliary Talon FX will always be positive
-		 * in the forward direction because it's a selected sensor
-		 * over the CAN bus.
-		 * 
-		 * The master's native integrated sensor may not always be positive when forward because
-		 * sensor phase is only applied to *Selected Sensors*, not native
-		 * sensor sources.  And we need the native to be combined with the 
-		 * aux (other side's) distance into a single robot distance.
-		 */
+    // This is taken from CTRE's sample code at
+    // https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/MotionMagic_ArbFeedForward/src/main/java/frc/robot/Robot.java.
 
-		/* THIS FUNCTION should not need to be modified. 
-		   This setup will work regardless of whether the master
-		   is on the Right or Left side since it only deals with
-		   distance magnitude.  */
+    /**
+     * Determines if SensorSum or SensorDiff should be used
+     * for combining left/right sensors into Robot Distance.
+     * 
+     * Assumes Aux Position is set as Remote Sensor 0.
+     * 
+     * configAllSettings must still be called on the master config
+     * after this function modifies the config values.
+     * 
+     * @param masterInvertType Invert of the Master Talon
+     * @param masterConfig     Configuration object to fill
+     */
+    void setRobotDistanceConfigs(TalonFXInvertType masterInvertType, TalonFXConfiguration masterConfig) {
+        /**
+         * Determine if we need a Sum or Difference.
+         * 
+         * The auxiliary Talon FX will always be positive
+         * in the forward direction because it's a selected sensor
+         * over the CAN bus.
+         * 
+         * The master's native integrated sensor may not always be positive when forward
+         * because
+         * sensor phase is only applied to *Selected Sensors*, not native
+         * sensor sources. And we need the native to be combined with the
+         * aux (other side's) distance into a single robot distance.
+         */
 
-		/* Check if we're inverted */
-		if (masterInvertType == TalonFXInvertType.Clockwise){
-			/* 
-				If master is inverted, that means the integrated sensor
-				will be negative in the forward direction.
-				If master is inverted, the final sum/diff result will also be inverted.
-				This is how Talon FX corrects the sensor phase when inverting 
-				the motor direction.  This inversion applies to the *Selected Sensor*,
-				not the native value.
-				Will a sensor sum or difference give us a positive total magnitude?
-				Remember the Master is one side of your drivetrain distance and 
-				Auxiliary is the other side's distance.
-					Phase | Term 0   |   Term 1  | Result
-				Sum:  -((-)Master + (+)Aux   )| NOT OK, will cancel each other out
-				Diff: -((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
-				Diff: -((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
-			*/
+        /*
+         * THIS FUNCTION should not need to be modified.
+         * This setup will work regardless of whether the master
+         * is on the Right or Left side since it only deals with
+         * distance magnitude.
+         */
 
-			masterConfig.diff0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor
-			masterConfig.diff1Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice();   //Aux Selected Sensor
-			masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorDifference.toFeedbackDevice(); //Diff0 - Diff1
-		} else {
-			/* Master is not inverted, both sides are positive so we can sum them. */
-			masterConfig.sum0Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice();    //Aux Selected Sensor
-			masterConfig.sum1Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local IntegratedSensor
-			masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorSum.toFeedbackDevice(); //Sum0 + Sum1
-		}
+        /* Check if we're inverted */
+        if (masterInvertType == TalonFXInvertType.Clockwise) {
+            /*
+             * If master is inverted, that means the integrated sensor
+             * will be negative in the forward direction.
+             * If master is inverted, the final sum/diff result will also be inverted.
+             * This is how Talon FX corrects the sensor phase when inverting
+             * the motor direction. This inversion applies to the *Selected Sensor*,
+             * not the native value.
+             * Will a sensor sum or difference give us a positive total magnitude?
+             * Remember the Master is one side of your drivetrain distance and
+             * Auxiliary is the other side's distance.
+             * Phase | Term 0 | Term 1 | Result
+             * Sum: -((-)Master + (+)Aux )| NOT OK, will cancel each other out
+             * Diff: -((-)Master - (+)Aux )| OK - This is what we want, magnitude will be
+             * correct and positive.
+             * Diff: -((+)Aux - (-)Master)| NOT OK, magnitude will be correct but negative
+             */
 
-		/* Since the Distance is the sum of the two sides, divide by 2 so the total isn't double
-		   the real-world value */
-		masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
-	}
+            masterConfig.diff0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); // Local Integrated
+                                                                                                // Sensor
+            masterConfig.diff1Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice(); // Aux Selected Sensor
+            masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorDifference.toFeedbackDevice(); // Diff0
+                                                                                                                        // -
+                                                                                                                        // Diff1
+        } else {
+            /* Master is not inverted, both sides are positive so we can sum them. */
+            masterConfig.sum0Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice(); // Aux Selected Sensor
+            masterConfig.sum1Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); // Local IntegratedSensor
+            masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorSum.toFeedbackDevice(); // Sum0
+                                                                                                                 // +
+                                                                                                                 // Sum1
+        }
+
+        /*
+         * Since the Distance is the sum of the two sides, divide by 2 so the total
+         * isn't double
+         * the real-world value
+         */
+        masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
+    }
 
     public void setKickerWheel(double speed) {
+        if (speed > 0.01) {
+            System.out.println("Runing Kicker");
+        }
         m_kickerWheel.set(speed);
     }
 
@@ -226,5 +280,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void togglePsiton() {
         m_piston.toggle();
+    }
+
+    public void setShootingMode(ShootingMode mode) {
+        m_mode = mode;
+    }
+
+    public void setLimeLightRPM(double RPM) {
+        m_LimeLightRPM = RPM;
     }
 }

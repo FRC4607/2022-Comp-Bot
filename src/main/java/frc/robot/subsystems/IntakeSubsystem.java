@@ -24,7 +24,6 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     private IntakeState m_state = IntakeState.Idle;
-    private boolean forcedExtention;
 
     public IntakeSubsystem() {
         m_solenoid = new Solenoid(Constants.pnumaticHub, PneumaticsModuleType.REVPH, IntakeConstants.solenoidChannel);
@@ -42,15 +41,25 @@ public class IntakeSubsystem extends SubsystemBase {
         m_PIDController.setD(IntakeConstants.kD);
 
         m_PIDController.setOutputRange(-10, 10);
-
     }
 
+    /**
+     * Sets the speed of the motor
+     * 
+     * @param speed the speed the motor is set to. [-1, 1]
+     */
+    public void setSpeed(double speed) {
+        if (m_solenoid.get()) {
+            m_intakeMotor.set(speed);
+        } else {
+            m_intakeMotor.set(0);
+        }
+    }
     public void setState(IntakeState state) {
         if (state != m_state) {
             switch (state) {
                 case Idle:
                     m_intakeMotor.set(0);
-                    if (!forcedExtention)
                         m_solenoid.set(false);
                     break;
                 case Intaking:
@@ -68,6 +77,19 @@ public class IntakeSubsystem extends SubsystemBase {
         }
     }
 
+    /**
+     * Sets the voltage of the motor
+     * 
+     * @param voltage
+     */
+    public void setVoltage(double voltage) {
+        if (m_solenoid.get()) {
+            m_intakeMotor.setVoltage(voltage);
+        } else {
+            m_intakeMotor.setVoltage(0);
+        }
+    }
+
     public IntakeState getState() {
         return m_state;
     }
@@ -76,13 +98,24 @@ public class IntakeSubsystem extends SubsystemBase {
         m_solenoid.toggle();
     }
 
-    public void setForcedExtention(boolean exetended) {
-        forcedExtention = exetended;
-        if (exetended) {
-            m_solenoid.set(true);
-        } else if (m_state == IntakeState.Idle) {
-            m_solenoid.set(false);
-        }
-        SmartDashboard.putBoolean("Forced Extenchon", forcedExtention);
+    /**
+     * Extends the solenoid
+     */
+    public void extendIntake() {
+        m_solenoid.set(true);
+    }
+
+    /**
+     * Retracts the solenoid
+     */
+    public void retractIntake() {
+        m_solenoid.set(false);
+    }
+
+    /**
+     * Toggles the solenoid
+     */
+    public void toggleIntake() {
+        m_solenoid.toggle();
     }
 }

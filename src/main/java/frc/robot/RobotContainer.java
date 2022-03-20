@@ -12,23 +12,26 @@
 
 package frc.robot;
 
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.*;
 import frc.robot.commands.Auto.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.IntakeSubsystem.IntakeState;
+import frc.robot.subsystems.ShooterSubsystem.ShootingMode;
+import oi.limelightvision.limelight.frc.LimeLight;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in
-s * the {@link Robot}
+ * s * the {@link Robot}
  * periodic methods (other than the scheduler calls). Instead, the structure of
  * the robot
  * (including subsystems, commands, and button mappings) should be declared
@@ -52,6 +55,8 @@ public class RobotContainer {
 	private final XboxController operator = new XboxController(1);
 	private final XboxController driver = new XboxController(0);
 
+	private final LimeLight limeLight = new LimeLight();
+
 	// A chooser for autonomous commands
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -66,15 +71,21 @@ public class RobotContainer {
 		// Configure default commands
 		m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
 		m_climberSubsystem.setDefaultCommand(new ClimberTrigers(m_climberSubsystem, operator));
+		m_intakeSubsystem.setDefaultCommand(new DriverIntake(m_intakeSubsystem, m_towerSubsystem, driver));
+		m_towerSubsystem.setDefaultCommand(new DriverTower(m_towerSubsystem, driver));
 		// m_flywheelSubsystem.setDefaultCommand(new
 		// RunFlywheelJoystick(m_flywheelSubsystem, operator));
 
 		// Configure autonomous sendable chooser
-		m_chooser.setDefaultOption("Two Ball", new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
-		m_chooser.addOption("Two Ball B", new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
-		m_chooser.addOption("Three Ball", new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
-		m_chooser.addOption("Four Ball", new Auton_FourBall(m_shooterSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
-		
+		m_chooser.setDefaultOption("Two Ball",
+				new Auton_TwoBall_A(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
+		m_chooser.addOption("Two Ball B",
+				new Auton_TwoBall_B(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
+		m_chooser.addOption("Three Ball",
+				new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
+		m_chooser.addOption("Four Ball",
+				new Auton_FourBall(m_shooterSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
+
 		// m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
 		// m_chooser.addOption("Calibate Trackwidth", new
 		// CalibateTrackwidth(m_drivetrainSubsystem, false));
@@ -84,8 +95,6 @@ public class RobotContainer {
 		SmartDashboard.putData("Reset Climber", new InstantCommand(() -> {
 			m_climberSubsystem.resetEncoder();
 		}));
-
-		SmartDashboard.putNumber("Flywheel Speed", ShooterConstants.flywheeelRPM);
 	}
 
 	public static RobotContainer getInstance() {
@@ -101,14 +110,19 @@ public class RobotContainer {
 	 * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
-		// Driver 
+		// Driver
 		JoystickButton driver_leftBumper = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 		JoystickButton driver_rightBumper = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+		JoystickButton driver_xButton = new JoystickButton(driver, XboxController.Button.kX.value);
 
-		driver_leftBumper.whenHeld(new OutakeBalls(m_intakeSubsystem, m_towerSubsystem));
-		driver_rightBumper.whenHeld(new IntakeBalls(m_intakeSubsystem, m_towerSubsystem));
-		// new JoystickButton(driver, 1).whenPressed(new InstantCommand(() -> {m_intakeSubsystem.togglePiston();}));
-
+		// driver_leftBumper.whenHeld(new OutakeBalls(m_intakeSubsystem,
+		// m_towerSubsystem));
+		// driver_rightBumper.whenHeld(new IntakeBalls(m_intakeSubsystem,
+		// m_towerSubsystem));
+		new JoystickButton(driver, XboxController.Button.kA.value).whenPressed(new InstantCommand(() -> {
+			m_intakeSubsystem.togglePiston();
+		}));
+		driver_xButton.whileHeld(new LimeLightTarget(limeLight, m_drivetrainSubsystem, driver));
 		// Operator
 		JoystickButton operator_aButton = new JoystickButton(operator, XboxController.Button.kA.value);
 		JoystickButton operator_bButton = new JoystickButton(operator, XboxController.Button.kB.value);
@@ -117,11 +131,26 @@ public class RobotContainer {
 		JoystickButton operator_leftBumper = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
 		JoystickButton operator_rightBumper = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
 		JoystickButton operator_startButton = new JoystickButton(operator, XboxController.Button.kStart.value);
+		JoystickButton operator_backButton = new JoystickButton(operator, XboxController.Button.kBack.value);
 
-		operator_rightBumper.whileHeld(new ShootBalls(m_towerSubsystem, m_shooterSubsystem, 0));
-		operator_startButton.whenPressed(new ToggleShooterPiston(m_shooterSubsystem));
+		operator_rightBumper.whileHeld(new SequentialCommandGroup(
+				new InstantCommand(() -> {
+					m_shooterSubsystem.setShootingMode(ShootingMode.lowGoal);
+				}),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 0)));
+
+		operator_leftBumper.whileHeld(new SequentialCommandGroup(
+				new InstantCommand(() -> {
+					m_shooterSubsystem.setShootingMode(ShootingMode.highGoal);
+				}),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 0)));
+		operator_bButton.whileHeld(new SequentialCommandGroup(
+				new InstantCommand(() -> {
+					m_shooterSubsystem.setShootingMode(ShootingMode.limeLight);
+				}),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 0)));
 		operator_aButton.whenHeld(new RetractClimber(m_climberSubsystem));
-		operator_bButton.whenHeld(new RelseseClimber(m_climberSubsystem));
+		operator_startButton.whenHeld(new RelseseClimber(m_climberSubsystem));
 		operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem, m_intakeSubsystem));
 		operator_yButton.whenHeld(new ExtendClimber(m_climberSubsystem));
 

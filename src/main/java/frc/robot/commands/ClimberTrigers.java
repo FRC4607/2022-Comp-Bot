@@ -17,7 +17,7 @@ public class ClimberTrigers extends CommandBase {
 
     @Override
     public void execute() {
-        double speed = m_operator.getLeftTriggerAxis() * 0.30 - m_operator.getRightTriggerAxis() * 1;
+        double speed = m_operator.getLeftTriggerAxis() * 1 - m_operator.getRightTriggerAxis() * 1;
         if (speed > 0.01 || speed < 0.01) {
             m_climberSubsystem.setClimber(speed);
         }

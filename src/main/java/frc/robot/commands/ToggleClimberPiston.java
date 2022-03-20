@@ -5,7 +5,6 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.PistonState;
-import frc.robot.subsystems.IntakeSubsystem.IntakeState;
 
 
 public class ToggleClimberPiston extends CommandBase {
