@@ -149,10 +149,10 @@ public class RobotContainer {
 					m_shooterSubsystem.setShootingMode(ShootingMode.limeLight);
 				}),
 				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 0)));
-		operator_aButton.whenHeld(new RetractClimber(m_climberSubsystem));
-		operator_startButton.whenHeld(new RelseseClimber(m_climberSubsystem));
+		// operator_aButton.whenHeld(new RetractClimber(m_climberSubsystem));
+		// operator_startButton.whenHeld(new RelseseClimber(m_climberSubsystem));
+		// operator_yButton.whenHeld(new ExtendClimber(m_climberSubsystem));
 		operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem, m_intakeSubsystem));
-		operator_yButton.whenHeld(new ExtendClimber(m_climberSubsystem));
 
 	}
 

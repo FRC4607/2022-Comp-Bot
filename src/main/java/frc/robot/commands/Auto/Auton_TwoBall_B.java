@@ -40,8 +40,7 @@ public class Auton_TwoBall_B extends CommandBase {
         NetworkTable FMSInfo = inst.getTable("FMSInfo");
         NetworkTableEntry alienceColor = FMSInfo.getEntry("IsRedAlliance");
         boolean m_isRed = alienceColor.getBoolean(true);
-        SmartDashboard.putBoolean("Is Red Allience", m_isRed);
-
+        
 		m_commandScheduler.schedule(new SequentialCommandGroup(
 			new InstantCommand(() -> {
 				m_drivetrainSubsystem.setBrakeMode(true);

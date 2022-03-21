@@ -112,7 +112,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Absolut Encoder Distance", m_absolutEncoder.get());
+        // SmartDashboard.putNumber("Absolut Encoder Distance", m_absolutEncoder.get());
 
         if (m_absolutEncoder.getDistance() < 0) {
             m_absolutEncoder.reset();
@@ -124,7 +124,7 @@ public class ClimberSubsystem extends SubsystemBase {
             m_motor2.set(dutyCycle);
         }
 
-        SmartDashboard.putBoolean("PID Controled", PIDEnabled);
+        // SmartDashboard.putBoolean("PID Controled", PIDEnabled);
 
     }
 

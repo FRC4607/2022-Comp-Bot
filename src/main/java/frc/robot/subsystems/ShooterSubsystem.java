@@ -271,6 +271,9 @@ public class ShooterSubsystem extends SubsystemBase {
         if (speed > 0.01) {
             System.out.println("Runing Kicker");
         }
+        else {
+            System.out.println("Kicker Commanded to 0");
+        }
         m_kickerWheel.set(speed);
     }
 

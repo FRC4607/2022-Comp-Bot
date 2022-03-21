@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import oi.limelightvision.limelight.frc.LimeLight;
 
@@ -27,15 +28,15 @@ public class LimeLightTarget extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double yAxis = m_driver.getLeftY();
-        double xAxis;
+        // double yAxis = m_driver.getLeftY();
+        double volatge = 0;
         if (m_limeLight.getIsTargetFound()) {
             double angle = m_limeLight.getdegRotationToTarget();
-            xAxis = (angle * 0.07) + Math.copySign(.25, angle);
-        } else {
-            xAxis = m_driver.getLeftX();
+            if (Math.abs(angle) > 0.1) {
+                volatge = (angle * 0.25) + Math.copySign(DriveConstants.ks_Volts, angle);
+            }
         }
-        m_drivetrainSubsystem.setArcadeDrive(xAxis, yAxis);
+        m_drivetrainSubsystem.tankDriveVolts(volatge, -volatge);
     }
 
     // Called once the command ends or is interrupted.
@@ -54,6 +55,5 @@ public class LimeLightTarget extends CommandBase {
     @Override
     public boolean runsWhenDisabled() {
         return false;
-
     }
 }
