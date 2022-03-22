@@ -28,12 +28,15 @@ public class FollowPath extends CommandBase {
     // Reset odometry to the starting pose of the trajectory.
 
     public FollowPath(DrivetrainSubsystem drivetrainSubsystem, Trajectory trajectory) {
+        System.out.println("Path created from trajectory");
         m_trajectory = trajectory;
         m_drivetrainSubsystem = drivetrainSubsystem;
+        System.out.println("Path length: " + m_trajectory.getTotalTimeSeconds());
         addRequirements(m_drivetrainSubsystem);
     }
 
     public FollowPath(DrivetrainSubsystem drivetrain, Path pathweaverJSON) {
+        System.out.println("Path created from JSON");
         m_drivetrainSubsystem = drivetrain;
         Trajectory trajectory;
         try {
@@ -43,6 +46,7 @@ public class FollowPath extends CommandBase {
             trajectory = null;
         }
         m_trajectory = trajectory;
+        System.out.println("Path length: " + m_trajectory.getTotalTimeSeconds());
         addRequirements(m_drivetrainSubsystem);
     }
 

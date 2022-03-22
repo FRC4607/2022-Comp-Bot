@@ -22,8 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -86,7 +84,7 @@ public class RobotContainer {
 		m_chooser.addOption("Four Ball",
 				new Auton_FourBall(m_shooterSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
 
-		// m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
+		m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
 		// m_chooser.addOption("Calibate Trackwidth", new
 		// CalibateTrackwidth(m_drivetrainSubsystem, false));
 

@@ -10,7 +10,6 @@ import frc.robot.subsystems.*;
 public class ShootBalls extends CommandBase {
 	private final ShooterSubsystem m_shooterSubsystem;
 	private final TowerSubsystem m_towerSubsystem;
-	private final IntakeSubsystem m_intakeSubsystem;
 	private Timer timer;
 
 	enum sequence {
@@ -24,23 +23,23 @@ public class ShootBalls extends CommandBase {
 	private int m_shots;
 	private int m_takenShots;
 
+	private int cycleCount = 0;
+
 	public ShootBalls(TowerSubsystem towerSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem,
 			int shots) {
 		m_towerSubsystem = towerSubsystem;
 		m_shooterSubsystem = shooterSubsystem;
-		m_intakeSubsystem = intakeSubsystem;
 
 		addRequirements(m_shooterSubsystem, m_towerSubsystem);
 
 		m_shots = shots;
-		m_takenShots = 0;
 	}
 
 	@Override
 	public void initialize() {
 		m_shooterSubsystem.spinupFlywheel();
 		timer = new Timer();
-
+		m_takenShots = 0;
 		state = sequence.spinupFlywheel;
 		timer.reset();
 		timer.start();
@@ -48,48 +47,45 @@ public class ShootBalls extends CommandBase {
 
 	@Override
 	public void execute() {
+		cycleCount++;
 		switch (state) {
 			case spinupFlywheel:
-				if (m_shooterSubsystem.constantSpeed() && timer.hasElapsed(0.2)) {
+				if (m_shooterSubsystem.constantSpeed() && cycleCount >= 10) {
 					System.out.println("Spin up Time:" + timer.get());
-					timer.stop();
-					timer.reset();
-					
-					if (SmartDashboard.getBoolean("Enabled Auto Tower", false)) {
-						state = sequence.waitForBall;
-					} else {
-						state = sequence.shoot;
-					}
+
+					cycleCount = 0;
+					state = sequence.waitForBall;
 				}
 				break;
 			case waitForBall:
 
 				if (!m_towerSubsystem.getHighBrakeBeam()) {
 					if (timerHasStarted) {
-						if (timer.hasElapsed(0.1)) {
+						if (cycleCount >= 5) {
 							state = sequence.shoot;
-							
-							timer.stop();
-							timer.reset();
-							timer.start();
+
+							cycleCount = 0;
 
 							m_shooterSubsystem.setKickerWheel(ShooterConstants.kickerWheelSpeed);
 							timerHasStarted = false;
 						}
 					} else {
-						timer.stop();
-						timer.reset();
-						timer.start();
+
+						cycleCount = 0;
+
 						timerHasStarted = true;
 					}
 				} else {
 				}
-				
+
 				break;
 			case shoot:
-				if (timer.hasElapsed(0.2)) {
+				if (cycleCount >= 10) {
 					System.out.println("Recovering");
 					m_shooterSubsystem.setKickerWheel(0);
+
+					cycleCount = 0;
+
 					timer.reset();
 					timer.start();
 					state = sequence.spinupFlywheel;
@@ -113,10 +109,6 @@ public class ShootBalls extends CommandBase {
 
 	@Override
 	public boolean isFinished() {
-		if (SmartDashboard.getBoolean("Enabled Auto Tower", false)) {
-			return m_shots != 0 && m_takenShots >= m_shots;
-		} else {
-			return m_takenShots > 0;
-		}
+		return m_shots != 0 && m_takenShots >= m_shots;
 	}
 }

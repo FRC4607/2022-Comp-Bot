@@ -77,6 +77,10 @@ public class IntakeSubsystem extends SubsystemBase {
         }
     }
 
+    public void setIntake(boolean extended) {
+        m_solenoid.set(extended);
+    }
+
     /**
      * Sets the voltage of the motor
      * 

@@ -3,16 +3,15 @@ package frc.robot.commands.Auto;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Paths;
-import frc.robot.commands.IntakeBalls;
 import frc.robot.commands.ShootBalls;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ShooterSubsystem.ShootingMode;
 
 public class Auton_TwoBall_B extends CommandBase {
 	private static CommandScheduler m_commandScheduler;
@@ -37,25 +36,29 @@ public class Auton_TwoBall_B extends CommandBase {
 	public void initialize() {
 
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        NetworkTable FMSInfo = inst.getTable("FMSInfo");
-        NetworkTableEntry alienceColor = FMSInfo.getEntry("IsRedAlliance");
-        boolean m_isRed = alienceColor.getBoolean(true);
-        
+		NetworkTable FMSInfo = inst.getTable("FMSInfo");
+		NetworkTableEntry alienceColor = FMSInfo.getEntry("IsRedAlliance");
+		boolean m_isRed = alienceColor.getBoolean(true);
+
 		m_commandScheduler.schedule(new SequentialCommandGroup(
-			new InstantCommand(() -> {
-				m_drivetrainSubsystem.setBrakeMode(true);
-			}),
-			new ParallelDeadlineGroup(
-					new FollowPath(m_drivetrainSubsystem, m_isRed ? Paths.redPaths.Start_Ball2B : Paths.bluePaths.Start_Ball2B),
-					new IntakeBalls(m_intakeSubsystem, m_towerSubsystem)),
-			new ParallelDeadlineGroup(
-					new FollowPath(m_drivetrainSubsystem, m_isRed ? Paths.redPaths.Ball2B_Hub : Paths.bluePaths.Ball2B_Hub),
-					new IntakeBalls(m_intakeSubsystem, m_towerSubsystem).withTimeout(1)
-							.andThen(new RunAutoTower(m_towerSubsystem))),
-			new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
-			new InstantCommand(() -> {
-				m_shooterSubsystem.setSpeed(0);
-			}, m_shooterSubsystem)));
+				new InstantCommand(() -> {
+					m_drivetrainSubsystem.setBrakeMode(true);
+					m_intakeSubsystem.setIntake(true);
+					m_shooterSubsystem.setShootingMode(ShootingMode.highGoal);
+				}),
+				new ParallelDeadlineGroup(
+						new FollowPath(m_drivetrainSubsystem, m_isRed ? Paths.redPaths.Start_Ball2B : Paths.bluePaths.Start_Ball2B),
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem),
+						new RunAutoTower(m_towerSubsystem)),
+				new ParallelDeadlineGroup(
+						new FollowPath(m_drivetrainSubsystem, m_isRed ? Paths.redPaths.Ball2B_Hub : Paths.bluePaths.Ball2B_Hub),
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem),
+						new RunAutoTower(m_towerSubsystem)),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
+				new InstantCommand(() -> {
+					m_drivetrainSubsystem.setBrakeMode(false);
+				})
+				));
 	}
 
 	@Override

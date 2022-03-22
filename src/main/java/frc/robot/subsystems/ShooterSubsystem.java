@@ -125,6 +125,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_piston = new Solenoid(Constants.pnumaticHub, PneumaticsModuleType.REVPH, ShooterConstants.pistionChannel);
         m_piston.set(false);
 
+        m_mode = ShootingMode.highGoal;
         SmartDashboard.putNumber("Low goal RPM", ShooterConstants.lowGoalRPM);
         SmartDashboard.putNumber("High goal RPM", ShooterConstants.highGoalRPM);
         SmartDashboard.putNumber("Lime Light RPM", 2825);
