@@ -7,6 +7,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ClimberConstants;
+import frc.robot.commands.ExtendClimber;
+import frc.robot.commands.RelseseClimber;
+import frc.robot.commands.RetractClimber;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -25,21 +28,32 @@ public class AutoClimb extends CommandBase {
 
         BooleanSupplier ValidRotation = () -> {return (ClimberConstants.minRoatation <= /*m_drivetrainSubsystem.getYaw()*/ 0 && /*m_drivetrainSubsystem.getYaw()*/0 <= ClimberConstants.maxRoatation); };
         m_commandScheduler.schedule(new SequentialCommandGroup(
-            new ExtendClimberPistion(m_climberSubsystem, true),
-            new WaitUntilCommand(ValidRotation),
-            new SetClimber(m_climberSubsystem, true),
-            new ExtendClimberPistion(m_climberSubsystem, false),
-            new SetClimber(m_climberSubsystem, false),
-            new ExtendClimberPistion(m_climberSubsystem, true),
-            new WaitUntilCommand(ValidRotation),
-            new SetClimber(m_climberSubsystem, true),
-            new ExtendClimberPistion(m_climberSubsystem, false),
-            new SetClimber(m_climberSubsystem, false),
-            new ExtendClimberPistion(m_climberSubsystem, true),
-            new WaitUntilCommand(ValidRotation),
-            new SetClimber(m_climberSubsystem, true),
-            new ExtendClimberPistion(m_climberSubsystem, false),
-            new SetClimber(m_climberSubsystem, false)
+            new ExtendClimber(m_climberSubsystem),
+            new WaitUntilCommand(m_climberSubsystem::atPosition),
+            new RetractClimber(m_climberSubsystem),
+            new WaitUntilCommand(m_climberSubsystem::atPosition),
+            new RelseseClimber(m_climberSubsystem),
+            new WaitUntilCommand(m_climberSubsystem::atPosition),
+            
+            new SetClimberPiston(m_climberSubsystem, false),
+            new ExtendClimber(m_climberSubsystem),
+            new WaitUntilCommand(m_climberSubsystem::atPosition),
+            new SetClimberPiston(m_climberSubsystem, true),
+            new RetractClimber(m_climberSubsystem),
+            new WaitUntilCommand(m_climberSubsystem::atPosition),
+            new RelseseClimber(m_climberSubsystem),
+            new WaitUntilCommand(m_climberSubsystem::atPosition),
+            new SetClimberPiston(m_climberSubsystem, false),
+
+            new SetClimberPiston(m_climberSubsystem, false),
+            new ExtendClimber(m_climberSubsystem),
+            new WaitUntilCommand(m_climberSubsystem::atPosition),
+            new SetClimberPiston(m_climberSubsystem, true),
+            new RetractClimber(m_climberSubsystem),
+            new WaitUntilCommand(m_climberSubsystem::atPosition),
+            new RelseseClimber(m_climberSubsystem),
+            new WaitUntilCommand(m_climberSubsystem::atPosition),
+            new SetClimberPiston(m_climberSubsystem, false)
         ));
 
     }

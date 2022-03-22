@@ -19,13 +19,15 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -40,7 +42,10 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
     private RobotContainer m_robotContainer;
-    //private Compressor m_compresor;
+    private Compressor m_compresor;
+
+    private Timer timer;
+    private PowerDistribution PDH;
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -55,9 +60,15 @@ public class Robot extends TimedRobot {
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
         
         inst.startClientTeam(4607);
-        Paths.generateTrajectories();
 
-        //m_compresor = new Compressor(Constants.pnumaticHub, PneumaticsModuleType.REVPH);
+        m_compresor = new Compressor(Constants.pnumaticHub, PneumaticsModuleType.REVPH);
+        m_compresor.disable();
+        // m_compresor.disable();
+
+        timer = new Timer();
+        timer.start();
+
+        PDH = new PowerDistribution(Constants.PDH, ModuleType.kRev);
     }
 
     /**
@@ -74,6 +85,12 @@ public class Robot extends TimedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
+
+        if (timer.hasElapsed(0.5)) {
+            m_robotContainer.m_climberSubsystem.resetEncoder();
+            timer.stop();
+            timer.reset();
+        }
     }
 
 
@@ -108,6 +125,8 @@ public class Robot extends TimedRobot {
         NetworkTable databace = inst.getTable("PiTable");
 		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
 		entry.setBoolean(true);
+        
+        m_compresor.disable();
     }
 
     /**
@@ -119,6 +138,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        PDH.clearStickyFaults();
+        
+        RobotContainer.getInstance().m_drivetrainSubsystem.setBrakeMode(false);
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -133,7 +155,7 @@ public class Robot extends TimedRobot {
 
         // Shuffleboard.startRecording();
 
-        //m_compresor.enableDigital();
+        m_compresor.enableDigital();
     }
 
     /**

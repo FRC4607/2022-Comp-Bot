@@ -1,14 +1,17 @@
 package frc.robot.commands.Auto;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Paths;
-import frc.robot.commands.RunTransferWheel;
+import frc.robot.commands.ShootBalls;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ShooterSubsystem.ShootingMode;
 
 public class Auton_TwoBall_B extends CommandBase {
 	private static CommandScheduler m_commandScheduler;
@@ -16,50 +19,46 @@ public class Auton_TwoBall_B extends CommandBase {
 	private static DrivetrainSubsystem m_drivetrainSubsystem;
 	private static IntakeSubsystem m_intakeSubsystem;
 	private static TowerSubsystem m_towerSubsystem;
-	private static TransferWheelSubsystem m_transferWheelSubsystem;
-	private static FlywheelSubsystem m_flywheelSubsystem;
+	private static ShooterSubsystem m_shooterSubsystem;
 
 	public Auton_TwoBall_B(DrivetrainSubsystem drivetrainSubsystem, IntakeSubsystem intakeSubsystem,
-			TowerSubsystem towerSubsystem, TransferWheelSubsystem transferWheelSubsystem,
-			FlywheelSubsystem flywheelSubsystem) {
+			TowerSubsystem towerSubsystem,
+			ShooterSubsystem shooterSubsystem) {
 		m_commandScheduler = CommandScheduler.getInstance();
 
 		m_drivetrainSubsystem = drivetrainSubsystem;
 		m_intakeSubsystem = intakeSubsystem;
 		m_towerSubsystem = towerSubsystem;
-		m_transferWheelSubsystem = transferWheelSubsystem;
-		m_flywheelSubsystem = flywheelSubsystem;
+		m_shooterSubsystem = shooterSubsystem;
 	}
 
 	@Override
 	public void initialize() {
-		/*
-		 * m_commandScheduler.schedule(new SequentialCommandGroup(
-		 * new SetIntake(m_intakeSubsystem, true),
-		 * new SpinFlywheel(m_flywheelSubsystem),
-		 * new RunTransferWheel(true, m_towerSubsystem).withTimeout(0.5),
-		 * ));
-		 */
+
+		NetworkTableInstance inst = NetworkTableInstance.getDefault();
+		NetworkTable FMSInfo = inst.getTable("FMSInfo");
+		NetworkTableEntry alienceColor = FMSInfo.getEntry("IsRedAlliance");
+		boolean m_isRed = alienceColor.getBoolean(true);
+
 		m_commandScheduler.schedule(new SequentialCommandGroup(
-				new SetIntake(m_intakeSubsystem, true),
-				new ParallelDeadlineGroup(
-						new FollowPath(m_drivetrainSubsystem, Paths.Start_Ball2),
-						new RunIntake(m_intakeSubsystem, false)),
-				new RunIntake(m_intakeSubsystem, false).withTimeout(0.1),
-				new ParallelCommandGroup(
-						new FollowPath(m_drivetrainSubsystem, Paths.Ball2B_Hub),
-						new SpinFlywheel(m_flywheelSubsystem)),
-				new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false)
-						.withTimeout(0.2),
-				new ParallelCommandGroup(
-						new SpinFlywheel(m_flywheelSubsystem),
-						new RunIntake(m_intakeSubsystem, false).withTimeout(1)),
-				new RunTransferWheel(m_transferWheelSubsystem, m_flywheelSubsystem, false)
-						.withTimeout(0.2),
 				new InstantCommand(() -> {
-					m_flywheelSubsystem.setSpeed(0);
-				}, m_flywheelSubsystem)).withTimeout(15),
-				new RunAutoTower(m_towerSubsystem).withTimeout(15));
+					m_drivetrainSubsystem.setBrakeMode(true);
+					m_intakeSubsystem.setIntake(true);
+					m_shooterSubsystem.setShootingMode(ShootingMode.highGoal);
+				}),
+				new ParallelDeadlineGroup(
+						new FollowPath(m_drivetrainSubsystem, m_isRed ? Paths.redPaths.Start_Ball2B : Paths.bluePaths.Start_Ball2B),
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem),
+						new RunAutoTower(m_towerSubsystem)),
+				new ParallelDeadlineGroup(
+						new FollowPath(m_drivetrainSubsystem, m_isRed ? Paths.redPaths.Ball2B_Hub : Paths.bluePaths.Ball2B_Hub),
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem),
+						new RunAutoTower(m_towerSubsystem)),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
+				new InstantCommand(() -> {
+					m_drivetrainSubsystem.setBrakeMode(false);
+				})
+				));
 	}
 
 	@Override

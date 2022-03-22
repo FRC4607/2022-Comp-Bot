@@ -1,9 +1,10 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,11 +32,17 @@ public class TowerSubsystem extends SubsystemBase {
         Color(int value) {
             this.value = value;
         }
-
+        
         public int getValue() {
             return value;
         }
     }
+    
+    private AddressableLED m_LEDs;
+    private AddressableLEDBuffer m_LEDBuffer;
+    // 27, 26
+    
+    private NetworkTableEntry alienceColorEntry;
 
     public TowerSubsystem() {
 
@@ -43,35 +50,21 @@ public class TowerSubsystem extends SubsystemBase {
         m_agitatior.restoreFactoryDefaults();
         m_agitatior.setInverted(false);
         m_agitatior.setIdleMode(IdleMode.kBrake);
-
+        
+        m_agitatior.setSmartCurrentLimit(40, 20);
+        
         m_midBrakeBeam = new DigitalInput(TowerConstants.midBrakeBeamID);
         m_highBrakeBeam = new DigitalInput(TowerConstants.highBrakeBeamID);
-    }
-
-    public TowerSubsystem(Color teamColor) {
-
-        m_agitatior = new CANSparkMax(TowerConstants.agitatiorID, MotorType.kBrushless);
-        m_agitatior.restoreFactoryDefaults();
-        m_agitatior.setInverted(false);
-        m_agitatior.setIdleMode(IdleMode.kBrake);
-
-        m_midBrakeBeam = new DigitalInput(TowerConstants.midBrakeBeamID);
-        m_highBrakeBeam = new DigitalInput(TowerConstants.highBrakeBeamID);
-
-        m_allianceColor = teamColor;
+        
+        m_LEDs = new AddressableLED(9);
+        m_LEDs.setLength(27);
+        m_LEDBuffer = new AddressableLEDBuffer(27);
+        m_LEDs.setData(m_LEDBuffer);
+        m_LEDs.start();
 
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         NetworkTable FMSInfo = inst.getTable("FMSInfo");
-        NetworkTableEntry alienceColor = FMSInfo.getEntry("IsRedAllience");
-        alienceColor.addListener((event) -> {
-            m_allianceColor = Color.values()[(int) event.getEntry().getNumber(0)];
-        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-        NetworkTable PIDatabase = inst.getTable("PiTable");
-        NetworkTableEntry ColorSensor = PIDatabase.getEntry("");
-        ColorSensor.addListener((event) -> {
-            m_ColorSensor = Color.values()[(int) event.getEntry().getNumber(0)];
-        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        alienceColorEntry = FMSInfo.getEntry("IsRedAlliance");
     }
 
     @Override
@@ -79,6 +72,33 @@ public class TowerSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Mid Brake Beam", m_midBrakeBeam.get());
         SmartDashboard.putBoolean("High Brake Beam", m_highBrakeBeam.get());
 
+        m_LEDs.setData(m_LEDBuffer);
+
+        boolean isRed = alienceColorEntry.getBoolean(true);
+        boolean[] state = { !m_midBrakeBeam.get(), !m_highBrakeBeam.get() };
+
+        for (int i = 0; i < 13; i++) {
+            if (state[0]) {
+                m_LEDBuffer.setHSV(i, isRed ? 0 : 100, 255, 255);
+            } else {
+                m_LEDBuffer.setHSV(i, 0, 0, 0);
+            }
+        }
+
+        for (int i = 13; i < 27; i++) {
+            if (state[1]) {
+                m_LEDBuffer.setHSV(i, isRed ? 0 : 100, 255, 255);
+            } else {
+                m_LEDBuffer.setHSV(i, 0, 0, 0);
+            }
+        }
+
+        m_LEDs.setData(m_LEDBuffer);
+
+        // i++;
+        // i %= 27;
+        // m_LEDBuffer.setHSV((i+1)%27, 90, 255, 255);
+        // m_LEDBuffer.setHSV(i, 0, 0, 0);
 
     }
 

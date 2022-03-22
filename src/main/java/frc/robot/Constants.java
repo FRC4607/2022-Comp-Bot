@@ -15,7 +15,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -75,13 +74,21 @@ public class Constants {
 
     public static final class IntakeConstants {
         public static final int motorID = 7;
-        public static final int solenoidModule = 8;
-        public static final PneumaticsModuleType SolenoidType = PneumaticsModuleType.REVPH;
-        public static final int solenoidForwardChannel = 13;
-        public static final int solenoidReverseChannel = 12;
+        
+        public static final int solenoidChannel = 14;
 
-        public static final double intakeSpeed = 1;
-        public static final double reverseScalar = 0.5;
+        public static final double kP = 0.0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+
+        public static final double kS = 0.24302;
+        public static final double kV = 0.12861;
+
+        public static final double intakeingRPM = 3500;
+        public static final double releasingRPM = 1000;
+
+        public static final double intakeSpeed = 0.80;
+
     }
 
     public static final class TowerConstants {
@@ -92,46 +99,37 @@ public class Constants {
         public static final int highBrakeBeamID = 1;
     }
 
-    public static final class TransferWheelConstants {
-        public static final int transferWheelID = 10;
-        public static final double transferWheelSpeed = 1;
-    }
-
-    public static final class FlywheelConstants {
+    public static final class ShooterConstants {
         public static final int flywheelMotor1ID = 11;
         public static final int flywheelMotor2ID = 12;
 
         // This is calculated from the characterization tool's CTRE preset.
-        public static final double flywheelP = 0.17121;
-        public static final double flywheelD = 0;
+        //public static final double flywheelP =  0.15;// 0.17121;
+        public static final double flywheelF =  0.05;
+        public static final double flywheelP =  0.08;
+        public static final double flywheelD = 5;
 
-        /*
-         * 0.17121, 0.0171
-         * 0.17121, 0.02
-         * 0.17121, 0.05
-         * 0.25, 0.1
-         * 0.15, 0.1
-         * 0.15, 0.0
-         * Peck 1
-         * +320
-         * +310
-         * +300
-         * +500
-         * +290
-         */
         // kS from characterization tool, used here as an arbitrary feed forward to
         // overcome friction. This is divided by 12 to get the value as a percent of the
         // motor's max output.
-        public static final double flywheelKs = 0.64575 / 12;
+        public static final double flywheelKs = 0.7983;
         // kA from characterization tool, used here as the velocity feed forward.
         // Conversion from v / (rotation/sec) to CTRE units (v (0-1023) / (rotations /
         // 0.1sec) ) is needed.
         // public static final double flywheelKf = 0.05103092783505154639175257731959;
-        public static final double flywheelKf = 0.046775;
+        public static final double flywheelKv = 0.11287;
 
-        public static final int flywheeelRPM = 3900;
+        public static final double flywheelMaxError = 200; // 50
+        
+        public static final double lowGoalRPM = 900;
+        public static final double highGoalRPM = 2550;
+        
+        public static final int kickerWheelID = 10;
+        public static final double kickerWheelSpeed = 1;
 
-        public static final float flywheelMaxError = 200; // 50
+        public static final int pistionChannel = 15;
+        public static final double limeLightRPM = 2300;
+        
     }
 
     public static final class FollowPathConstants {
@@ -156,27 +154,26 @@ public class Constants {
         public static final int motor1ID = 17;
         public static final int motor2ID = 16;
 
-        public static final double kP = 0;
-        public static final double kI = 0;
+        public static final double kP = 0.5;
+        public static final double kI = 0.1;
         public static final double kD = 0;
-        public static final double kFF = 0;
 
-        public static final int pistionModule = 8;
-        public static final PneumaticsModuleType pistionType = PneumaticsModuleType.REVPH;
-        public static final int pistionForwardChannel = 10;
-        public static final int pistionReverseChannel = 11;
-
-        public static final int clutchModule = 8;
-        public static final PneumaticsModuleType clutchType = PneumaticsModuleType.REVPH;
-        public static final int clutchForwardChannel = 8;
-        public static final int clutchReverseChannel = 9;
-        public static final double maxHight_Rotations = 6.8;
+        public static final double maxHight_Rotations = 6.9;
         public static final double rotationToExtend = 0;
         public static final int limitSwitchID = 2;
         public static final double conversenFactor_SensorUnitsPerInch = 8192;
 
         public static final double maxRoatation = 90;
         public static final double minRoatation = -45;
+        
+        public static final int pistionChannel = 13;
+
+        public static final double maxVelocity = 200;
+        public static final double maxAcceleration = 200;
+
+        public static final double PositonTolerace = 0.05;
+
+        public static final double pistionEstenchonTime = 5.0;
     }
 
     public static final int pnumaticHub = 8;

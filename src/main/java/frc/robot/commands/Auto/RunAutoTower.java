@@ -16,10 +16,7 @@ public class RunAutoTower extends CommandBase {
 
     @Override
     public void execute() {
-        if ((m_towerSubsystem.getMidBrakeBeam() || m_towerSubsystem.getHighBrakeBeam()) &&
-                (m_towerSubsystem.getColorSensor() == m_towerSubsystem.getAllianceColor()
-                        || m_towerSubsystem.getColorSensor() == Color.None
-                        || m_towerSubsystem.getAllianceColor() == Color.None)) {
+        if ((m_towerSubsystem.getMidBrakeBeam() || m_towerSubsystem.getHighBrakeBeam())) {
             m_towerSubsystem.setSpeed(TowerConstants.agitatiorSpeed);
         } else {
             m_towerSubsystem.setSpeed(0);
