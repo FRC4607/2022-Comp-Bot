@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Paths;
-import frc.robot.commands.IntakeBalls;
 import frc.robot.commands.ShootBalls;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ShooterSubsystem.ShootingMode;

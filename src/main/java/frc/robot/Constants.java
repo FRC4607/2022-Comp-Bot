@@ -121,14 +121,14 @@ public class Constants {
 
         public static final double flywheelMaxError = 200; // 50
         
-        public static final double lowGoalRPM = 900;
-        public static final double highGoalRPM = 2550;
+        public static final double lowGoalRPM = 1000;
+        public static final double highGoalRPM = 2500;
         
         public static final int kickerWheelID = 10;
         public static final double kickerWheelSpeed = 1;
 
         public static final int pistionChannel = 15;
-        public static final double limeLightRPM = 2300;
+        public static final double limeLightRPM = 2825;
         
     }
 

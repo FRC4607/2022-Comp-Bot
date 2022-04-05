@@ -34,17 +34,22 @@ public class LimeLightTarget extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        // double yAxis = m_driver.getLeftY();
-        double volatge = 0;
+        double yAxis = m_driver.getLeftY();
+        double PIDVolatge = 0.0;
+        double driverInput = 0.0;
         if (m_limeLight.getIsTargetFound()) {
             double angle = m_limeLight.getdegRotationToTarget();
             double PID = pidController.calculate(angle);
             
             if (Math.abs(angle) > 0.1) {
-                volatge = PID + Math.copySign(DriveConstants.ks_Volts, PID);
+                PIDVolatge = PID + Math.copySign(DriveConstants.ks_Volts, PID);
             }
         }
-        m_drivetrainSubsystem.tankDriveVolts(-volatge, volatge);
+        if (yAxis > 0.05 || yAxis < -0.05) { 
+            driverInput = yAxis * -1.0;
+        }
+
+        m_drivetrainSubsystem.tankDriveVolts(-PIDVolatge + driverInput, PIDVolatge + driverInput);
     }
 
     // Called once the command ends or is interrupted.

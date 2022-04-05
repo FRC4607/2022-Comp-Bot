@@ -10,7 +10,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Paths;
 import frc.robot.Constants.FollowPathConstants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 

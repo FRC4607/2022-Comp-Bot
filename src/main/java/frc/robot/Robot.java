@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,6 +47,9 @@ public class Robot extends TimedRobot {
 
     private Timer timer;
     private PowerDistribution PDH;
+
+    NetworkTable databace = inst.getTable("PiTable");
+	NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -64,6 +68,8 @@ public class Robot extends TimedRobot {
         m_compresor = new Compressor(Constants.pnumaticHub, PneumaticsModuleType.REVPH);
         m_compresor.disable();
         // m_compresor.disable();
+
+        // RobotController.setBrownoutVoltage(6.5);
 
         timer = new Timer();
         timer.start();
@@ -99,8 +105,6 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void disabledInit() {
-        NetworkTable databace = inst.getTable("PiTable");
-		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
 		entry.setBoolean(false);
 
         // Shuffleboard.stopRecording();
@@ -108,6 +112,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+		entry.setBoolean(false);
     }
 
     /**
@@ -122,8 +127,6 @@ public class Robot extends TimedRobot {
             m_autonomousCommand.schedule();
         }
 
-        NetworkTable databace = inst.getTable("PiTable");
-		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
 		entry.setBoolean(true);
         
         m_compresor.disable();
@@ -134,6 +137,7 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void autonomousPeriodic() {
+        entry.setBoolean(true);
     }
 
     @Override
@@ -149,8 +153,6 @@ public class Robot extends TimedRobot {
             m_autonomousCommand.cancel();
         }
 
-        NetworkTable databace = inst.getTable("PiTable");
-		NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
 		entry.setBoolean(true);
 
         // Shuffleboard.startRecording();
@@ -164,6 +166,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         //SmartDashboard.putNumber("Compresor Curent", m_compresor.getCurrent());
+		entry.setBoolean(true);
     }
 
     @Override

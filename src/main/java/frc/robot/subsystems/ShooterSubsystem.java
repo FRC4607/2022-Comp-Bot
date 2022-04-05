@@ -126,9 +126,6 @@ public class ShooterSubsystem extends SubsystemBase {
         m_piston.set(false);
 
         m_mode = ShootingMode.highGoal;
-        SmartDashboard.putNumber("Low goal RPM", ShooterConstants.lowGoalRPM);
-        SmartDashboard.putNumber("High goal RPM", ShooterConstants.highGoalRPM);
-        SmartDashboard.putNumber("Lime Light RPM", 2825);
     }
 
     @Override
@@ -167,15 +164,15 @@ public class ShooterSubsystem extends SubsystemBase {
     public void spinupFlywheel() {
         switch (m_mode) {
             case lowGoal:
-                setRPM(SmartDashboard.getNumber("Low goal RPM", ShooterConstants.lowGoalRPM));
+                setRPM(ShooterConstants.lowGoalRPM);
                 m_piston.set(true);
                 break;
             case highGoal:
-                setRPM(SmartDashboard.getNumber("High goal RPM", ShooterConstants.highGoalRPM));
+                setRPM(ShooterConstants.highGoalRPM);
                 m_piston.set(false);
                 break;
             case limeLight:
-                setRPM(SmartDashboard.getNumber("Lime Light RPM", ShooterConstants.highGoalRPM));
+                setRPM(ShooterConstants.limeLightRPM);
                 m_piston.set(true);
                 break;
         }
@@ -269,12 +266,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setKickerWheel(double speed) {
-        if (speed > 0.01) {
-            System.out.println("Runing Kicker");
-        }
-        else {
-            System.out.println("Kicker Commanded to 0");
-        }
         m_kickerWheel.set(speed);
     }
 
