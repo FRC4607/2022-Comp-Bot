@@ -43,6 +43,7 @@ public class ShootBalls extends CommandBase {
 		state = sequence.spinupFlywheel;
 		timer.reset();
 		timer.start();
+		cycleCount = 0;
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class ShootBalls extends CommandBase {
 		cycleCount++;
 		switch (state) {
 			case spinupFlywheel:
-				if (m_shooterSubsystem.constantSpeed() && cycleCount >= 10) {
+				if (m_shooterSubsystem.constantSpeed() && cycleCount >= 5) {
 					System.out.println("Spin up Time:" + timer.get());
 
 					cycleCount = 0;
@@ -80,8 +81,7 @@ public class ShootBalls extends CommandBase {
 
 				break;
 			case shoot:
-				if (cycleCount >= 10) {
-					System.out.println("Recovering");
+				if (cycleCount >= 5) {
 					m_shooterSubsystem.setKickerWheel(0);
 
 					cycleCount = 0;

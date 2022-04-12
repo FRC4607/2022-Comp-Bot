@@ -126,6 +126,8 @@ public class ShooterSubsystem extends SubsystemBase {
         m_piston.set(false);
 
         m_mode = ShootingMode.highGoal;
+
+        SmartDashboard.putNumber("Set Limelight RPM", 0);
     }
 
     @Override
@@ -172,7 +174,8 @@ public class ShooterSubsystem extends SubsystemBase {
                 m_piston.set(false);
                 break;
             case limeLight:
-                setRPM(ShooterConstants.limeLightRPM);
+                setRPM(m_LimeLightRPM);
+                //setRPM(m_LimeLightRPM);
                 m_piston.set(true);
                 break;
         }

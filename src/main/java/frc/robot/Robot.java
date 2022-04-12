@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.RobotContainer.LimeLightTargetState;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -48,8 +51,16 @@ public class Robot extends TimedRobot {
     private Timer timer;
     private PowerDistribution PDH;
 
+    private Timer compressorTimer;
+    private boolean timerStarted = false;
+
     NetworkTable databace = inst.getTable("PiTable");
 	NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
+
+    private AddressableLED m_LEDs;
+    private AddressableLEDBuffer m_LEDBuffer;
+    private NetworkTableEntry alienceColorEntry;
+
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -72,9 +83,20 @@ public class Robot extends TimedRobot {
         // RobotController.setBrownoutVoltage(6.5);
 
         timer = new Timer();
+        compressorTimer = new Timer();
         timer.start();
 
         PDH = new PowerDistribution(Constants.PDH, ModuleType.kRev);
+
+        m_LEDs = new AddressableLED(9);
+        m_LEDs.setLength(27);
+        m_LEDBuffer = new AddressableLEDBuffer(27);
+        m_LEDs.setData(m_LEDBuffer);
+        m_LEDs.start();
+
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable FMSInfo = inst.getTable("FMSInfo");
+        alienceColorEntry = FMSInfo.getEntry("IsRedAlliance");
     }
 
     /**
@@ -97,6 +119,50 @@ public class Robot extends TimedRobot {
             timer.stop();
             timer.reset();
         }
+
+        boolean isRed = alienceColorEntry.getBoolean(true);
+        boolean[] state = { !m_robotContainer.m_towerSubsystem.getMidBrakeBeam(), !m_robotContainer.m_towerSubsystem.getHighBrakeBeam() };
+
+        for (int i = 0; i < 10; i++) {
+            if (state[0]) {
+                m_LEDBuffer.setHSV(i, isRed ? 0 : 100, 255, 255);
+            } else {
+                m_LEDBuffer.setHSV(i, 0, 0, 0);
+            }
+        }
+
+        for (int i = 10; i < 20; i++) {
+            if (state[1]) {
+                m_LEDBuffer.setHSV(i, isRed ? 0 : 100, 255, 255);
+            } else {
+                m_LEDBuffer.setHSV(i, 0, 0, 0);
+            }
+        }
+
+        int hew = 0;
+        switch (m_robotContainer.m_lightTargetState) {
+            case Idle:
+                hew = 0;
+                break;
+            case NoTarget:
+                hew = 0;
+                break;
+            case Targeting:
+                hew = 118;
+                break;
+            case Ready:
+                hew = 64;
+                break;
+        }
+        for (int i = 20; i < 27; i++) {
+            if (m_robotContainer.m_lightTargetState == LimeLightTargetState.Idle) {
+                m_LEDBuffer.setHSV(i, 0, 0, 0);
+            } else {
+                m_LEDBuffer.setHSV(i, hew, 255, 255);
+            }
+        }
+
+        m_LEDs.setData(m_LEDBuffer);
     }
 
 
@@ -106,7 +172,10 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
 		entry.setBoolean(false);
-
+        m_compresor.disable();
+        compressorTimer.stop();
+        compressorTimer.reset();
+        timerStarted = false;
         // Shuffleboard.stopRecording();
     }
 
@@ -167,6 +236,21 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         //SmartDashboard.putNumber("Compresor Curent", m_compresor.getCurrent());
 		entry.setBoolean(true);
+        if (RobotController.getBatteryVoltage() >= 11) {
+            if (!timerStarted || compressorTimer.hasElapsed(3)) {
+                compressorTimer.stop();
+                compressorTimer.reset();
+                timerStarted = false;
+            }
+            else {
+                m_compresor.enableDigital();
+            }
+        }
+        else {
+            m_compresor.disable();
+            compressorTimer.start();
+            timerStarted = true;
+        }
     }
 
     @Override

@@ -58,6 +58,14 @@ public class RobotContainer {
 	// A chooser for autonomous commands
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
 
+	public enum LimeLightTargetState {
+        Idle,
+        NoTarget,
+        Targeting,
+        Ready
+    }
+    public LimeLightTargetState m_lightTargetState = LimeLightTargetState.Idle;
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -120,7 +128,7 @@ public class RobotContainer {
 		new JoystickButton(driver, XboxController.Button.kA.value).whenPressed(new InstantCommand(() -> {
 			m_intakeSubsystem.togglePiston();
 		}));
-		driver_xButton.whileHeld(new LimeLightTarget(limeLight, m_drivetrainSubsystem, driver));
+		driver_xButton.whileHeld(new LimeLightTarget(limeLight, m_drivetrainSubsystem, m_shooterSubsystem, driver, operator, false));
 		// Operator
 		JoystickButton operator_aButton = new JoystickButton(operator, XboxController.Button.kA.value);
 		JoystickButton operator_bButton = new JoystickButton(operator, XboxController.Button.kB.value);

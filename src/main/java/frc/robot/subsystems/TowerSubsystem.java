@@ -55,12 +55,6 @@ public class TowerSubsystem extends SubsystemBase {
         
         m_midBrakeBeam = new DigitalInput(TowerConstants.midBrakeBeamID);
         m_highBrakeBeam = new DigitalInput(TowerConstants.highBrakeBeamID);
-        
-        m_LEDs = new AddressableLED(9);
-        m_LEDs.setLength(27);
-        m_LEDBuffer = new AddressableLEDBuffer(27);
-        m_LEDs.setData(m_LEDBuffer);
-        m_LEDs.start();
 
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         NetworkTable FMSInfo = inst.getTable("FMSInfo");
@@ -71,35 +65,6 @@ public class TowerSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("Mid Brake Beam", m_midBrakeBeam.get());
         SmartDashboard.putBoolean("High Brake Beam", m_highBrakeBeam.get());
-
-        m_LEDs.setData(m_LEDBuffer);
-
-        boolean isRed = alienceColorEntry.getBoolean(true);
-        boolean[] state = { !m_midBrakeBeam.get(), !m_highBrakeBeam.get() };
-
-        for (int i = 0; i < 13; i++) {
-            if (state[0]) {
-                m_LEDBuffer.setHSV(i, isRed ? 0 : 100, 255, 255);
-            } else {
-                m_LEDBuffer.setHSV(i, 0, 0, 0);
-            }
-        }
-
-        for (int i = 13; i < 27; i++) {
-            if (state[1]) {
-                m_LEDBuffer.setHSV(i, isRed ? 0 : 100, 255, 255);
-            } else {
-                m_LEDBuffer.setHSV(i, 0, 0, 0);
-            }
-        }
-
-        m_LEDs.setData(m_LEDBuffer);
-
-        // i++;
-        // i %= 27;
-        // m_LEDBuffer.setHSV((i+1)%27, 90, 255, 255);
-        // m_LEDBuffer.setHSV(i, 0, 0, 0);
-
     }
 
     public void setSpeed(double speed) {
