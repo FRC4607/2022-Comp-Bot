@@ -37,6 +37,18 @@ public class LimeLightTarget extends CommandBase {
         pidController = new ProfiledPIDController(0.25, 0, 0, new TrapezoidProfile.Constraints(10, 10));
     }
 
+    public LimeLightTarget(LimeLight limeLight, DrivetrainSubsystem drivetrainSubsystem, ShooterSubsystem shooterSubsystem, boolean finish) {
+        m_limeLight = limeLight;
+        m_drivetrainSubsystem = drivetrainSubsystem;
+        m_shooterSubsystem = shooterSubsystem;
+        addRequirements(m_drivetrainSubsystem);
+
+        m_driver = null;
+        m_operator = null;
+        m_finish = finish;
+        pidController = new ProfiledPIDController(0.25, 0, 0, new TrapezoidProfile.Constraints(10, 10));
+    }
+
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
@@ -73,21 +85,24 @@ public class LimeLightTarget extends CommandBase {
                 double RPM = -0.052043 * Math.pow(dD_in, 2) + 34.3271 * dD_in + 217.264;
                 m_shooterSubsystem.setLimeLightRPM(RPM);
                 RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.Ready;
-                m_driver.setRumble(RumbleType.kLeftRumble, 0.2);
-                m_driver.setRumble(RumbleType.kRightRumble, 0.2);
-                m_operator.setRumble(RumbleType.kLeftRumble, 0.2);
-                m_operator.setRumble(RumbleType.kRightRumble, 0.2);
+                setRumble(0.2);
             } else {
                 RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.Targeting;
                 m_alingined = false;
-                m_driver.setRumble(RumbleType.kLeftRumble, 0);
-                m_driver.setRumble(RumbleType.kRightRumble, 0);
-                m_operator.setRumble(RumbleType.kLeftRumble, 0);
-                m_operator.setRumble(RumbleType.kRightRumble, 0);
+                setRumble(0);
             }
         } else {
             RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.NoTarget;
             m_drivetrainSubsystem.setArcadeDrive(m_driver.getLeftX(), m_driver.getLeftY());
+        }
+    }
+
+    private void setRumble(double value) {
+        if (m_driver != null && m_operator != null) {
+            m_driver.setRumble(RumbleType.kLeftRumble, value);
+            m_driver.setRumble(RumbleType.kRightRumble, value);
+            m_operator.setRumble(RumbleType.kLeftRumble, value);
+            m_operator.setRumble(RumbleType.kRightRumble, value);
         }
     }
 
@@ -98,10 +113,7 @@ public class LimeLightTarget extends CommandBase {
         m_drivetrainSubsystem.setArcadeDrive(0, 0);
         RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.Idle;
 
-        m_driver.setRumble(RumbleType.kLeftRumble, 0);
-        m_driver.setRumble(RumbleType.kRightRumble, 0);
-        m_operator.setRumble(RumbleType.kLeftRumble, 0);
-        m_operator.setRumble(RumbleType.kRightRumble, 0);
+        setRumble(0);
     }
 
     // Returns true when the command should end.

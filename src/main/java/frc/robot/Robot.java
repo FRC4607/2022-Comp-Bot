@@ -51,9 +51,6 @@ public class Robot extends TimedRobot {
     private Timer timer;
     private PowerDistribution PDH;
 
-    private Timer compressorTimer;
-    private boolean timerStarted = false;
-
     NetworkTable databace = inst.getTable("PiTable");
 	NetworkTableEntry entry = databace.getEntry("IsRobotEnabled");
 
@@ -83,7 +80,6 @@ public class Robot extends TimedRobot {
         // RobotController.setBrownoutVoltage(6.5);
 
         timer = new Timer();
-        compressorTimer = new Timer();
         timer.start();
 
         PDH = new PowerDistribution(Constants.PDH, ModuleType.kRev);
@@ -173,9 +169,6 @@ public class Robot extends TimedRobot {
     public void disabledInit() {
 		entry.setBoolean(false);
         m_compresor.disable();
-        compressorTimer.stop();
-        compressorTimer.reset();
-        timerStarted = false;
         // Shuffleboard.stopRecording();
     }
 
@@ -237,19 +230,10 @@ public class Robot extends TimedRobot {
         //SmartDashboard.putNumber("Compresor Curent", m_compresor.getCurrent());
 		entry.setBoolean(true);
         if (RobotController.getBatteryVoltage() >= 11) {
-            if (!timerStarted || compressorTimer.hasElapsed(3)) {
-                compressorTimer.stop();
-                compressorTimer.reset();
-                timerStarted = false;
-            }
-            else {
-                m_compresor.enableDigital();
-            }
+            m_compresor.enableDigital();
         }
         else {
             m_compresor.disable();
-            compressorTimer.start();
-            timerStarted = true;
         }
     }
 
