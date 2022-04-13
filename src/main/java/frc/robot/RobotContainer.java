@@ -53,18 +53,19 @@ public class RobotContainer {
 	private final XboxController operator = new XboxController(1);
 	private final XboxController driver = new XboxController(0);
 
-	private final LimeLight limeLight = new LimeLight();
+	private final LimeLight m_limeLight = new LimeLight();
 
 	// A chooser for autonomous commands
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
 
 	public enum LimeLightTargetState {
-        Idle,
-        NoTarget,
-        Targeting,
-        Ready
-    }
-    public LimeLightTargetState m_lightTargetState = LimeLightTargetState.Idle;
+		Idle,
+		NoTarget,
+		Targeting,
+		Ready
+	}
+
+	public LimeLightTargetState m_lightTargetState = LimeLightTargetState.Idle;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -90,7 +91,15 @@ public class RobotContainer {
 		m_chooser.addOption("Three Ball",
 				new Auton_ThreeBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
 		m_chooser.addOption("Four Ball",
-				new Auton_FourBall(m_shooterSubsystem, m_intakeSubsystem, m_drivetrainSubsystem, m_towerSubsystem));
+				new Auton_FourBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
+		m_chooser.addOption("Four Ball LL",
+				new Auton_FourBall_LL(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, m_limeLight));
+		m_chooser.addOption("Five Ball",
+				new Auton_FiveBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, m_limeLight));
+		m_chooser.addOption("One Ball",
+				new Auton_OneBall_TwoBall_LL(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, m_limeLight, 1));
+		m_chooser.addOption("Two Ball LL",
+				new Auton_OneBall_TwoBall_LL(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, m_limeLight, 2));
 
 		m_chooser.addOption("Test Path", new TestPath(m_drivetrainSubsystem));
 		// m_chooser.addOption("Calibate Trackwidth", new
@@ -128,7 +137,8 @@ public class RobotContainer {
 		new JoystickButton(driver, XboxController.Button.kA.value).whenPressed(new InstantCommand(() -> {
 			m_intakeSubsystem.togglePiston();
 		}));
-		driver_xButton.whileHeld(new LimeLightTarget(limeLight, m_drivetrainSubsystem, m_shooterSubsystem, driver, operator, false));
+		driver_xButton
+				.whileHeld(new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem, driver, operator));
 		// Operator
 		JoystickButton operator_aButton = new JoystickButton(operator, XboxController.Button.kA.value);
 		JoystickButton operator_bButton = new JoystickButton(operator, XboxController.Button.kB.value);

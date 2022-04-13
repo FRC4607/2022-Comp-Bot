@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import com.revrobotics.CANSparkMax.IdleMode;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.XboxController;
@@ -12,7 +10,6 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.RobotContainer.LimeLightTargetState;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.ShooterSubsystem.*;
 import oi.limelightvision.limelight.frc.LimeLight;
 
 public class LimeLightTarget extends CommandBase {
@@ -25,7 +22,7 @@ public class LimeLightTarget extends CommandBase {
     private boolean m_alingined;
     private boolean m_finish;
 
-    public LimeLightTarget(LimeLight limeLight, DrivetrainSubsystem drivetrainSubsystem, ShooterSubsystem shooterSubsystem, XboxController driver, XboxController operator, boolean finish) {
+    public LimeLightTarget(LimeLight limeLight, DrivetrainSubsystem drivetrainSubsystem, ShooterSubsystem shooterSubsystem, XboxController driver, XboxController operator) {
         m_limeLight = limeLight;
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_shooterSubsystem = shooterSubsystem;
@@ -33,11 +30,11 @@ public class LimeLightTarget extends CommandBase {
 
         m_driver = driver;
         m_operator = operator;
-        m_finish = finish;
+        m_finish = false;
         pidController = new ProfiledPIDController(0.25, 0, 0, new TrapezoidProfile.Constraints(10, 10));
     }
 
-    public LimeLightTarget(LimeLight limeLight, DrivetrainSubsystem drivetrainSubsystem, ShooterSubsystem shooterSubsystem, boolean finish) {
+    public LimeLightTarget(LimeLight limeLight, DrivetrainSubsystem drivetrainSubsystem, ShooterSubsystem shooterSubsystem) {
         m_limeLight = limeLight;
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_shooterSubsystem = shooterSubsystem;
@@ -45,7 +42,7 @@ public class LimeLightTarget extends CommandBase {
 
         m_driver = null;
         m_operator = null;
-        m_finish = finish;
+        m_finish = true;
         pidController = new ProfiledPIDController(0.25, 0, 0, new TrapezoidProfile.Constraints(10, 10));
     }
 

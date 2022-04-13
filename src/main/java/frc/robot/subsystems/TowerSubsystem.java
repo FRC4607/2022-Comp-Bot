@@ -3,8 +3,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,10 +35,6 @@ public class TowerSubsystem extends SubsystemBase {
             return value;
         }
     }
-    
-    private AddressableLED m_LEDs;
-    private AddressableLEDBuffer m_LEDBuffer;
-    // 27, 26
     
     private NetworkTableEntry alienceColorEntry;
 
