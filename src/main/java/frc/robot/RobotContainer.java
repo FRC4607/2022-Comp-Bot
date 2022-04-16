@@ -78,7 +78,7 @@ public class RobotContainer {
 		// Configure default commands
 		m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
 		m_climberSubsystem.setDefaultCommand(new ClimberTrigers(m_climberSubsystem, operator));
-		m_intakeSubsystem.setDefaultCommand(new DriverIntake(m_intakeSubsystem, m_towerSubsystem, driver));
+		m_intakeSubsystem.setDefaultCommand(new DriverIntake(m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, driver));
 		m_towerSubsystem.setDefaultCommand(new DriverTower(m_towerSubsystem, driver));
 		// m_flywheelSubsystem.setDefaultCommand(new
 		// RunFlywheelJoystick(m_flywheelSubsystem, operator));

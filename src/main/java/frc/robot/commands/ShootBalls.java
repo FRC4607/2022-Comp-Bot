@@ -81,16 +81,31 @@ public class ShootBalls extends CommandBase {
 
 				break;
 			case shoot:
-				if (cycleCount >= 5) {
-					m_shooterSubsystem.setKickerWheel(0);
-
-					cycleCount = 0;
-
-					timer.reset();
-					timer.start();
-					state = sequence.spinupFlywheel;
-					m_takenShots++;
+				if (m_takenShots == m_shots - 1) {
+					if (cycleCount >= 10) {
+						m_shooterSubsystem.setKickerWheel(0);
+	
+						cycleCount = 0;
+	
+						timer.reset();
+						timer.start();
+						state = sequence.spinupFlywheel;
+						m_takenShots++;
+					}
 				}
+				else {
+					if (cycleCount >= 5) {
+						m_shooterSubsystem.setKickerWheel(0);
+	
+						cycleCount = 0;
+	
+						timer.reset();
+						timer.start();
+						state = sequence.spinupFlywheel;
+						m_takenShots++;
+					}
+				}
+				
 				break;
 		}
 		if (m_towerSubsystem.getHighBrakeBeam()) {

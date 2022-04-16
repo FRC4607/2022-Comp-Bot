@@ -18,12 +18,6 @@ public class Auton_FiveBall extends CommandBase {
 	private static ShooterSubsystem m_shooterSubsystem;
     private static LimeLight m_limeLight;
 
-	private AutoIntake m_AutoIntake;
-	private RunAutoTower m_AutoTower;
-	private ShootBalls m_shoot2Balls;
-	private ShootBalls m_shootBall;
-    private LimeLightTarget m_limeLightTarget;
-
 	private Command m_sequence;
 	private Timer m_timer;
 
@@ -35,14 +29,7 @@ public class Auton_FiveBall extends CommandBase {
 		m_intakeSubsystem = intakeSubsystem;
 		m_towerSubsystem = towerSubsystem;
 		m_shooterSubsystem = shooterSubsystem;
-				m_limeLight = limeLight;
-
-		m_AutoIntake = new AutoIntake(m_intakeSubsystem, m_towerSubsystem);
-		m_AutoTower = new RunAutoTower(m_towerSubsystem);
-
-		m_shoot2Balls = new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2);
-		m_shootBall = new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 1);
-        m_limeLightTarget = new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem);
+		m_limeLight = limeLight;
 
 		m_timer = new Timer();
 	}
@@ -65,34 +52,31 @@ public class Auton_FiveBall extends CommandBase {
 				new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Start_Ball2 : Paths.bluePaths.Start_Ball2),
-						m_AutoIntake, m_AutoTower),
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
 				new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Ball2_Hub : Paths.bluePaths.Ball2_Hub),
-						m_AutoIntake, m_AutoTower),
-				m_shoot2Balls,
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
 				new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Hub_Ball3 : Paths.bluePaths.Hub_Ball3),
-						m_AutoIntake, m_AutoTower),
-				new ParallelCommandGroup(
-						new FollowPath(m_drivetrainSubsystem,
-								m_isRed ? Paths.redPaths.Ball3_Hub : Paths.bluePaths.Ball3_Hub),
-						m_AutoIntake, m_AutoTower),
-				m_shootBall,
-                new ParallelDeadlineGroup(
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
+				new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 1),
+                /*new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Hub_Ball4 : Paths.bluePaths.Hub_Ball4),
-						m_AutoIntake, m_AutoTower),
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
 				new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Ball4_Tarmac : Paths.bluePaths.Ball4_Tarmac),
-						m_AutoIntake, m_AutoTower),
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
                 new InstantCommand(() -> {
                     m_shooterSubsystem.setShootingMode(ShootingMode.limeLight);
                 }),
-                m_limeLightTarget,
-				m_shoot2Balls,
+                new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),*/
 				new InstantCommand(() -> {
 					m_drivetrainSubsystem.setBrakeMode(false);
 				}));

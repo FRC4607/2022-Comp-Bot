@@ -15,10 +15,6 @@ public class Auton_FourBall extends CommandBase {
 	private static TowerSubsystem m_towerSubsystem;
 	private static ShooterSubsystem m_shooterSubsystem;
 
-	private AutoIntake m_AutoIntake;
-	private RunAutoTower m_AutoTower;
-	private ShootBalls m_shootBalls;
-
 	private Command m_sequence;
 	private Timer m_timer;
 
@@ -29,11 +25,6 @@ public class Auton_FourBall extends CommandBase {
 		m_intakeSubsystem = intakeSubsystem;
 		m_towerSubsystem = towerSubsystem;
 		m_shooterSubsystem = shooterSubsystem;
-
-		m_AutoIntake = new AutoIntake(m_intakeSubsystem, m_towerSubsystem);
-		m_AutoTower = new RunAutoTower(m_towerSubsystem);
-
-		m_shootBalls = new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2);
 
 		m_timer = new Timer();
 	}
@@ -56,21 +47,21 @@ public class Auton_FourBall extends CommandBase {
 				new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Start_Ball2 : Paths.bluePaths.Start_Ball2),
-						m_AutoIntake, m_AutoTower),
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
 				new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Ball2_Hub : Paths.bluePaths.Ball2_Hub),
-						m_AutoIntake, m_AutoTower),
-				m_shootBalls,
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
 				new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Hub_Ball3_Ball4 : Paths.bluePaths.Hub_Ball3_Ball4),
-						m_AutoIntake, m_AutoTower),
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
 				new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Ball4_Hub : Paths.bluePaths.Ball4_Hub),
-						m_AutoIntake, m_AutoTower),
-				m_shootBalls,
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
 				new InstantCommand(() -> {
 					m_drivetrainSubsystem.setBrakeMode(false);
 				}));

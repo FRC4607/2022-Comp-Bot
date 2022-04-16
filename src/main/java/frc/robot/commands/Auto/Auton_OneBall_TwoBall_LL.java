@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Paths;
 import frc.robot.commands.LimeLightTarget;
 import frc.robot.commands.ShootBalls;
+import frc.robot.commands.ToggleShooterPiston;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ShooterSubsystem.ShootingMode;
 import oi.limelightvision.limelight.frc.LimeLight;
@@ -18,10 +19,7 @@ public class Auton_OneBall_TwoBall_LL extends CommandBase {
     private static ShooterSubsystem m_shooterSubsystem;
     private static LimeLight m_limeLight;
 
-    private AutoIntake m_AutoIntake;
-    private RunAutoTower m_AutoTower;
-    private ShootBalls m_shootBalls;
-    private LimeLightTarget m_lightTarget;
+    private final int m_numberOfBalls;
 
     private Command m_sequence;
     private Timer m_timer;
@@ -34,12 +32,7 @@ public class Auton_OneBall_TwoBall_LL extends CommandBase {
         m_towerSubsystem = towerSubsystem;
         m_shooterSubsystem = shooterSubsystem;
         m_limeLight = limeLight;
-
-        m_AutoIntake = new AutoIntake(m_intakeSubsystem, m_towerSubsystem);
-        m_AutoTower = new RunAutoTower(m_towerSubsystem);
-
-        m_shootBalls = new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, numberOfBalls);
-        m_lightTarget = new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem);
+        m_numberOfBalls = numberOfBalls;
 
         m_timer = new Timer();
     }
@@ -59,12 +52,13 @@ public class Auton_OneBall_TwoBall_LL extends CommandBase {
         m_timer.start();
 
         m_sequence = new SequentialCommandGroup(
+                new ToggleShooterPiston(m_shooterSubsystem),
                 new ParallelDeadlineGroup(
                         new FollowPath(m_drivetrainSubsystem,
                                 m_isRed ? Paths.redPaths.Start_Ball2 : Paths.bluePaths.Start_Ball2),
-                        m_AutoIntake, m_AutoTower),
-                m_lightTarget,
-                m_shootBalls,
+                        new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
+                new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem),
+                new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, m_numberOfBalls),
                 new InstantCommand(() -> {
                     m_drivetrainSubsystem.setBrakeMode(false);
                 }));

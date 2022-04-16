@@ -25,7 +25,7 @@ public class Paths {
 		public static Path Hub_Ball4 = Filesystem.getDeployDirectory().toPath()
 				.resolve("./pathplanner/generatedJSON/Hub-Ball4-Red.wpilib.json");
 		public static Path Ball4_Tarmac = Filesystem.getDeployDirectory().toPath()
-				.resolve("./pathplanner/generatedJSON/Ball4-Tarmac-Blue.wpilib.json");
+				.resolve("./pathplanner/generatedJSON/Ball4-Tarmac-Red.wpilib.json");
 	}
 
 	public static class bluePaths {

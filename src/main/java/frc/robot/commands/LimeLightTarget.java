@@ -57,7 +57,13 @@ public class LimeLightTarget extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double yAxis = m_driver.getLeftY();
+        double yAxis;
+        if (m_driver != null) {
+            yAxis = m_driver.getLeftY();
+        }
+        else {
+            yAxis = 0;
+        }
         double PIDVolatge = 0.0;
         double driverInput = 0.0;
         if (m_limeLight.getIsTargetFound()) {
@@ -71,8 +77,15 @@ public class LimeLightTarget extends CommandBase {
                 driverInput = yAxis * -1.0;
             }
             m_drivetrainSubsystem.tankDriveVolts(-PIDVolatge + driverInput, PIDVolatge + driverInput);
+            if (Math.abs(PID) < 0.4) {
+                RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.Ready;
+                setRumble(0.2);
+            }
+            else {
+                RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.Targeting;
+                setRumble(0);
+            }
             if (Math.abs(PID) < 0.2) {
-                m_alingined = true;
                 double dV_in = 104 - 25; // Meshered
                 double angle_deg = 31.5 + m_limeLight.getdegVerticalToTarget(); // Meshered
                 double dD_in = dV_in / Math.tan(Math.toRadians(angle_deg));
@@ -81,16 +94,15 @@ public class LimeLightTarget extends CommandBase {
 
                 double RPM = -0.052043 * Math.pow(dD_in, 2) + 34.3271 * dD_in + 217.264;
                 m_shooterSubsystem.setLimeLightRPM(RPM);
-                RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.Ready;
-                setRumble(0.2);
+                m_alingined = true;
             } else {
-                RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.Targeting;
                 m_alingined = false;
-                setRumble(0);
             }
         } else {
+            if (m_driver != null) {
+                m_drivetrainSubsystem.setArcadeDrive(m_driver.getLeftX(), m_driver.getLeftY());
+            }
             RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.NoTarget;
-            m_drivetrainSubsystem.setArcadeDrive(m_driver.getLeftX(), m_driver.getLeftY());
         }
     }
 
