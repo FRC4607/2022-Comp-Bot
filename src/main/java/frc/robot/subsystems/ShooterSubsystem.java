@@ -28,6 +28,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
@@ -101,6 +102,9 @@ public class ShooterSubsystem extends SubsystemBase {
         pidConfig.remoteFilter0.remoteSensorDeviceID = m_flywheelMotor2.getDeviceID();
         pidConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.TalonFX_SelectedSensor;
 
+        m_flywheelMotor2.setStatusFramePeriod(1, 20);
+        m_flywheelMotor2.setStatusFramePeriod(2, 20);
+
         setRobotDistanceConfigs(TalonFXInvertType.Clockwise, pidConfig);
 
         pidConfig.slot0.kF = ShooterConstants.flywheelF;
@@ -113,6 +117,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_flywheelMotor1.configAllSettings(pidConfig);
 
         m_flywheelMotor2.follow(m_flywheelMotor1);
+        m_flywheelMotor2.setStatusFramePeriod(StatusFrame.Status_1_General, 240);
 
         m_kickerWheel = new CANSparkMax(ShooterConstants.kickerWheelID, MotorType.kBrushless);
 

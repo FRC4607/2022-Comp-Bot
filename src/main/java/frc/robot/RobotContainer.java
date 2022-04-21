@@ -78,8 +78,9 @@ public class RobotContainer {
 		// Configure default commands
 		m_drivetrainSubsystem.setDefaultCommand(new DrivetrainJoystick(m_drivetrainSubsystem, driver));
 		m_climberSubsystem.setDefaultCommand(new ClimberTrigers(m_climberSubsystem, operator));
-		m_intakeSubsystem.setDefaultCommand(new DriverIntake(m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, driver));
+		m_intakeSubsystem.setDefaultCommand(new DriverIntake(m_intakeSubsystem, m_towerSubsystem, driver));
 		m_towerSubsystem.setDefaultCommand(new DriverTower(m_towerSubsystem, driver));
+		m_shooterSubsystem.setDefaultCommand(new DriverShooter(m_shooterSubsystem, driver));
 		// m_flywheelSubsystem.setDefaultCommand(new
 		// RunFlywheelJoystick(m_flywheelSubsystem, operator));
 
@@ -107,9 +108,7 @@ public class RobotContainer {
 
 		SmartDashboard.putData("Auto Mode", m_chooser);
 
-		SmartDashboard.putData("Reset Climber", new InstantCommand(() -> {
-			m_climberSubsystem.resetEncoder();
-		}));
+		SmartDashboard.putData("Reset Climber", new ResetClimber(m_climberSubsystem));
 	}
 
 	public static RobotContainer getInstance() {
@@ -168,6 +167,8 @@ public class RobotContainer {
 		// operator_aButton.whenHeld(new RetractClimber(m_climberSubsystem));
 		// operator_startButton.whenHeld(new RelseseClimber(m_climberSubsystem));
 		// operator_yButton.whenHeld(new ExtendClimber(m_climberSubsystem));
+
+		operator_startButton.whenPressed(new ResetClimber(m_climberSubsystem));
 		operator_xButton.whenPressed(new ToggleClimberPiston(m_climberSubsystem, m_intakeSubsystem));
 
 	}

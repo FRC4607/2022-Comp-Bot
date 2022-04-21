@@ -73,6 +73,7 @@ public class ClimberSubsystem extends SubsystemBase {
         m_motor2.restoreFactoryDefaults();
 
         m_motor2.follow(m_motor1);
+        m_motor2.setControlFramePeriodMs(240);
 
         m_motor1.setIdleMode(IdleMode.kBrake);
         m_motor2.setIdleMode(IdleMode.kBrake);
@@ -110,7 +111,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // SmartDashboard.putNumber("Absolut Encoder Distance", m_absolutEncoder.get());
+        SmartDashboard.putNumber("Absolut Encoder Distance", m_absolutEncoder.get());
 
         if (m_absolutEncoder.getDistance() < 0) {
             m_absolutEncoder.reset();

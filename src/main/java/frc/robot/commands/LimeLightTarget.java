@@ -88,7 +88,7 @@ public class LimeLightTarget extends CommandBase {
             if (Math.abs(PID) < 0.2) {
                 double dV_in = 104 - 25; // Meshered
                 double angle_deg = 31.5 + m_limeLight.getdegVerticalToTarget(); // Meshered
-                double dD_in = dV_in / Math.tan(Math.toRadians(angle_deg));
+                double dD_in = dV_in / Math.tan(Math.toRadians(angle_deg)) - 4;
                 
                 SmartDashboard.putNumber("Limelight Distance", dD_in);
 

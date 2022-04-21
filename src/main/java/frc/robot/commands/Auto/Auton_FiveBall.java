@@ -64,7 +64,7 @@ public class Auton_FiveBall extends CommandBase {
 						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
 				new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem),
 				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 1),
-                /*new ParallelDeadlineGroup(
+                new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Hub_Ball4 : Paths.bluePaths.Hub_Ball4),
 						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
@@ -76,7 +76,7 @@ public class Auton_FiveBall extends CommandBase {
                     m_shooterSubsystem.setShootingMode(ShootingMode.limeLight);
                 }),
                 new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem),
-				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),*/
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
 				new InstantCommand(() -> {
 					m_drivetrainSubsystem.setBrakeMode(false);
 				}));

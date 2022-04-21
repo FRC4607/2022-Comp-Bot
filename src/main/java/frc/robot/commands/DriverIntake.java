@@ -15,13 +15,12 @@ public class DriverIntake extends CommandBase {
 
     private final IntakeSubsystem m_intakeSubsystem;
     private final TowerSubsystem m_towerSubsystem;
-    private final ShooterSubsystem m_shooterSubsystem;
     private final XboxController m_driver;
 
-    public DriverIntake(IntakeSubsystem intakeSubsystem, TowerSubsystem towerSubsystem, ShooterSubsystem flywheel, XboxController driver) {
+    public DriverIntake(IntakeSubsystem intakeSubsystem, TowerSubsystem towerSubsystem,
+            XboxController driver) {
         m_intakeSubsystem = intakeSubsystem;
         m_towerSubsystem = towerSubsystem;
-        m_shooterSubsystem = flywheel;
         addRequirements(m_intakeSubsystem);
         m_driver = driver;
     }
@@ -33,27 +32,19 @@ public class DriverIntake extends CommandBase {
 
     @Override
     public void execute() {
-        double speed = m_driver.getLeftTriggerAxis();
+        double speed = m_driver.getRightTriggerAxis() - m_driver.getLeftTriggerAxis();
 
-        if (speed > 0.1) {
-            m_intakeSubsystem.setSpeed(-Constants.IntakeConstants.intakeSpeed * speed);
-            m_towerSubsystem.setSpeed(-Constants.TowerConstants.agitatiorSpeed * speed);
-            m_shooterSubsystem.setKickerWheel(-Constants.ShooterConstants.kickerWheelSpeed * speed);
-            m_shooterSubsystem.setSpeed(-0.5 * speed);
-        }
-        else {
+        if ((speed > 0.1 && (m_towerSubsystem.getMidBrakeBeam() || m_towerSubsystem.getHighBrakeBeam()))) {
+            m_intakeSubsystem.setSpeed(Constants.IntakeConstants.intakeSpeed * speed);
+        } else if (speed < -0.1) {
+            m_intakeSubsystem.setSpeed(Constants.IntakeConstants.intakeSpeed * speed);
+        } else {
             m_intakeSubsystem.setSpeed(0);
-            m_towerSubsystem.setSpeed(0);
-            m_shooterSubsystem.setKickerWheel(0);
-            m_shooterSubsystem.setSpeed(0);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
         m_intakeSubsystem.setSpeed(0);
-        m_towerSubsystem.setSpeed(0);
-        m_shooterSubsystem.setKickerWheel(0);
-        m_shooterSubsystem.setSpeed(0);
     }
 }

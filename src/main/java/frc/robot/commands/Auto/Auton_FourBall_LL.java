@@ -18,19 +18,19 @@ public class Auton_FourBall_LL extends CommandBase {
 	private static TowerSubsystem m_towerSubsystem;
 	private static ShooterSubsystem m_shooterSubsystem;
 
-    private LimeLight m_limeLight;
+	private LimeLight m_limeLight;
 
 	private Command m_sequence;
 	private Timer m_timer;
 
-	public Auton_FourBall_LL(DrivetrainSubsystem drivetrainSubsystem, IntakeSubsystem intakeSubsystem, 
-						  TowerSubsystem towerSubsystem, ShooterSubsystem shooterSubsystem, LimeLight limeLight) {
+	public Auton_FourBall_LL(DrivetrainSubsystem drivetrainSubsystem, IntakeSubsystem intakeSubsystem,
+			TowerSubsystem towerSubsystem, ShooterSubsystem shooterSubsystem, LimeLight limeLight) {
 
 		m_drivetrainSubsystem = drivetrainSubsystem;
 		m_intakeSubsystem = intakeSubsystem;
 		m_towerSubsystem = towerSubsystem;
 		m_shooterSubsystem = shooterSubsystem;
-        m_limeLight = limeLight;
+		m_limeLight = limeLight;
 
 		m_timer = new Timer();
 	}
@@ -58,7 +58,7 @@ public class Auton_FourBall_LL extends CommandBase {
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Ball2_Hub : Paths.bluePaths.Ball2_Hub),
 						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
-				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2).withTimeout(4),
 				new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Hub_Ball3_Ball4 : Paths.bluePaths.Hub_Ball3_Ball4),
@@ -66,13 +66,12 @@ public class Auton_FourBall_LL extends CommandBase {
 				new ParallelDeadlineGroup(
 						new FollowPath(m_drivetrainSubsystem,
 								m_isRed ? Paths.redPaths.Ball4_Tarmac : Paths.bluePaths.Ball4_Tarmac),
-						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem),
-						new ToggleShooterPiston(m_shooterSubsystem)),
-                new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem),
+						new AutoIntake(m_intakeSubsystem, m_towerSubsystem), new RunAutoTower(m_towerSubsystem)),
 				new InstantCommand(() -> {
-					System.out.println("Shooting");
+					m_shooterSubsystem.setShootingMode(ShootingMode.limeLight);
 				}),
-				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
+				new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2).withTimeout(4),
 				new InstantCommand(() -> {
 					m_drivetrainSubsystem.setBrakeMode(false);
 				}));
