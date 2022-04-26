@@ -2,15 +2,14 @@ package frc.robot.subsystems;
 
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,7 +18,8 @@ import frc.robot.Constants.ClimberConstants;
 public class ClimberSubsystem extends SubsystemBase {
     private CANSparkMax m_motor1;
     private CANSparkMax m_motor2;
-    private DutyCycleEncoder m_absolutEncoder;
+    //private DutyCycleEncoder m_absolutEncoder;
+    private RelativeEncoder m_relativeEncoder;
     private ProfiledPIDController m_PIDController;
 
     private Solenoid m_pistion;
@@ -63,8 +63,6 @@ public class ClimberSubsystem extends SubsystemBase {
 
     private boolean ExtendedClimber;
 
-    private Timer m_pistonExtentionTimer;
-
     public ClimberSubsystem() {
         m_motor1 = new CANSparkMax(ClimberConstants.motor1ID, MotorType.kBrushless);
         m_motor2 = new CANSparkMax(ClimberConstants.motor2ID, MotorType.kBrushless);
@@ -82,8 +80,9 @@ public class ClimberSubsystem extends SubsystemBase {
         m_motor2.setSmartCurrentLimit(60, 40);
 
         // m_encoder = new Encoder(3, 4, 5);
-        m_absolutEncoder = new DutyCycleEncoder(2);
-        m_absolutEncoder.reset();
+        //m_absolutEncoder = new DutyCycleEncoder(2);
+        //m_absolutEncoder.reset();
+        m_relativeEncoder = m_motor1.getEncoder();
 
         // m_encoder = m_motor1.getEncoder();
         // m_encoder.setPositionConversionFactor(ClimberConstants.conversenFactor_SensorUnitsPerInch);
@@ -105,20 +104,18 @@ public class ClimberSubsystem extends SubsystemBase {
         m_PIDController.setTolerance(ClimberConstants.PositonTolerace);
 
         ExtendedClimber = true;
-
-        m_pistonExtentionTimer = new Timer();
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Absolut Encoder Distance", m_absolutEncoder.get());
+        SmartDashboard.putNumber("Encoder Distance", m_relativeEncoder.getPosition());
 
-        if (m_absolutEncoder.getDistance() < 0) {
-            m_absolutEncoder.reset();
+        if (m_relativeEncoder.getPosition() < 0) {
+            m_relativeEncoder.setPosition(0);
         }
 
         if (PIDEnabled) {
-            double dutyCycle = m_PIDController.calculate(m_absolutEncoder.get());
+            double dutyCycle = m_PIDController.calculate(m_relativeEncoder.getPosition());
             m_motor1.set(dutyCycle);
             m_motor2.set(dutyCycle);
         }
@@ -129,7 +126,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public void setClimber(double speed) {
         if (!PIDEnabled) {
-            if (speed > 0 && m_absolutEncoder.getDistance() >= ClimberConstants.maxHight_Rotations) {
+            if (speed > 0 && m_relativeEncoder.getPosition() >= ClimberConstants.maxHight_Rotations) {
                 m_motor1.set(0);
                 m_motor2.set(0);
             } else {
@@ -155,7 +152,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public void setPosition(ClimberPosition position) {
         PIDEnabled = true;
-        m_PIDController.reset(m_absolutEncoder.get());
+        m_PIDController.reset(m_relativeEncoder.getPosition());
         switch (position) {
             case retracted:
                 m_PIDController.setGoal(0);
@@ -174,11 +171,11 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public double getEncoder() {
-        return m_absolutEncoder.getDistance();
+        return m_relativeEncoder.getPosition();
     }
 
     public void resetEncoder() {
-        m_absolutEncoder.reset();
+        m_relativeEncoder.setPosition(0);
     }
 
     public boolean atPosition() {

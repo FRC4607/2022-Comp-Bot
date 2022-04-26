@@ -78,7 +78,6 @@ public class LimeLightTarget extends CommandBase {
             }
             m_drivetrainSubsystem.tankDriveVolts(-PIDVolatge + driverInput, PIDVolatge + driverInput);
             if (Math.abs(PID) < 0.4) {
-                RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.Ready;
                 setRumble(0.2);
             }
             else {
@@ -95,6 +94,7 @@ public class LimeLightTarget extends CommandBase {
                 double RPM = -0.052043 * Math.pow(dD_in, 2) + 34.3271 * dD_in + 217.264;
                 m_shooterSubsystem.setLimeLightRPM(RPM);
                 m_alingined = true;
+                RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.Ready;
             } else {
                 m_alingined = false;
             }

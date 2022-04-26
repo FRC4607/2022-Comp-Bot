@@ -71,7 +71,7 @@ public class Auton_FourBall_LL extends CommandBase {
 					m_shooterSubsystem.setShootingMode(ShootingMode.limeLight);
 				}),
 				new LimeLightTarget(m_limeLight, m_drivetrainSubsystem, m_shooterSubsystem),
-				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2).withTimeout(4),
+				new ShootBalls(m_towerSubsystem, m_shooterSubsystem, m_intakeSubsystem, 2),
 				new InstantCommand(() -> {
 					m_drivetrainSubsystem.setBrakeMode(false);
 				}));
