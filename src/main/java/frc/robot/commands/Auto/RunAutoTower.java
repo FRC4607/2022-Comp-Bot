@@ -15,10 +15,10 @@ public class RunAutoTower extends CommandBase {
 
     @Override
     public void execute() {
-        if ((m_towerSubsystem.getMidBrakeBeam() || m_towerSubsystem.getHighBrakeBeam())) {
-            m_towerSubsystem.setSpeed(TowerConstants.agitatiorSpeed);
-        } else {
+        if ((m_towerSubsystem.getMidBrakeBeam() && m_towerSubsystem.getHighBrakeBeam())) {
             m_towerSubsystem.setSpeed(0);
+        } else {
+            m_towerSubsystem.setSpeed(TowerConstants.agitatiorSpeed);
         }
     }
 

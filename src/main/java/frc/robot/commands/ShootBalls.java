@@ -25,19 +25,32 @@ public class ShootBalls extends CommandBase {
 
 	private int cycleCount = 0;
 
+	private final int m_targetRPM;
+
 	public ShootBalls(TowerSubsystem towerSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem,
-			int shots) {
+			int shots, int targetRPM) {
 		m_towerSubsystem = towerSubsystem;
 		m_shooterSubsystem = shooterSubsystem;
 
 		addRequirements(m_shooterSubsystem, m_towerSubsystem);
 
 		m_shots = shots;
+
+		m_targetRPM = targetRPM;
+	}
+
+	public ShootBalls(TowerSubsystem towerSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, int shots) {
+		this(towerSubsystem, shooterSubsystem, intakeSubsystem, shots, 0);
 	}
 
 	@Override
 	public void initialize() {
-		m_shooterSubsystem.spinupFlywheel();
+		if (m_targetRPM != 0) {
+			m_shooterSubsystem.spinupFlywheel(m_targetRPM);
+		}
+		else {
+			m_shooterSubsystem.spinupFlywheel();
+		}
 		timer = new Timer();
 		m_takenShots = 0;
 		state = sequence.spinupFlywheel;
@@ -60,7 +73,7 @@ public class ShootBalls extends CommandBase {
 				break;
 			case waitForBall:
 
-				if (!m_towerSubsystem.getHighBrakeBeam()) {
+				if (m_towerSubsystem.getHighBrakeBeam()) {
 					if (timerHasStarted) {
 						if (cycleCount >= 5) {
 							state = sequence.shoot;
@@ -109,9 +122,9 @@ public class ShootBalls extends CommandBase {
 				break;
 		}
 		if (m_towerSubsystem.getHighBrakeBeam()) {
-			m_towerSubsystem.setSpeed(TowerConstants.agitatiorSpeed);
-		} else {
 			m_towerSubsystem.setSpeed(0);
+		} else {
+			m_towerSubsystem.setSpeed(TowerConstants.agitatiorSpeed);
 		}
 	}
 

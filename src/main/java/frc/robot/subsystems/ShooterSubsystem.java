@@ -186,6 +186,11 @@ public class ShooterSubsystem extends SubsystemBase {
         }
     }
 
+    public void spinupFlywheel(int targetRPM) {
+        setRPM(targetRPM);
+        m_piston.set(true);
+    }
+
     public double getFlywheelError() {
         return m_flywheelMotor1.getClosedLoopError();
     }

@@ -25,12 +25,12 @@ public class IntakeBalls extends CommandBase {
 
     @Override
     public void execute() {
-        if (m_towerSubsystem.getHighBrakeBeam() || m_towerSubsystem.getMidBrakeBeam()) {
-            m_intakeSubsystem.setState(IntakeState.Intaking);
-            m_towerSubsystem.setSpeed(TowerConstants.agitatiorSpeed);
-        } else {
+        if (m_towerSubsystem.getHighBrakeBeam() && m_towerSubsystem.getMidBrakeBeam()) {
             m_intakeSubsystem.setState(IntakeState.Idle);
             m_towerSubsystem.setSpeed(0);
+        } else {
+            m_intakeSubsystem.setState(IntakeState.Intaking);
+            m_towerSubsystem.setSpeed(TowerConstants.agitatiorSpeed);
         }
     }
 

@@ -30,7 +30,7 @@ public class DriverTower extends CommandBase {
             m_towerSubsystem.setSpeed(speed * TowerConstants.agitatiorSpeed);
         } else {
             if (speed > 0) {
-                if (!m_towerSubsystem.getMidBrakeBeam() && !m_towerSubsystem.getHighBrakeBeam()) {
+                if (m_towerSubsystem.getMidBrakeBeam() && m_towerSubsystem.getHighBrakeBeam()) {
                     m_towerSubsystem.setSpeed(0);
                 } else {
                     m_towerSubsystem.setSpeed(speed * TowerConstants.agitatiorSpeed);

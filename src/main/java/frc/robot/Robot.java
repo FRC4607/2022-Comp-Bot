@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
         }
 
         boolean isRed = alienceColorEntry.getBoolean(true);
-        boolean[] state = { !m_robotContainer.m_towerSubsystem.getMidBrakeBeam(), !m_robotContainer.m_towerSubsystem.getHighBrakeBeam() };
+        boolean[] state = { m_robotContainer.m_towerSubsystem.getMidBrakeBeam(), m_robotContainer.m_towerSubsystem.getHighBrakeBeam() };
 
         for (int i = 0; i < 10; i++) {
             if (state[0]) {

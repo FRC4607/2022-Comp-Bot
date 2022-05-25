@@ -44,6 +44,7 @@ public class LimeLightTarget extends CommandBase {
         m_operator = null;
         m_finish = true;
         pidController = new ProfiledPIDController(0.25, 0, 0, new TrapezoidProfile.Constraints(10, 10));
+        m_shooterSubsystem.setRPM(2000);
     }
 
     // Called when the command is initially scheduled.
@@ -91,8 +92,9 @@ public class LimeLightTarget extends CommandBase {
                 
                 SmartDashboard.putNumber("Limelight Distance", dD_in);
 
-                double RPM = -0.052043 * Math.pow(dD_in, 2) + 34.3271 * dD_in + 217.264;
+                double RPM = -0.052043 * Math.pow(dD_in, 2) + 34.3271 * dD_in + 217.264 - 75;
                 m_shooterSubsystem.setLimeLightRPM(RPM);
+                m_shooterSubsystem.spinupFlywheel();
                 m_alingined = true;
                 RobotContainer.getInstance().m_lightTargetState = LimeLightTargetState.Ready;
             } else {

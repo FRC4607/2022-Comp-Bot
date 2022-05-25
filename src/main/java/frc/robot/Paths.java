@@ -26,6 +26,8 @@ public class Paths {
 				.resolve("./pathplanner/generatedJSON/Hub-Ball4-Red.wpilib.json");
 		public static Path Ball4_Tarmac = Filesystem.getDeployDirectory().toPath()
 				.resolve("./pathplanner/generatedJSON/Ball4-Tarmac-Red.wpilib.json");
+		public static Path Ball3_Ball4 = Filesystem.getDeployDirectory().toPath()
+				.resolve("./pathplanner/generatedJSON/Ball3-Ball4-Red.wpilib.json");
 	}
 
 	public static class bluePaths {
@@ -49,5 +51,7 @@ public class Paths {
 				.resolve("./pathplanner/generatedJSON/Hub-Ball4-Blue.wpilib.json");
 		public static Path Ball4_Tarmac = Filesystem.getDeployDirectory().toPath()
 				.resolve("./pathplanner/generatedJSON/Ball4-Tarmac-Blue.wpilib.json");
+		public static Path Ball3_Ball4 = Filesystem.getDeployDirectory().toPath()
+				.resolve("./pathplanner/generatedJSON/Ball3-Ball4-Blue.wpilib.json");
 	}
 }

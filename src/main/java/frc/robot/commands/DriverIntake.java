@@ -34,7 +34,7 @@ public class DriverIntake extends CommandBase {
     public void execute() {
         double speed = m_driver.getRightTriggerAxis() - m_driver.getLeftTriggerAxis();
 
-        if ((speed > 0.1 && (m_towerSubsystem.getMidBrakeBeam() || m_towerSubsystem.getHighBrakeBeam()))) {
+        if ((speed > 0.1 && !(m_towerSubsystem.getMidBrakeBeam() && m_towerSubsystem.getHighBrakeBeam()))) {
             m_intakeSubsystem.setSpeed(Constants.IntakeConstants.intakeSpeed * speed);
         } else if (speed < -0.1) {
             m_intakeSubsystem.setSpeed(Constants.IntakeConstants.intakeSpeed * speed);

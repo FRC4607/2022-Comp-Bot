@@ -95,8 +95,10 @@ public class RobotContainer {
 				new Auton_FourBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem));
 		m_chooser.addOption("Four Ball LL",
 				new Auton_FourBall_LL(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, m_limeLight));
-		m_chooser.addOption("Five Ball",
-				new Auton_FiveBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, m_limeLight));
+		// m_chooser.addOption("Five Ball",
+		// 		new Auton_FiveBall(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, m_limeLight));
+		m_chooser.addOption("Five Ball Alt",
+				new Auton_FiveBall_Alt(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, m_limeLight));
 		m_chooser.addOption("One Ball",
 				new Auton_OneBall_TwoBall_LL(m_drivetrainSubsystem, m_intakeSubsystem, m_towerSubsystem, m_shooterSubsystem, m_limeLight, 1));
 		m_chooser.addOption("Two Ball LL",

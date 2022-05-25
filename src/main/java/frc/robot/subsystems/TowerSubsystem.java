@@ -87,10 +87,10 @@ public class TowerSubsystem extends SubsystemBase {
     }
 
     public boolean getMidBrakeBeam() {
-        return m_midBrakeBeam.get();
+        return !m_midBrakeBeam.get();
     }
 
     public boolean getHighBrakeBeam() {
-        return m_highBrakeBeam.get();
+        return !m_highBrakeBeam.get();
     }
 }

@@ -17,10 +17,10 @@ public class AutoIntake extends CommandBase {
 
     @Override
     public void execute() {
-        if (m_towerSubsystem.getMidBrakeBeam() || m_towerSubsystem.getHighBrakeBeam()) {
-            m_intakeSubsystem.setSpeed(IntakeConstants.intakeSpeed);
-        } else {
+        if (m_towerSubsystem.getMidBrakeBeam() && m_towerSubsystem.getHighBrakeBeam()) {
             m_intakeSubsystem.setSpeed(0);
+        } else {
+            m_intakeSubsystem.setSpeed(IntakeConstants.intakeSpeed);
         }
     }
 

@@ -49,16 +49,16 @@ public class Constants {
         public static final int pigeonID = 6;
         //public static final int countsPerRevolution = 2048;
         public static final double sensorCoefficient = (Math.PI * Units.inchesToMeters(6)) / 4096; // 0.478777
-        public static final double ks_Volts = 0.63729; // [0.58644, 0.5908, 0.65852]
-        public static final double kv_VoltSecondsPerMeters = 2.4912; // [2.5331, 2.5377, 2.4524]
-        public static final double ka_VoltSecondsSquaredPerMeters = 0.38831; // [0.20049, 0.25145, 0.42348]
+        public static final double ks_Volts = 0.65288; // [0.58644, 0.5908, 0.65852, 0.65288]
+        public static final double kv_VoltSecondsPerMeters = 2.5016; // [2.5331, 2.5377, 2.4524, 2.5016]
+        public static final double ka_VoltSecondsSquaredPerMeters = 0.38331; // [0.20049, 0.25145, 0.42348, 0.38331]
         public static final double trackWidth_Meters = 0.7036911491; // Theoretical
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
             trackWidth_Meters);
             public static final double maxVoltage = 10;
             public static final double maxUnitsPerSecond = 2; // Slue Rate
             public static final double maxSpeed = 1;
-            public static final double maxTurning = 0.9;
+            public static final double maxTurning = 0.8;
             
             // PID drive
             public static final double kPDriveVel = 2.9025 * 2; // 2.9445, 2.9025
@@ -70,6 +70,7 @@ public class Constants {
             // Conversons
             public static final double gearing = 4.0 / 45.0;
             public static final double MeterPerFalconCount = gearing / 2048 * (Math.PI * Units.inchesToMeters(6));
+            public static double maxTurnPerSecond = 2;
     }
 
     public static final class IntakeConstants {
@@ -122,13 +123,13 @@ public class Constants {
         public static final double flywheelMaxError = 200; // 50
         
         public static final double lowGoalRPM = 1000;
-        public static final double highGoalRPM = 2500;
+        public static final double highGoalRPM = 2450;
         
         public static final int kickerWheelID = 10;
         public static final double kickerWheelSpeed = 1;
 
         public static final int pistionChannel = 15;
-        public static final double limeLightRPM = 2825;
+        public static final double limeLightRPM = 2725;
         
     }
 
@@ -158,7 +159,7 @@ public class Constants {
         public static final double kI = 0.1;
         public static final double kD = 0;
 
-        public static final double maxHight_Rotations = 80; // 6.9;
+        public static final double maxHight_Rotations = 82; // 6.9;
         public static final double rotationToExtend = 0;
         public static final int limitSwitchID = 2;
         public static final double conversenFactor_SensorUnitsPerInch = 8192;
